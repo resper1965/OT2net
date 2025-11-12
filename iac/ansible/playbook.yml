@@ -1,0 +1,9 @@
+---
+- name: Provisionar stack Secure-OT-Browser
+  hosts: kasm
+  become: true
+  vars:
+    kasm_version: "1.15.0"
+    kasm_download_url: "https://kasm-static-content.s3.amazonaws.com/kasm_release_${kasm_version}.tar.gz"
+  roles:
+    - role: kasm

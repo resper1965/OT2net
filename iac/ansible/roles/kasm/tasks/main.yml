@@ -1,0 +1,50 @@
+---
+- name: Garantir pacotes base instalados
+  apt:
+    name:
+      - curl
+      - git
+      - htop
+    state: present
+    update_cache: true
+
+- name: Instalar Docker engine
+  include_role:
+    name: geerlingguy.docker
+  vars:
+    docker_install_compose_plugin: true
+  tags: docker
+
+- name: Criar diretório temporário do Kasm
+  file:
+    path: /tmp/kasm
+    state: directory
+    mode: "0755"
+
+- name: Baixar release do Kasm Workspaces
+  get_url:
+    url: "{{ kasm_download_url }}"
+    dest: /tmp/kasm/kasm.tar.gz
+    mode: "0644"
+
+- name: Descompactar instalador
+  unarchive:
+    src: /tmp/kasm/kasm.tar.gz
+    dest: /tmp/kasm
+    remote_src: true
+
+- name: Executar instalador do Kasm
+  command: "/tmp/kasm/kasm_release/install.sh --accept-eula"
+  args:
+    creates: /opt/kasm/current/version.txt
+
+- name: Configurar serviço kasm-workspaces para iniciar com o sistema
+  systemd:
+    name: kasmapi
+    enabled: true
+    state: started
+
+- name: Limpar instalador temporário
+  file:
+    path: /tmp/kasm
+    state: absent
