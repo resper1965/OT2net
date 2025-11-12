@@ -1,0 +1,104 @@
+---
+title: 'Security Controls'
+description: 'Controles, hardening e alinhamento ao CIS Controls v8.1 para o Secure-OT-Browser.'
+date: 2025-11-12
+---
+
+# 🔒 Guia de Segurança
+
+Este documento descreve controles e práticas recomendadas para manter o Secure-OT-Browser em conformidade com requisitos de redes industriais.
+
+## 1. Princípios de Segurança
+
+- **Isolamento total da OT:** navegação em contêineres descartáveis na DMZ.
+- **Menor privilégio:** administração restrita a jump hosts com MFA.
+- **Visibilidade contínua:** logs de pfSense/Kasm encaminhados para SIEM genérico.
+- **Imutabilidade:** reconstrução via IaC minimiza drift e garante baseline.
+
+## 2. Controles Recomendados
+
+| Área | Controle | Implementação | Frequência |
+| :--- | :--- | :--- | :--- |
+| Acesso remoto | VPN/IPsec + MFA | pfSense + RADIUS/LDAP | Sempre ativo |
+| Navegação | Filtragem de URL | pfSense + DNS filtrado | Contínua |
+| Contêineres | Reset por sessão | Padrão Kasm | Contínua |
+| Logs | Syslog + Retenção 180 dias | pfSense + Kasm → SIEM | Diária |
+| Atualizações | Patch, firmware, containers | Terraform/Ansible | Quinzenal |
+| Segredos | Vault centralizado | Variáveis via Ansible Vault | Contínua |
+
+## 3. Hardening de Componentes
+
+### Hypervisor Proxmox
+
+- Adotar recomendações CIS (SSH com chave, restringir `root`).
+- Limitar `pveproxy` à rede de gerência (`eno1`).
+- Habilitar backup criptografado no PBS.
+
+### pfSense
+
+- Desabilitar acesso administrativo pela WAN.
+- Usuários administrativos individuais com MFA.
+- IDS/IPS (Suricata) opcional em WAN/DMZ.
+
+### Kasm Workspaces
+
+- Restringir imagens disponíveis ao mínimo necessário.
+- Habilitar session timeout (< 60 minutos inativo).
+- Forçar TLS 1.2+ e renovar certificados via AC corporativa.
+
+## 4. Gestão de Segredos
+
+- Armazenar credenciais em cofre (HashiCorp Vault, AWS Secrets Manager).
+- Usar Ansible Vault para criptografar variáveis sensíveis.
+- Nunca versionar `.env` ou segredos; manter `.gitignore` atualizado.
+
+## 5. Detecção e Resposta
+
+- Alertas para tentativas de login falho no pfSense/Kasm.
+- Integração com SOC para playbooks de bloqueio e reset de sessão.
+- Runbooks de incidente documentados em `docs/operations/runbook`.
+
+## 6. Compliance e Auditoria
+
+- Registrar mudanças de firewall via ADR com justificativa e data.
+- Rastrear alterações IaC com PRs revisados (Spec Kit → `specs/` + tarefas).
+- Auditorias trimestrais: validar checksums do `config.xml` e do playbook Ansible.
+
+## 7. Roadmap de Segurança
+
+- [ ] Varredura de vulnerabilidades nas imagens Kasm.
+- [ ] Assinatura digital dos backups `config.xml`.
+- [ ] Verificação automática de drift de firewall via API pfSense.
+- [ ] Integração com Zero Trust Access para operadores.
+
+## 8. Alinhamento ao CIS Controls v8.1 (IG2)
+
+| CIS Control | Descrição | Implementação | Lacunas / Próximos passos |
+| :--- | :--- | :--- | :--- |
+| 01 - Assets | Inventário de ativos conectados | Terraform/Ansible descrevem VMs; specs registram mudanças | Automatizar descoberta de thin clients OT e integrá-los ao CMDB |
+| 02 - Software Assets | Inventário de software | Playbooks definem versões Kasm/Docker; pfSense `config.xml` versionado | Executar varredura periódica de pacotes |
+| 03 - Data Protection | Proteção de dados | DMZ isolada, TLS obrigatório, backups cifrados | Classificar dados das sessões, considerar DLP na DMZ |
+| 04 - Secure Configuration | Configurações seguras | Hardening documentado, Ansible aplica baseline | Automatizar checagem com CIS-CAT/OpenSCAP |
+| 05 - Account Management | Gestão de contas | MFA recomendado, contas individuais | Integrar com IAM corporativo e revisar contas sem uso |
+| 06 - Access Control | Controle de acesso | Segregação de redes, ACLs pfSense, RBAC no Kasm | Implementar Just-In-Time access para administração |
+| 07 - Vulnerability Management | Vulnerabilidades | Atualizações quinzenais, roadmap de scanner | Adicionar scanner autenticado (OpenVAS) e registrar findings via Spec Kit |
+| 08 - Audit Log Management | Logs | Exportação para SIEM genérico, retenção 180 dias | Definir correlação de eventos críticos e alertas automáticos |
+| 09 - Email/Web Browser Protection | Proteções | Sessões Kasm isolam browsers e plugins | Bloquear extensões e downloads na DMZ |
+| 10 - Malware Defenses | Defesa anti-malware | Containers descartáveis, IDS/IPS opcional | Avaliar antivírus nas imagens Kasm |
+| 11 - Data Recovery | Recuperação | Backups diários, plano IaC | Testar restauração trimestral documentada no Spec Kit |
+| 12 - Network Management | Gestão de rede | Bridges definidas, regras versionadas, DMZ isolada | Automatizar conformidade das regras vs. matriz |
+| 13 - Network Monitoring | Monitoramento | IDS/IPS opcional, logging pfSense → SIEM | Implantar Suricata/com regras SOC específicas |
+| 14 - Security Awareness | Conscientização | Documentação e RACI | Criar módulo de treinamento para operadores Kasm |
+| 15 - Service Provider Management | Terceiros | Dependências mapeadas (Kasm, PBS); suporte oficial | Avaliar SLAs e requisitos de segurança de fornecedores |
+| 16 - Application Security | Segurança de software | Kasm/pfSense tratados como appliances | Para customizações, seguir pipeline DevSecOps |
+| 17 - Incident Response | Resposta a incidentes | Runbook com troubleshooting e contatos SOC | Desenvolver playbooks SOC (comprometimento DMZ, falha pfSense) |
+| 18 - Penetration Testing | Testes de intrusão | Não implementado; previsto no roadmap | Agendar pentest anual focado em DMZ/pfSense/streaming |
+
+### Prioridades IG2
+
+1. Vulnerabilidade e monitoramento (Controles 07, 08, 13).
+2. Gestão de identidades (Controles 05, 06).
+3. Resposta e testes (Controles 11, 17, 18).
+4. Treinamento e provedores (Controles 14, 15).
+
+

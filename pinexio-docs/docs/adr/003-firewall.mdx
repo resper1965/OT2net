@@ -1,0 +1,29 @@
+---
+title: 'ADR 003 — Firewall Strategy'
+description: 'Decisão sobre a adoção de pfSense como firewall dedicado da solução Secure-OT-Browser.'
+date: 2025-11-12
+---
+
+# ADR 003: Firewall Dedicado
+
+## Decisão
+
+Adotar **pfSense** como firewall stateful responsável por segmentar OT, DMZ, IT e WAN.
+
+## Justificativa
+
+- Comunidade consolidada e recursos avançados (IDS/IPS, VPN, HA).
+- Fácil exportação/importação via `config.xml`, possibilitando versionamento Git.
+- Integração direta com Proxmox e suporte a múltiplas interfaces virtuais.
+
+## Alternativas Consideradas
+
+- **Firewalls proprietários**: custo elevado e menor flexibilidade para IaC.
+- **iptables puro em Linux**: maior esforço de manutenção e ausência de GUI para operações.
+
+## Consequências
+
+- Equipe precisa manter backups frequentes do `config.xml`.
+- Mudanças de regras devem ser refletidas em ADRs e documentação para auditoria.
+
+

@@ -1,0 +1,74 @@
+---
+title: 'TOC Customization'
+description: 'Como personalizar a navegação lateral (sidebar) e o índice (TOC) da documentação Secure-OT-Browser.'
+date: 2025-11-12
+---
+
+# Table of Contents (TOC) Customization
+
+O índice lateral e o sumário por página são definidos manualmente para garantir controle total sobre a navegação.
+
+## Estrutura
+
+- `config/sidebar.tsx`: define as seções exibidas na navegação principal (Getting Started, Architecture, etc.).
+- `config/toc.tsx`: mapeia cada página para o sumário de seções internas.
+
+## Sidebar
+
+Cada entrada da sidebar utiliza ícones do **lucide-react** e aceita colapsar subpáginas:
+
+```tsx
+export const sidebarNav = [
+  {
+    title: 'Architecture',
+    icon: <Layers className="h-5 w-5" />,
+    defaultOpen: true,
+    pages: [
+      {
+        title: 'Architecture Blueprint',
+        href: '/docs/architecture/stack',
+      },
+    ],
+  },
+];
+```
+
+- Para adicionar uma nova página, crie um arquivo `.mdx` em `docs/` e insira um objeto `title/href`.
+- O caminho deve corresponder ao slug gerado pelo Contentlayer (`/docs/...`).
+
+## TOC por página
+
+`config/toc.tsx` armazena um objeto onde a chave corresponde ao path interno (ex.: `operations/runbook`). Cada seção da página recebe título e âncora:
+
+```ts
+export const TocData = {
+  'operations/runbook': [
+    {
+      title: 'Backup (Plano A)',
+      href: '/docs/operations/runbook#1-backup-plano-a',
+    },
+    {
+      title: 'Reconstrução (Plano B - IaC)',
+      href: '/docs/operations/runbook#3-reconstrucao-plano-b-iac',
+    },
+  ],
+};
+```
+
+## Regras
+
+- Sempre use `kebab-case` gerado automaticamente pelos headings do MDX (verifique o ID inspecionando o HTML ou via `#` na página).
+- Para seções com subtópicos, utilize a propriedade `pages` dentro do item principal.
+- Evite referências quebradas: ao renomear um heading no MDX, atualize a âncora correspondente em `config/toc.tsx`.
+
+## Estilo
+
+- A sidebar aplica classes baseadas nas variáveis de cor definidas em `globals.css`. Ajuste `--sidebar`, `--sidebar-active` para combinar com o tema slate/brand.
+- O TOC secundário é renderizado no componente `src/components/toc.tsx`, herdando as mesmas tokens de cor.
+
+## Teste
+
+- Rode `pnpm dev` ou `pnpm build:content` para garantir que o Contentlayer indexe o novo conteúdo.
+- Utilize a pesquisa (atalho `⌘/Ctrl + K`) para confirmar que as novas páginas aparecem imediatamente.
+
+

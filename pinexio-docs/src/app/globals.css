@@ -1,0 +1,238 @@
+@import 'tailwindcss';
+@import 'tailwindcss-animated';
+
+@variant dark (&:is(.dark *));
+
+html {
+  scroll-behavior: smooth;
+}
+
+[id] {
+  scroll-margin-top: 4rem; /* Default for mobile */
+
+  @media (min-width: 1024px) {
+    scroll-margin-top: 5rem; /* Desktop header height */
+  }
+}
+
+/* You can add plugins here if needed */
+/* @plugin "tailwindcss-animate"; */
+
+@theme {
+  /* Map HSL variables to semantic color names */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  /* Borders */
+  --color-border: hsl(var(--border));
+  --color-border-header: hsl(var(--border-header));
+
+  /* UI Colors */
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  /* Component Colors */
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  /* Status Colors */
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+
+  /* Other UI Elements */
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-active: hsl(var(--sidebar-active));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-active-foreground: hsl(var(--sidebar-active-foreground));
+  --color-button: hsl(var(--button));
+  --color-button-border: hsl(var(--button-border));
+  --color-button-foreground: hsl(var(--button-foreground));
+  --color-button-hover: hsl(var(--button-hover));
+  --color-button-secondary: hsl(var(--button-secondary));
+  --color-button-secondary-foreground: hsl(var(--button-secondary-foreground));
+
+  /* Border Radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  :root {
+    /* Base Theme - Light Mode */
+    --background: 215 28% 97%;
+    --foreground: 215 28% 12%;
+
+    /* Borders */
+    --border: 215 20% 82%;
+    --border-header: 215 21% 80%;
+
+    /* UI Colors */
+    --primary: 189 100% 45%;
+    --primary-foreground: 205 100% 6%;
+    --secondary: 210 12% 35%;
+    --secondary-foreground: 210 30% 96%;
+    --muted: 215 20% 93%;
+    --muted-foreground: 215 18% 45%;
+    --accent: 215 32% 18%;
+    --accent-foreground: 210 28% 94%;
+
+    /* Component Colors */
+    --card: 215 30% 99%;
+    --card-foreground: 215 28% 10%;
+    --popover: 215 30% 99%;
+    --popover-foreground: 215 28% 12%;
+
+    /* Status Colors */
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 147 65% 42%;
+    --success-foreground: 210 40% 98%;
+    --warning: 40 96% 50%;
+    --warning-foreground: 210 40% 12%;
+
+    /* Other UI Elements */
+    --input: 215 18% 88%;
+    --ring: 189 100% 45%;
+
+    /* Border Radius */
+    --radius: 0.5rem;
+
+    /* Sidebar Elements */
+    --sidebar: 215 28% 95%;
+    --sidebar-foreground: 215 15% 35%;
+    --sidebar-active: 189 100% 90%;
+    --sidebar-active-foreground: 200 30% 15%;
+  }
+
+  .dark {
+    /* Base Theme - Dark Mode */
+    --background: 222 47% 6%;
+    --foreground: 215 32% 88%;
+
+    /* Borders */
+    --border: 222 30% 20%;
+    --border-header: 222 28% 16%;
+
+    /* UI Colors */
+    --primary: 189 100% 45%;
+    --primary-foreground: 210 100% 8%;
+    --secondary: 222 18% 32%;
+    --secondary-foreground: 215 32% 92%;
+    --muted: 220 18% 18%;
+    --muted-foreground: 215 18% 68%;
+    --accent: 222 35% 14%;
+    --accent-foreground: 215 32% 92%;
+
+    /* Component Colors */
+    --card: 222 47% 7%;
+    --card-foreground: 215 32% 92%;
+    --popover: 222 48% 8%;
+    --popover-foreground: 215 32% 88%;
+
+    /* Status Colors */
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 210 32% 96%;
+    --success: 147 58% 42%;
+    --success-foreground: 210 40% 98%;
+    --warning: 40 96% 52%;
+    --warning-foreground: 215 32% 10%;
+
+    /* Other UI Elements */
+    --input: 222 30% 20%;
+    --ring: 189 100% 45%;
+
+    /* Sidebar Elements */
+    --sidebar: 222 40% 10%;
+    --sidebar-foreground: 215 22% 72%;
+    --sidebar-active: 189 100% 28%;
+    --sidebar-active-foreground: 210 42% 98%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-inter), 'Inter', ui-sans-serif, system-ui;
+    letter-spacing: 0.01em;
+    background-image: radial-gradient(
+        circle at 10% 20%,
+        rgba(0, 173, 232, 0.12),
+        transparent 25%
+      ),
+      radial-gradient(
+        circle at 90% 30%,
+        rgba(0, 173, 232, 0.08),
+        transparent 22%
+      );
+  }
+}
+
+@layer utilities {
+  .border-b-header {
+    @apply border-b;
+    border-bottom-color: var(--color-border-header);
+  }
+
+  .bg-glass {
+    background: linear-gradient(
+      135deg,
+      rgba(12, 18, 30, 0.65),
+      rgba(10, 31, 52, 0.3)
+    );
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-montserrat), 'Montserrat', ui-sans-serif, system-ui;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+p {
+  color: hsl(var(--foreground) / 0.85);
+  line-height: 1.65;
+}
+
+a {
+  color: hsl(var(--primary));
+  transition: color 150ms ease;
+}
+
+a:hover {
+  color: hsl(var(--primary) / 0.8);
+}
+
+::selection {
+  background: hsl(var(--primary) / 0.25);
+  color: hsl(var(--primary-foreground));
+}
+
+.ness-wordmark {
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+}

@@ -1,19 +1,25 @@
+---
+title: 'Architecture Blueprint'
+description: 'Topologia, componentes e fluxos de sessão do Secure-OT-Browser.'
+date: 2025-11-12
+---
+
 # 📐 Arquitetura da Solução
 
 Esta seção detalha os componentes de hardware e software e o design da rede.
 
 ## 1. Pilha de Tecnologia (Stack)
 
-* **Hypervisor (Host):** Proxmox VE
-* **Firewall (VM 1):** pfSense
-* **Gateway (VM 2):** Ubuntu Server rodando Kasm Workspaces (Docker)
+- **Hypervisor (Host):** Proxmox VE
+- **Firewall (VM 1):** pfSense
+- **Gateway (VM 2):** Ubuntu Server rodando Kasm Workspaces (Docker)
 
 ## 2. Requisitos de Hardware (Mínimo para 10 Usuários)
 
-* **CPU:** 8+ Cores (AMD EPYC, Intel Xeon)
-* **RAM:** 32 GB DDR4
-* **Storage:** 1 TB NVMe SSD (para I/O rápido dos contêineres)
-* **Rede:** 4 Placas de Rede (NICs) Físicas
+- **CPU:** 8+ Cores (AMD EPYC, Intel Xeon)
+- **RAM:** 32 GB DDR4
+- **Storage:** 1 TB NVMe SSD (para I/O rápido dos contêineres)
+- **Rede:** 4 Placas de Rede (NICs) Físicas
 
 ## 3. Design da Rede
 
@@ -69,7 +75,7 @@ Esta seção detalha os componentes de hardware e software e o design da rede.
 
 - **AD/LDAP corporativo (opcional):** exposto na rede IT (`vmbr2`) com portas 389/636 abertas.
 - **Provedor DNS seguro:** pfSense encaminha DNS para upstream filtrado (ex.: Quad9, Umbrella).
-- **Observabilidade:** métricas do Proxmox via `Prometheus exporter` ou `Zabbix` genérico (ver runbook).
+- **Observabilidade:** métricas do Proxmox via `Prometheus exporter` ou `Monitoring` genérico.
 - **PKI interna:** certificados para Kasm e pfSense administrados por AC corporativa.
 
 ## 8. Escalabilidade e Alta Disponibilidade
@@ -85,7 +91,7 @@ Esta seção detalha os componentes de hardware e software e o design da rede.
 
 - **Segmentação rígida:** nenhuma rota direta OT↔WAN; somente streaming Kasm.
 - **Hardening:** aplicar OpenSCAP/Ansible para Ubuntu, reforçar pfSense (disable admin WAN).
-- **Logging:** encaminhar syslog do pfSense e audit logs do Kasm para SIEM (genérico).
+- **Logging:** encaminhar syslog do pfSense e audit logs do Kasm para SIEM genérico.
 - **Atualizações:** Terraform limita mudanças de rede; use Ansible para patch windows.
 
 ## 10. Riscos e Mitigações
@@ -97,3 +103,5 @@ Esta seção detalha os componentes de hardware e software e o design da rede.
 | Falha no DNS upstream | Navegação indisponível | Configurar múltiplos forwarders + fallback local. |
 | Latência elevada WAN | Experiência degradada | Ajustar QoS no pfSense e otimizar MTU. |
 | Perda de certificados TLS | Usuários sem acesso seguro | Automatizar renovação via AC ou scripts ACME. |
+
+

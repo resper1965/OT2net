@@ -1,0 +1,18 @@
+.venv/
+pnpm-debug.log
+docs-site/
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Ansible
+iac/ansible/.ansible/
+iac/ansible/collections/
+
+# Node / Next.js
+**/node_modules/
+.next/
+
+

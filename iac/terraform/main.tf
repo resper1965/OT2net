@@ -14,30 +14,28 @@ resource "proxmox_vm_qemu" "pfsense" {
   memory  = 4096
   scsihw  = "virtio-scsi-single"
 
-  disks {
-    scsi0 = "local-lvm:${var.pfsense_disk_size_gb}"
+  disk {
+    type    = "scsi"
+    storage = var.proxmox_storage_pool
+    size    = var.pfsense_disk_size_gb
   }
 
   network {
-    id     = 0
     model  = "virtio"
     bridge = var.bridge_wan
   }
 
   network {
-    id     = 1
     model  = "virtio"
     bridge = var.bridge_ot
   }
 
   network {
-    id     = 2
     model  = "virtio"
     bridge = var.bridge_it
   }
 
   network {
-    id     = 3
     model  = "virtio"
     bridge = var.bridge_dmz
   }
@@ -58,12 +56,13 @@ resource "proxmox_vm_qemu" "kasm" {
   memory  = 16384
   scsihw  = "virtio-scsi-single"
 
-  disks {
-    scsi0 = "local-lvm:${var.kasm_disk_size_gb}"
+  disk {
+    type    = "scsi"
+    storage = var.proxmox_storage_pool
+    size    = var.kasm_disk_size_gb
   }
 
   network {
-    id     = 0
     model  = "virtio"
     bridge = var.bridge_dmz
   }

@@ -1,0 +1,67 @@
+---
+title: 'Font Customization'
+description: 'Como aplicar a tipografia Montserrat + Inter no portal Secure-OT-Browser e ajustar pesos conforme o design system ness.'
+date: 2025-11-12
+---
+
+# Font Customization
+
+O design system da **ness** utiliza **Montserrat** (títulos) e **Inter** (corpo). Esta página mostra como a aplicação Pinexio foi adaptada e como você pode evoluir a tipografia.
+
+## Fonte global
+
+- `src/app/layout.tsx` importa as fontes via `next/font/google`:
+
+```tsx
+import { Inter, Montserrat } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+});
+```
+
+- O `ThemeProvider` aplica `font-sans` globalmente, enquanto os headings usam Montserrat através de `globals.css`.
+
+## Tailwind config
+
+`tailwind.config.js` expõe as famílias para uso em classes utilitárias:
+
+```ts
+fontFamily: {
+  sans: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
+  display: ['var(--font-montserrat)', 'Montserrat', 'system-ui', 'sans-serif'],
+},
+```
+
+Use `font-display` ou `font-sans` diretamente nas classes de componentes.
+
+## Pesos recomendados
+
+| Uso | Classe | Peso |
+| :-- | :-- | :-- |
+| Títulos principais | `font-display font-semibold` | 600 |
+| Headings secundários | `font-display font-medium` | 500 |
+| Corpo de texto | `font-sans font-normal` | 400 |
+| Labels / Navegação | `font-sans tracking-wide` | 500 |
+
+## Ajustando tamanhos
+
+- Os headings no `mdx-components.tsx` adotam espaçamento negativo (`letter-spacing`) e tamanhos específicos seguindo a escala 4px.
+- Para novos componentes, utilize utilitários Tailwind (`text-2xl`, `leading-tight`) combinados com `font-display`.
+
+## Dicas
+
+- Prefira `display: 'swap'` nas fontes para evitar texto invisível durante o carregamento.
+- Se precisar de variações extras (ex.: Montserrat 800), adicione o peso ao array `weight` no `next/font`.
+- Mantenha a consistência com o design system: títulos destacam a tipografia, enquanto o corpo permanece discreto.
+
+

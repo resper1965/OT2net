@@ -1,50 +1,40 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Secure-OT-Browser Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Spec-Driven Decisions
+Toda iniciativa parte de um `spec.md` com user stories, critérios de aceitação e métricas. Nenhuma implementação é iniciada sem spec aprovado e versionado.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Infraestrutura Reprodutível
+Terraform, Ansible e artefatos pfSense são fonte de verdade. Alterações manuais devem ser capturadas como código e documentadas antes de serem consideradas válidas.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Segurança em Primeiro Lugar
+Cada mudança deve evidenciar impacto em isolamento OT, hardening e cadeia de restauração. Nenhum ajuste é aceito se reduzir controles de segurança sem mitigação referenciada.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Observabilidade e Recuperação
+Metas de monitoramento e recuperação (backup, restauração, alertas) são parte do Definition of Done. Specs precisam apontar métricas e testes operacionais.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Documentação Viva
+Docs (`docs/`, ADRs e portal) são atualizados no mesmo PR da implementação. Divergências entre spec e documentação são bugs críticos.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Requisitos Complementares
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- Aderência ao padrão BMAD da empresa, preservando linguagem especificada e design system oficial.
+- Utilização obrigatória do fluxo Context7 para consulta de bibliotecas, APIs e diagnósticos de erro.
+- Manutenção do SBOM atualizado a cada dependência nova ou atualizada.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Workflow de Desenvolvimento
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+1. Criar spec via `/speckit.specify` usando os scripts em `.specify/scripts`.
+2. Gerar plano (`/speckit.plan`) e tarefas (`/speckit.tasks`), versionando artefatos em `specs/<id>/`.
+3. Abrir PR vinculando spec, plano, tarefas e ADRs afetados.
+4. Executar `/speckit.implement`, atualizar docs e marcar tarefas concluídas antes do merge.
+5. Registrar evidências de testes (IaC, operação, segurança) no spec ou anexos.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- Esta constituição tem prioridade sobre outras práticas do projeto.
+- Emendas exigem ADR dedicada, atualização deste documento e consenso das áreas Arquitetura, Operações e Segurança.
+- Code reviews devem verificar conformidade com princípios, fluxos Spec Kit e atualização da documentação.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2025-11-12 | **Last Amended**: 2025-11-12

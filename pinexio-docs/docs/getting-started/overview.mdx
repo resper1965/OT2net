@@ -1,0 +1,36 @@
+---
+title: 'Overview'
+description: 'Visão geral do Secure-OT-Browser, objetivos e benefícios principais da solução.'
+date: 2025-11-12
+---
+
+# Secure-OT-Browser
+
+O **Secure-OT-Browser** entrega uma “DMZ em uma caixa” para que operadores OT acessem conteúdo web sem expor a rede industrial. Toda navegação ocorre em sessões Kasm descartáveis hospedadas em uma DMZ dedicada, enquanto a estação OT recebe apenas streaming de áudio e vídeo.
+
+## Problema
+
+- Estações SCADA e IHMs não podem tocar a Internet diretamente devido ao risco de malware.
+- Operadores precisam baixar drivers, consultar manuais e acessar bases de conhecimento externas.
+- A falta de isolamento gera pressão por exceções de firewall ou dispositivos paralelos pouco governados.
+
+## Solução
+
+- Sessões efêmeras do Kasm Workspaces entregues via streaming, destruídas ao encerrar.
+- pfSense dedicado com política OT→DMZ restritiva e rotas específicas para IT/AD.
+- Terraform + Ansible para provisionamento e configuração determinísticos.
+- Limite padrão de 5 sessões simultâneas por nó para garantir performance.
+
+## Benefícios
+
+- **Segurança reforçada**: isolamento rígido entre OT e Internet, com contêineres descartáveis e firewall versionado.
+- **Simplicidade operacional**: IaC cobre desde o Proxmox até o deployment do Kasm, reduzindo curva de aprendizado.
+- **Escalabilidade controlada**: crescer significa adicionar hosts Proxmox e novos nós Kasm, mantendo governança.
+- **Branding rápido**: portal Kasm permite personalização visual via painel admin.
+
+> Consulte também:
+> - `docs/architecture/stack.mdx` para detalhes da topologia e matriz de firewall.
+> - `docs/operations/runbook.mdx` para backup, restore e plano IaC.
+> - `docs/security/security-controls.mdx` para controles alinhados ao CIS v8.1 (IG2).
+
+

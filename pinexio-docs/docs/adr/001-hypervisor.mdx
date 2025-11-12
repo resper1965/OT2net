@@ -1,0 +1,30 @@
+---
+title: 'ADR 001 — Hypervisor Selection'
+description: 'Decisão arquitetural para adoção do Proxmox VE como hypervisor do Secure-OT-Browser.'
+date: 2025-11-12
+---
+
+# ADR 001: Seleção de Hypervisor
+
+## Decisão
+
+Adotar **Proxmox VE** como hypervisor bare-metal para hospedar o Secure-OT-Browser.
+
+## Justificativa
+
+- **Stack única:** Proxmox unifica virtualização KVM e containers LXC com gerenciamento de storage, simplificando a operação.
+- **Recursos nativos:** clustering, HA e integração com Proxmox Backup Server, alinhados ao plano de backup.
+- **Compatibilidade:** suporte comprovado a pfSense e Ubuntu Server, componentes principais da solução.
+- **Custo:** software livre, permitindo operação sem licenciamento adicional.
+
+## Alternativas Consideradas
+
+- **VMware ESXi:** recursos avançados, porém custo recorrente e dependência de hardware certificado.
+- **Microsoft Hyper-V:** exige Windows Server como host, indo contra o objetivo de uma caixa única baseada em Linux.
+
+## Consequências
+
+- Equipe precisa dominar CLI e interface web do Proxmox.
+- Necessidade de manter repositório `pve-no-subscription` para atualizações estáveis sem assinatura.
+
+

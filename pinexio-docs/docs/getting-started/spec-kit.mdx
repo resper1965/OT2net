@@ -1,0 +1,37 @@
+---
+title: 'Spec Kit Workflow'
+description: 'Fluxo de engenharia orientado por especificações para o Secure-OT-Browser usando o Spec Kit.'
+date: 2025-11-12
+---
+
+# Spec-Driven Delivery
+
+O Secure-OT-Browser segue o [Spec Kit](https://github.com/github/spec-kit) para manter arquitetura, tarefas e implementação alinhadas.
+
+## Comandos Centrais
+
+- `/speckit.constitution` — define princípios de governança do produto.
+- `/speckit.specify` — captura problema, histórias e métricas em `specs/<id>/spec.md`.
+- `/speckit.plan` — gera o plano técnico executável pela equipe.
+- `/speckit.tasks` — produz tarefas acionáveis prontas para gestão.
+- `/speckit.implement` — conduz a entrega enquanto atualiza a especificação com os resultados.
+
+## Como iniciar uma feature
+
+```bash
+source .venv/bin/activate
+./.specify/scripts/bash/create-new-feature.sh "Descrição curta"
+# Em seguida rode os comandos /speckit.* dentro do agente Cursor
+```
+
+## Expectativas de documentação
+
+- Commits devem incluir as saídas relevantes (`plan.md`, `tasks.md`, ADRs atualizados).
+- Os artefatos em `docs/` precisam refletir decisões descritas nos specs e ADRs.
+- Toda alteração significativa deve registrar evidências no spec antes do merge.
+
+> **Dica:** execute `specify check` após atualizar o repositório para validar dependências do Spec Kit.
+
+Retorne ao guia de infraestrutura em `docs/operations/runbook` depois de planejar a feature.
+
+

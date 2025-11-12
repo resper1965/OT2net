@@ -1,0 +1,30 @@
+---
+title: 'ADR 002 — Isolation Technology'
+description: 'Decisão arquitetural sobre o uso do Kasm Workspaces para isolamento de navegação OT.'
+date: 2025-11-12
+---
+
+# ADR 002: Tecnologia de Isolamento
+
+## Decisão
+
+Utilizar **Kasm Workspaces** como camada de isolamento de navegação para operadores OT.
+
+## Justificativa
+
+- Contêineres efêmeros com streaming HTML5 reduzem risco de persistência.
+- Suporte a políticas de timeout, auditoria e personalização de imagens.
+- Compatível com autenticação local e integrações com AD/LDAP corporativo.
+- Disponibilidade de APIs (`kasmcli`) para automação e observabilidade.
+
+## Alternativas Consideradas
+
+- **Browser VM tradicional:** maior overhead e ausência de API nativa.
+- **Serviço de navegação remoto comercial:** dependência de SaaS externo e custos recorrentes altos.
+
+## Consequências
+
+- Necessidade de manter imagens Kasm atualizadas e compatíveis com uso regulatório.
+- Requer infraestrutura Docker robusta e monitoramento contínuo (CPU/GPU).
+
+

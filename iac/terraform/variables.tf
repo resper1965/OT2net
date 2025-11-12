@@ -25,6 +25,12 @@ variable "proxmox_target_node" {
   type        = string
 }
 
+variable "proxmox_storage_pool" {
+  description = "Pool de storage onde os discos das VMs serão alocados"
+  type        = string
+  default     = "local-lvm"
+}
+
 variable "pfsense_template" {
   description = "Nome do template/VM base do pfSense para clonagem"
   type        = string

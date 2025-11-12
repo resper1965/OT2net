@@ -1,0 +1,179 @@
+---
+title: 'Operational Runbook'
+description: 'Procedimentos de backup, restauração, provisionamento IaC e troubleshooting do Secure-OT-Browser.'
+date: 2025-11-12
+---
+
+# ⚙️ Operações e Manutenção
+
+## 1. Backup (Plano A)
+
+1. Use um **Proxmox Backup Server (PBS)** ou um **NAS (NFS/CIFS)**.
+2. No Proxmox, vá em `Datacenter -> Storage` e adicione seu storage de backup.
+3. Vá em `Datacenter -> Backup` e crie um job agendado.
+4. **IMPORTANTE:** Faça backup de **AMBAS** as VMs (`pfSense` e `Kasm`) diariamente.
+
+## 2. Recuperação de Desastre (Plano A - Restore)
+
+1. Instale o Proxmox VE no novo hardware.
+2. Adicione o storage de backup (conforme passo 1.2).
+3. No seu storage de backup, localize os backups das VMs.
+4. Clique no backup da `pfSense` -> **Restore**.
+5. Clique no backup da `Kasm` -> **Restore**.
+6. Inicie as VMs. O sistema estará 100% operacional.
+
+## 3. Reconstrução (Plano B - IaC)
+
+Se os backups falharem, use o IaC para reconstruir do zero:
+
+1. Instale o Proxmox e configure as redes em `/etc/network/interfaces`.
+2. Clone este repositório.
+3. Restaure o `config.xml` do pfSense (pode ser via Ansible).
+4. Provisione as VMs com Terraform.
+5. Configure o Kasm com Ansible.
+
+### 3.1 Pré-requisitos de laboratório
+
+- Proxmox VE funcional com templates clonáveis para pfSense e Ubuntu/Kasm.
+- Usuário/tokens do Proxmox com permissão para clonar VMs e gerenciar storage.
+- Bridges configuradas (`vmbr0` WAN, `vmbr1` OT, `vmbr2` IT, `vmbr3` DMZ) ou equivalentes.
+- Host de automação com Python 3.12+, Terraform (>= 1.7) e acesso SSH.
+
+### 3.2 Provisionamento com Terraform
+
+Crie `iac/terraform/terraform.tfvars` (não versionado) com parâmetros:
+
+```hcl
+proxmox_api_url             = "https://proxmox.local:8006/api2/json"
+proxmox_api_user            = "iac@pam"
+proxmox_api_password        = "TOKEN_SEGURO"
+proxmox_api_skip_tls_verify = true
+proxmox_target_node         = "pve01"
+proxmox_storage_pool        = "local-lvm"
+pfsense_template            = "tpl-pfsense"
+kasm_template               = "tpl-ubuntu-kasm"
+bridge_wan                  = "vmbr0"
+bridge_ot                   = "vmbr1"
+bridge_it                   = "vmbr2"
+bridge_dmz                  = "vmbr3"
+```
+
+Execute na pasta `iac/terraform`:
+
+```bash
+terraform fmt
+terraform init
+terraform plan
+terraform apply
+```
+
+> **Nota:** mantenha o `terraform.tfstate` seguro e exporte outputs (IPs das VMs) para uso no Ansible.
+
+### 3.3 Configuração com Ansible
+
+1. Ajuste um inventário apontando para a VM Kasm:
+
+   ```ini
+   [kasm]
+   kasm01 ansible_host=10.0.100.10 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/kasm.pem
+   ```
+
+2. Instale dependências e valide:
+
+   ```bash
+   source ../.venv/bin/activate
+   ansible-galaxy install -r requirements.yml -p collections
+   ansible-lint
+   ```
+
+3. Execute:
+
+   ```bash
+   ansible-playbook -i inventory.ini playbook.yml --check
+   ansible-playbook -i inventory.ini playbook.yml
+   ```
+
+4. Validar:
+   - `systemctl status kasmapi`.
+   - `kasmcli sessions list` após logout para garantir destruição de contêiner.
+   - Logs em `/opt/kasm/current/log`.
+
+Registre ajustes locais (ex.: `kasm_version`) nos specs correspondentes.
+
+## 4. Geração e Manutenção de SBOM
+
+- SBOM CycloneDX: `sbom/secure-ot-browser.cdx.json`.
+- Para atualizar:
+
+  ```bash
+  cd /home/resper/OT2net/secure-ot-browser
+  /home/resper/.local/bin/syft dir:./ --exclude './.venv' --exclude './docs-site/node_modules' -o cyclonedx-json > sbom/secure-ot-browser.cdx.json
+  ```
+
+- Publique o SBOM no pipeline corporativo e registre a atualização no spec.
+
+## 5. Branding (Customização do Produto)
+
+1. Portal Kasm (`Admin -> Branding`).
+2. Envie **Logo**, **Favicon** e **Background**.
+3. Ajuste CSS opcionalmente para seguir o design system ness.
+
+## 6. Monitoramento e Observabilidade
+
+- **Proxmox:** métricas via `pveproxy` ou exportação Prometheus.
+- **pfSense:** encaminhar syslog a um SIEM genérico.
+- **Kasm:** monitorar `/opt/kasm/current/log` e `docker stats`.
+- **Indicadores-chave:**
+  - CPU/RAM/disco das VMs.
+  - Sessões Kasm ativas (alvo ≤ 5).
+  - Latência WAN→DMZ (alerta > 150 ms).
+
+## 7. Gestão de Patches
+
+- **Proxmox:** `apt update && apt dist-upgrade` quinzenal (com snapshots).
+- **pfSense:** `System -> Update`, exportar `config.xml` antes.
+- **Kasm/Ubuntu:** `unattended-upgrades` + role Ansible.
+- **Docker:** reexecutar instalador Kasm ou `kasmcli`.
+
+## 8. Tabela de Capacidade
+
+| Recurso | Alvo | Ação preventiva |
+| :--- | :--- | :--- |
+| CPU host Proxmox | < 70% média | Adicionar segundo nó ou reduzir sessões. |
+| RAM host Proxmox | > 6 GB livres | Ajustar limites de sessão ou ampliar RAM. |
+| Disco NVMe | > 20% livre | Rotacionar snapshots, mover logs para NAS. |
+| Sessões simultâneas | ≤ 5 | Avaliar clusterização Kasm e balanceador. |
+
+## 9. Troubleshooting Rápido
+
+- **Portal Kasm inacessível:** revisar DNS/HTTPS, regra pfSense OT→DMZ, certificado TLS.
+- **Sem áudio/vídeo:** conferir codecs Kasm e largura de banda OT.
+- **WAN bloqueada:** validar DNS upstream no pfSense (`Diagnostics -> Ping`).
+- **Provisionamento falhou:** `terraform plan` para drift e `ansible-playbook -vv`.
+- **Sessões órfãs:** `kasmcli sessions terminate <id>`.
+
+## 10. Operações com Spec Kit
+
+- Iniciar feature: `./.specify/scripts/bash/create-new-feature.sh "Melhoria X"`.
+- Documentar spec em `specs/<id>/spec.md`.
+- Usar `/speckit.plan` e `/speckit.tasks` para gerar plano e tarefas.
+- Atualizar docs e PR antes do merge.
+
+## 11. Matriz RACI (Resumo)
+
+| Atividade | Responsável (R) | Suporte (S) | Informado (I) |
+| :--- | :--- | :--- | :--- |
+| Backup diário | Operações OT | Segurança | Gerência OT |
+| Patches mensais | Segurança | Operações OT | Gerência |
+| Monitoramento 24x7 | SOC | Operações OT | Segurança |
+| Branding | Marketing | Operações OT | Segurança |
+| Gestão de especificações | Arquitetura | Operações OT | Stakeholders |
+
+## 12. Contatos e Escalonamento
+
+- **NOC / Operações:** noc@example.com (24x7)
+- **Segurança (SOC):** soc@example.com (24x7)
+- **Change Advisory Board:** cab@example.com (horário comercial)
+- **Suporte Kasm:** https://kasmweb.com/support (SLA conforme contrato)
+
+
