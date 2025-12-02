@@ -30,6 +30,10 @@ docker-compose logs -f redis
 docker-compose ps
 ```
 
+⚠️ **Nota**: Se a porta 6379 já estiver em uso, você pode:
+1. Usar o Redis existente (atualize `REDIS_URL` no `.env.local`)
+2. Mudar a porta no `docker-compose.yml` (veja seção "Configuração")
+
 ### Parar Redis
 
 ```bash
