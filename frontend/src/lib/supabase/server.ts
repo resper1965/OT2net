@@ -1,5 +1,6 @@
 import { createServerClient as createSupabaseServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import type { Database } from "@/types/supabase";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -15,7 +16,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export function createServerClient() {
   const cookieStore = cookies();
 
-  return createSupabaseServerClient(supabaseUrl, supabaseAnonKey, {
+  return createSupabaseServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookies: {
       get(name: string) {
         return cookieStore.get(name)?.value;
