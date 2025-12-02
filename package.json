@@ -4,9 +4,13 @@
   "private": true,
   "description": "Sistema de Gestão de Governança e Segurança de TO - Plataforma PMO Inteligente",
   "scripts": {
-    "dev": "cd frontend && npm run dev",
+    "dev": "echo 'Use: cd frontend && npm run dev (e cd backend && npm run dev em outro terminal)'",
     "build": "cd frontend && npm run build",
-    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "setup": "npm run install:all && echo '✅ Dependências instaladas! Configure .env.local e execute: cd backend && npm run prisma:generate'",
+    "vercel:deploy": "vercel --prod",
+    "lint": "cd frontend && npm run lint",
+    "format": "cd frontend && npm run format"
   },
   "devDependencies": {
     "@vercel/node": "^3.2.29"

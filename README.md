@@ -108,12 +108,28 @@ Acesse:
 
 ## 📚 Documentação
 
-- [Autenticação](./docs/authentication.md)
+### Quick Start
+- [Quick Start Guide](./docs/quick-start.md) - Comece aqui!
+
+### Setup e Configuração
+- [Setup Completo](./docs/setup-complete.md) - Checklist final
+- [Variáveis de Ambiente](./docs/env-setup.md)
 - [Supabase Setup](./docs/supabase-setup.md)
 - [Prisma Setup](./docs/prisma-setup.md)
-- [Deploy Vercel](./docs/vercel-deployment.md)
+- [Docker Setup](./docs/docker-setup.md)
+
+### Desenvolvimento
+- [Autenticação](./docs/authentication.md)
 - [Supabase Auto REST APIs](./docs/supabase-auto-rest-apis.md)
 - [Ness Design System](./docs/ness-design-system.md)
+- [pgvector Setup](./docs/pgvector-setup.md)
+
+### Deploy
+- [Deploy Vercel](./docs/vercel-deployment.md)
+
+### Outros
+- [Status do Projeto](./PROJECT-STATUS.md)
+- [Guia de Contribuição](./CONTRIBUTING.md)
 
 ## 🚢 Deploy na Vercel
 
@@ -179,6 +195,9 @@ npm run prisma:seed      # Popular banco
 
 ## 🤝 Contribuindo
 
+Veja [CONTRIBUTING.md](./CONTRIBUTING.md) para o guia completo de contribuição.
+
+Quick start:
 1. Crie uma branch: `git checkout -b feature/nova-feature`
 2. Commit: `git commit -m 'feat: adiciona nova feature'`
 3. Push: `git push origin feature/nova-feature`
