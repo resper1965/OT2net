@@ -32,6 +32,8 @@ model Cliente {
   empresas            Empresa[]
   projetos            Projeto[]
 
+  @@index([cnpj])
+  @@index([created_at])
   @@map("clientes")
 }
 
@@ -50,6 +52,8 @@ model Empresa {
   cliente               Cliente?  @relation(fields: [cliente_id], references: [id], onDelete: Cascade)
   sites                 Site[]
 
+  @@index([cliente_id])
+  @@index([status])
   @@map("empresas")
 }
 
@@ -72,6 +76,8 @@ model Site {
   descricoes_operacionais_raw DescricaoOperacionalRaw[]
   riscos                    Risco[]
 
+  @@index([empresa_id])
+  @@index([classificacao])
   @@map("sites")
 }
 
@@ -97,6 +103,9 @@ model Projeto {
   stakeholders    Stakeholder[]
   riscos          Risco[]
 
+  @@index([cliente_id])
+  @@index([fase_atual])
+  @@index([created_at])
   @@map("projetos")
 }
 
@@ -114,6 +123,8 @@ model MembroEquipe {
 
   projeto         Projeto?  @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
 
+  @@index([projeto_id])
+  @@index([usuario_id])
   @@map("membros_equipe")
 }
 
@@ -132,6 +143,7 @@ model Stakeholder {
 
   projeto               Projeto?  @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
 
+  @@index([projeto_id])
   @@map("stakeholders")
 }
 
@@ -165,6 +177,11 @@ model DescricaoOperacionalRaw {
   site                  Site?     @relation(fields: [site_id], references: [id], onDelete: SetNull)
   processo_normalizado  ProcessoNormalizado?
 
+  @@index([projeto_id])
+  @@index([site_id])
+  @@index([status_processamento])
+  @@index([data_coleta])
+  @@index([processado_por_ia])
   @@map("descricoes_operacionais_raw")
 }
 
@@ -193,6 +210,10 @@ model ProcessoNormalizado {
   workarounds               Workaround[]
   riscos                    Risco[]
 
+  @@index([descricao_raw_id])
+  @@index([status])
+  @@index([tipo_processo])
+  @@index([created_at])
   @@map("processos_normalizados")
 }
 
@@ -210,6 +231,7 @@ model ProcessoEtapa {
 
   processo_normalizado  ProcessoNormalizado? @relation(fields: [processo_normalizado_id], references: [id], onDelete: Cascade)
 
+  @@index([processo_normalizado_id, ordem])
   @@map("processo_etapas")
 }
 
@@ -236,6 +258,10 @@ model Ativo {
   processo_normalizado    ProcessoNormalizado? @relation(fields: [processo_normalizado_id], references: [id], onDelete: SetNull)
   riscos                  Risco[]
 
+  @@index([site_id])
+  @@index([processo_normalizado_id])
+  @@index([tipo])
+  @@index([categoria])
   @@map("ativos")
 }
 
@@ -252,6 +278,8 @@ model DificuldadeOperacional {
 
   processo_normalizado  ProcessoNormalizado? @relation(fields: [processo_normalizado_id], references: [id], onDelete: Cascade)
 
+  @@index([processo_normalizado_id])
+  @@index([categoria])
   @@map("dificuldades_operacionais")
 }
 
@@ -267,6 +295,8 @@ model Workaround {
 
   processo_normalizado  ProcessoNormalizado? @relation(fields: [processo_normalizado_id], references: [id], onDelete: Cascade)
 
+  @@index([processo_normalizado_id])
+  @@index([categoria])
   @@map("workarounds")
 }
 
@@ -292,6 +322,10 @@ model Questionario {
   questoes        Questao[]
   respostas       RespostaQuestionario[]
 
+  @@index([projeto_id])
+  @@index([status])
+  @@index([link_acesso])
+  @@index([data_publicacao])
   @@map("questionarios")
 }
 
@@ -308,6 +342,8 @@ model Questao {
   questionario    Questionario? @relation(fields: [questionario_id], references: [id], onDelete: Cascade)
   respostas       RespostaQuestao[]
 
+  @@index([questionario_id, ordem])
+  @@index([tipo_questao])
   @@map("questoes")
 }
 
@@ -324,6 +360,10 @@ model RespostaQuestionario {
   questionario    Questionario? @relation(fields: [questionario_id], references: [id], onDelete: Cascade)
   respostas       RespostaQuestao[]
 
+  @@index([questionario_id])
+  @@index([respondente_id])
+  @@index([status])
+  @@index([data_preenchimento])
   @@map("respostas_questionario")
 }
 
@@ -342,6 +382,8 @@ model RespostaQuestao {
   resposta_questionario  RespostaQuestionario? @relation(fields: [resposta_questionario_id], references: [id], onDelete: Cascade)
   questao                Questao?  @relation(fields: [questao_id], references: [id], onDelete: Cascade)
 
+  @@index([resposta_questionario_id])
+  @@index([questao_id])
   @@map("respostas_questao")
 }
 
@@ -371,6 +413,11 @@ model Iniciativa {
 
   projeto             Projeto?  @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
 
+  @@index([projeto_id])
+  @@index([status])
+  @@index([dominio_governanca])
+  @@index([data_inicio])
+  @@index([data_fim_prevista])
   @@map("iniciativas")
 }
 
@@ -392,6 +439,10 @@ model Usuario {
 
   permissoes      Permissao[]
 
+  @@index([email])
+  @@index([supabase_user_id])
+  @@index([perfil])
+  @@index([status])
   @@map("usuarios")
 }
 
@@ -404,6 +455,8 @@ model Permissao {
 
   usuario         Usuario?  @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 
+  @@index([usuario_id])
+  @@index([entidade_tipo, acao])
   @@map("permissoes")
 }
 
@@ -421,6 +474,9 @@ model ChamadaIA {
   erro            String?   @db.Text
   created_at      DateTime? @default(now()) @db.Timestamptz(6)
 
+  @@index([funcionalidade])
+  @@index([sucesso])
+  @@index([created_at])
   @@map("chamadas_ia")
 }
 
@@ -442,6 +498,10 @@ model RequisitoFramework {
 
   analises_conformidade AnaliseConformidade[]
 
+  @@index([framework])
+  @@index([codigo])
+  @@index([categoria])
+  @@index([data_vetorizacao])
   @@map("requisitos_framework")
 }
 
@@ -461,6 +521,10 @@ model AnaliseConformidade {
 
   requisito         RequisitoFramework? @relation(fields: [requisito_id], references: [id], onDelete: Cascade)
 
+  @@index([requisito_id])
+  @@index([entidade_tipo, entidade_id])
+  @@index([status])
+  @@index([similaridade])
   @@map("analises_conformidade")
 }
 
@@ -489,6 +553,12 @@ model Risco {
   processo          ProcessoNormalizado? @relation(fields: [processo_id], references: [id], onDelete: SetNull)
   site              Site?     @relation(fields: [site_id], references: [id], onDelete: SetNull)
 
+  @@index([projeto_id])
+  @@index([ativo_id])
+  @@index([processo_id])
+  @@index([site_id])
+  @@index([classificacao])
+  @@index([data_identificacao])
   @@map("riscos")
 }
 
@@ -512,5 +582,8 @@ model Indicador {
   created_at        DateTime? @default(now()) @db.Timestamptz(6)
   updated_at        DateTime? @default(now()) @db.Timestamptz(6)
 
+  @@index([dominio_governanca])
+  @@index([tipo])
+  @@index([responsavel_id])
   @@map("indicadores")
 }
