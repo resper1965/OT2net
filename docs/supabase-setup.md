@@ -4,13 +4,18 @@ Este documento descreve como configurar e usar o Supabase no projeto OT2net.
 
 ## Credenciais Configuradas
 
-As credenciais do Supabase já estão configuradas no projeto:
+As credenciais do Supabase já estão configuradas no projeto usando o **novo formato de API keys**:
 
 - **URL**: `https://hyeifxvxifhrapfdvfry.supabase.co`
-- **Publishable Key (Anon Key)**: `sb_publishable_RMMpXpKBjUDFNQt9_X0aog_GzLv4jzd`
+- **Publishable Key**: `sb_publishable_RMMpXpKBjUDFNQt9_X0aog_GzLv4jzd`
   - ✅ **Segura para frontend** - Pode ser commitada (é pública)
   - ✅ Respeita políticas RLS (Row Level Security)
-  - ✅ Limitada pelas permissões configuradas
+  - ✅ Substitui a antiga `anon` key (novo formato)
+- **Secret Key**: `sb_secret_Q8M0UN_iohXf16iB4j4H9A_-hY1vuEQ`
+  - ⚠️ **NUNCA commitar** - Apenas em `.env.local`
+  - ✅ Substitui a antiga `service_role` key (novo formato)
+
+> **Nota**: Estamos usando o novo formato de API keys do Supabase. Veja [docs/supabase-api-keys-migration.md](./supabase-api-keys-migration.md) para mais detalhes.
 
 ## Variáveis de Ambiente
 
@@ -21,24 +26,26 @@ NEXT_PUBLIC_SUPABASE_URL=https://hyeifxvxifhrapfdvfry.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_RMMpXpKBjUDFNQt9_X0aog_GzLv4jzd
 ```
 
-✅ **Publishable Key é segura para frontend** - Pode ser commitada no `.env.example` pois é pública e respeita RLS.
+✅ **Publishable Key é segura para frontend** - Pode ser commitada no `.env.example` pois é pública e respeita RLS. Usa o novo formato `sb_publishable_...` (substitui o antigo `anon` JWT).
 
 ### Backend (Express)
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://hyeifxvxifhrapfdvfry.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=<obter_em_dashboard_supabase>
+SUPABASE_SERVICE_ROLE_KEY=sb_secret_Q8M0UN_iohXf16iB4j4H9A_-hY1vuEQ
 ```
 
 ⚠️ **CRÍTICO - SEGURANÇA**: 
 
-**A Service Role Key NUNCA deve ser commitada no git!**
+**A Secret Key (Service Role Key) NUNCA deve ser commitada no git!**
 
 Ela tem acesso total ao banco de dados, bypassando todas as políticas RLS. Se exposta, permite acesso completo aos dados.
 
-**Como configurar:**
+**Formato**: Usamos o novo formato `sb_secret_...` (substitui o antigo `service_role` JWT)
+
+**Como obter/atualizar:**
 1. Acesse: https://app.supabase.com/project/hyeifxvxifhrapfdvfry/settings/api
-2. Copie a "service_role" key (não a "anon" key)
+2. Copie a "Secret Key" (formato `sb_secret_...`)
 3. Adicione em `.env.local` (que está no `.gitignore`)
 4. **NUNCA** adicione em arquivos que serão commitados
 5. **NUNCA** compartilhe essa chave publicamente
