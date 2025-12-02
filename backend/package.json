@@ -12,7 +12,8 @@
     "prisma:studio": "prisma studio",
     "prisma:push": "prisma db push",
     "prisma:pull": "prisma db pull",
-    "prisma:seed": "tsx prisma/seed.ts"
+    "prisma:seed": "tsx prisma/seed.ts",
+    "scripts:import-frameworks": "tsx scripts/import-frameworks.ts"
   },
   "keywords": [],
   "author": "",
