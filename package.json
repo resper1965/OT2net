@@ -9,8 +9,6 @@
     "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
   },
   "devDependencies": {
-    "@vercel/node": "^3.0.0",
-    "@types/vercel__node": "^3.0.0"
+    "@vercel/node": "^3.2.29"
   }
 }
-
