@@ -31,7 +31,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${montserrat.variable} font-sans text-sm antialiased`}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
