@@ -63,6 +63,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(405).json({ error: 'Method not allowed' })
     }
   } catch (error: any) {
+    if (error.message === 'Token não fornecido' || error.message === 'Token inválido ou expirado') {
+      return res.status(401).json({
+        error: error.message,
+        message: 'Faça login novamente',
+      })
+    }
+
     console.error('Erro em /api/projetos:', error)
     return res.status(500).json({
       error: 'Erro interno do servidor',

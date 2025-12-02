@@ -1,20 +1,11 @@
 import { VercelRequest, VercelResponse } from '@vercel/node'
-import { verifySupabaseToken } from '../../backend/src/lib/supabase'
+import { authenticate, AuthenticatedRequest } from '../_helpers/auth'
 import prisma from '../../backend/src/lib/prisma'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Autenticação
-  const authHeader = req.headers.authorization
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Não autenticado' })
-  }
-
-  const token = authHeader.replace('Bearer ', '')
-  const user = await verifySupabaseToken(token)
-
-  if (!user) {
-    return res.status(401).json({ error: 'Token inválido' })
-  }
+  try {
+    // Autenticação
+    await authenticate(req as AuthenticatedRequest)
 
   const { id } = req.query
 
@@ -66,6 +57,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(405).json({ error: 'Method not allowed' })
     }
   } catch (error: any) {
+    if (error.message === 'Token não fornecido' || error.message === 'Token inválido ou expirado') {
+      return res.status(401).json({
+        error: error.message,
+        message: 'Faça login novamente',
+      })
+    }
+
     if (error.code === 'P2025') {
       return res.status(404).json({ error: 'Projeto não encontrado' })
     }
