@@ -66,7 +66,20 @@ cd backend
 npx prisma migrate dev
 ```
 
-### 5. Iniciar Desenvolvimento
+### 5. Iniciar Redis (para Bull jobs)
+
+```bash
+# Iniciar Redis via Docker Compose
+docker-compose up -d redis
+
+# Verificar se está rodando
+docker-compose ps
+
+# Ver logs
+docker-compose logs -f redis
+```
+
+### 6. Iniciar Desenvolvimento
 
 ```bash
 # Terminal 1 - Frontend
@@ -76,9 +89,6 @@ npm run dev
 # Terminal 2 - Backend
 cd backend
 npm run dev
-
-# Terminal 3 - Redis (para Bull jobs)
-docker-compose up redis
 ```
 
 ## Estrutura do Projeto

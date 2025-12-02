@@ -1,0 +1,99 @@
+/**
+ * Design System Ness - Tokens CSS
+ * Aplicar apenas quando necessário
+ */
+
+:root {
+  /* Azul Primário (Assinatura) */
+  --ness-primary: #00ade8;
+  --ness-primary-hover-light: #1ab0ff;
+  --ness-primary-hover-dark: #33BEE6;
+  --ness-primary-pressed: #008bb8;
+  --ness-primary-light: #4dc2ff;
+  --ness-primary-dark: #006988;
+  
+  /* Azul com Transparência */
+  --ness-primary-100: rgba(0, 173, 232, 0.05);
+  --ness-primary-200: rgba(0, 173, 232, 0.10);
+  --ness-primary-300: rgba(0, 173, 232, 0.15);
+  
+  /* Neutros - Cinzas Profundos */
+  --ness-slate-950: #0a0d14;
+  --ness-slate-900: #0f172a;
+  --ness-slate-850: #1a1f28;
+  --ness-slate-800: #1e293b;
+  
+  /* Neutros - Cinzas Médios */
+  --ness-slate-700: #2d3544;
+  --ness-slate-600: #3d4759;
+  --ness-slate-500: #64748b;
+  
+  /* Neutros - Cinzas Claros */
+  --ness-slate-400: #94a3b8;
+  --ness-slate-300: #cbd5e1;
+  --ness-slate-200: #e2e8f0;
+  --ness-slate-100: #f1f5f9;
+  --ness-slate-50: #f8fafc;
+  
+  /* Light Mode */
+  --ness-bg-light: #FFFFFF;
+  --ness-fg-light: #111827;
+  --ness-card-light: #F9FAFB;
+  --ness-border-light: #E5E7EB;
+  
+  /* Dark Mode */
+  --ness-bg-dark: #0B0D0E;
+  --ness-fg-dark: #E5E7EB;
+  --ness-card-dark: #111827;
+  --ness-border-dark: #1F2937;
+  
+  /* Estados */
+  --ness-destructive-light: #EF4444;
+  --ness-destructive-dark: #F87171;
+  --ness-ring-light: #00ade8;
+  --ness-ring-dark: #33BEE6;
+}
+
+/* Classe para ponto da marca */
+.brand-dot {
+  color: var(--ness-primary);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dark .brand-dot {
+  color: var(--ness-primary-hover-dark);
+}
+
+/* Gradiente para CTAs principais */
+.ness-cta-primary {
+  background: linear-gradient(135deg, var(--ness-primary) 0%, var(--ness-primary-pressed) 100%);
+  color: white;
+}
+
+/* Badge de marca */
+.ness-badge {
+  background: var(--ness-primary-200);
+  border: 1px solid var(--ness-primary-300);
+  color: var(--ness-primary-hover-light);
+}
+
+/* Scrollbar customizado */
+.ness-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--ness-primary);
+}
+
+.ness-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ness-primary-pressed);
+}
+
+/* Focus ring */
+.ness-focus-ring:focus {
+  outline: 2px solid var(--ness-primary);
+  outline-offset: 2px;
+}
+
+.dark .ness-focus-ring:focus {
+  outline-color: var(--ness-primary-hover-dark);
+}
+
