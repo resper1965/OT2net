@@ -22,14 +22,13 @@ app.use(express.json());
 // Rate limiting
 app.use(rateLimiter(15 * 60 * 1000, 100)); // 100 requests per 15 minutes
 
-// Health check (público)
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
-});
+// Rotas principais
+app.use("/api", routes);
 
 // Exemplo de rota protegida
 app.get("/api/me", authenticate, (req, res) => {
   const user = (req as any).user;
+  logger.info({ userId: user.id }, "User profile accessed");
   res.json({
     user: {
       id: user.id,
@@ -49,12 +48,10 @@ app.get("/api/admin/users", authenticate, requireAdmin, (req, res) => {
   res.json({ message: "Lista de usuários (apenas admin)" });
 });
 
-// Routes will be added here
-
 // Error handler (deve ser o último middleware)
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`🚀 Backend server running on http://localhost:${PORT}`);
+  logger.info({ port: PORT, env: process.env.NODE_ENV }, "Backend server started");
 });
 

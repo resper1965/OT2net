@@ -1,9 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-
-export interface AppError extends Error {
-  statusCode?: number
-  isOperational?: boolean
-}
+import { logger } from '@/utils/logger'
 
 /**
  * Middleware de tratamento de erros
@@ -18,14 +14,17 @@ export function errorHandler(
   const statusCode = err.statusCode || 500
   const message = err.message || 'Erro interno do servidor'
 
-  // Log do erro (em produção, usar logger estruturado)
-  console.error('Error:', {
-    message: err.message,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-    path: req.path,
-    method: req.method,
-    statusCode,
-  })
+  // Log do erro
+  logger.error(
+    {
+      message: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      path: req.path,
+      method: req.method,
+      statusCode,
+    },
+    'Request error'
+  )
 
   res.status(statusCode).json({
     error: {

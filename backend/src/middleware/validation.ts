@@ -1,0 +1,44 @@
+import { Request, Response, NextFunction } from 'express'
+import { ZodSchema, ZodError } from 'zod'
+import { AppError } from './errorHandler'
+
+/**
+ * Middleware de validação usando Zod
+ * Valida body, query ou params da requisição
+ */
+export function validate(schema: {
+  body?: ZodSchema
+  query?: ZodSchema
+  params?: ZodSchema
+}) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (schema.body) {
+        req.body = schema.body.parse(req.body)
+      }
+      if (schema.query) {
+        req.query = schema.query.parse(req.query)
+      }
+      if (schema.params) {
+        req.params = schema.params.parse(req.params)
+      }
+      next()
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const errors = error.errors.map((err) => ({
+          path: err.path.join('.'),
+          message: err.message,
+        }))
+
+        return res.status(400).json({
+          error: 'Erro de validação',
+          message: 'Dados inválidos fornecidos',
+          details: errors,
+        })
+      }
+
+      next(error)
+    }
+  }
+}
+
