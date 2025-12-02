@@ -35,25 +35,30 @@ A autenticação é **100% gerenciada pelo Supabase Auth**, sem necessidade de i
 
 ## Fluxo de Autenticação
 
-### 1. Registro
+### 1. Registro (Apenas por Convite)
 
+⚠️ **Registro público desabilitado** - Usuários só podem se registrar através de convites.
+
+**Sistema de convites (a implementar):**
+- Administradores geram links de convite
+- Links contêm token único
+- Usuário acessa `/invite/[token]` para criar conta
+- Token é validado antes de permitir registro
+
+**Fluxo futuro:**
 ```typescript
-// frontend/src/app/(auth)/register/page.tsx
+// Página de registro via convite (a criar)
 const { data, error } = await supabase.auth.signUp({
   email,
   password,
   options: {
     data: {
-      nome, // Metadata adicional
+      nome,
+      invite_token: token, // Token do convite
     },
   },
 })
 ```
-
-**O que acontece:**
-1. Supabase cria usuário na tabela `auth.users`
-2. Envia email de confirmação (se configurado)
-3. Retorna `user` e `session`
 
 ### 2. Login
 

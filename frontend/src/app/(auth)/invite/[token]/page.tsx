@@ -1,19 +1,30 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 
-export default function RegisterPage() {
+export default function InvitePage() {
   const router = useRouter()
+  const params = useParams()
+  const token = params.token as string
+
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [validating, setValidating] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [inviteData, setInviteData] = useState<any>(null)
+
+  useEffect(() => {
+    // TODO: Validar token do convite via API
+    // Por enquanto, apenas permite o registro
+    setValidating(false)
+  }, [token])
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,12 +44,16 @@ export default function RegisterPage() {
     }
 
     try {
+      // TODO: Validar token antes de criar conta
+      // const { data: invite } = await fetch(`/api/invites/${token}`)
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             nome,
+            invite_token: token, // Token do convite
           },
         },
       })
@@ -47,7 +62,6 @@ export default function RegisterPage() {
 
       if (data.user) {
         setSuccess(true)
-        // Redirecionar após 2 segundos
         setTimeout(() => {
           router.push('/login')
         }, 2000)
@@ -57,6 +71,16 @@ export default function RegisterPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (validating) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-900 px-4">
+        <div className="w-full max-w-md space-y-8 rounded-lg bg-slate-800 p-8 shadow-xl text-center">
+          <div className="text-slate-400">Validando convite...</div>
+        </div>
+      </div>
+    )
   }
 
   if (success) {
@@ -82,16 +106,10 @@ export default function RegisterPage() {
       <div className="w-full max-w-md space-y-8 rounded-lg bg-slate-800 p-8 shadow-xl">
         <div>
           <h2 className="text-center text-3xl font-bold text-slate-100">
-            Criar nova conta
+            Aceitar convite
           </h2>
           <p className="mt-2 text-center text-sm text-slate-400">
-            Ou{' '}
-            <Link
-              href="/login"
-              className="font-medium text-primary hover:text-primary-hover"
-            >
-              faça login em uma conta existente
-            </Link>
+            Complete seu cadastro para acessar a plataforma
           </p>
         </div>
 
@@ -165,7 +183,7 @@ export default function RegisterPage() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="block text-sm font-medium text-slate-300"
+                className="block text-sm font-medium text-slate-400"
               >
                 Confirmar senha
               </label>
@@ -189,7 +207,7 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full rounded-md bg-primary px-4 py-2 font-medium text-white hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-slate-800 disabled:opacity-50"
             >
-              {loading ? 'Criando conta...' : 'Criar conta'}
+              {loading ? 'Criando conta...' : 'Aceitar convite e criar conta'}
             </button>
           </div>
         </form>

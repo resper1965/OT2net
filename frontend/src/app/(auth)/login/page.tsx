@@ -44,13 +44,7 @@ export default function LoginPage() {
             Entrar na plataforma
           </h2>
           <p className="mt-2 text-center text-sm text-slate-400">
-            Ou{' '}
-            <Link
-              href="/register"
-              className="font-medium text-primary hover:text-primary-hover"
-            >
-              crie uma nova conta
-            </Link>
+            Acesso apenas por convite
           </p>
         </div>
 
