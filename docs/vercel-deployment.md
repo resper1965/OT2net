@@ -66,18 +66,28 @@ O Vercel detecta automaticamente Next.js, mas você pode configurar:
 - **Output Directory**: `frontend/.next`
 - **Install Command**: `cd frontend && npm install`
 
-### Backend (Serverless Functions)
+### Backend (Serverless Functions) ✅
 
-Se usar serverless functions, crie em `api/` na raiz do projeto:
+O backend está configurado como **Serverless Functions** na pasta `api/`:
 
 ```
 api/
-  projetos.ts
-  clientes.ts
-  ...
+  health.ts              # Health check
+  me.ts                  # Perfil do usuário
+  projetos/
+    index.ts             # GET/POST /api/projetos
+    [id].ts              # GET/PATCH/DELETE /api/projetos/:id
+  _helpers/
+    auth.ts              # Helper de autenticação
 ```
 
-Ou configure rewrite no `vercel.json` para apontar para `backend/api/`.
+**Configuração:**
+- Runtime: Node.js 20.x
+- Memory: 1024 MB
+- Max Duration: 30 segundos
+- Região: gru1 (São Paulo)
+
+As funções são automaticamente deployadas junto com o frontend.
 
 ## Passo 4: Deploy
 

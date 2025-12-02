@@ -10,17 +10,11 @@
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase_anon_key"
   },
   "functions": {
-    "backend/api/**/*.ts": {
+    "api/**/*.ts": {
       "runtime": "nodejs20.x",
       "memory": 1024,
       "maxDuration": 30
     }
-  },
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/backend/api/:path*"
-    }
-  ]
+  }
 }
 
