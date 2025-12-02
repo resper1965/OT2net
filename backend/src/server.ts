@@ -1,8 +1,11 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
 
-dotenv.config();
+// Carregar variáveis de ambiente (.env.local tem prioridade)
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
+dotenv.config(); // Fallback para .env se .env.local não existir
 
 const app = express();
 const PORT = process.env.PORT || 3001;
