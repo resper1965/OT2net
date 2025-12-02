@@ -87,8 +87,8 @@ const { data } = await supabaseAdmin.from('clientes').select('*')
 
 1. ✅ Credenciais configuradas
 2. ✅ Extensões habilitadas (uuid-ossp, pg_trgm, pgvector)
-3. ⏳ Obter Service Role Key do dashboard
-4. ⏳ Configurar variáveis de ambiente (ver `docs/env-setup.md`)
+3. ✅ Service Role Key configurada (atualizada em 2025-01-27)
+4. ⏳ Obter connection strings do Prisma (ver `docs/supabase-connection-strings.md`)
 5. ⏳ Configurar RLS policies
 6. ⏳ Criar buckets de storage
 
