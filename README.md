@@ -1,44 +1,68 @@
-# OT2net Project
+# OT2net - Sistema de Gestão de Governança e Segurança de TO
 
-Sistema de Gestão de Governança e Segurança de TO - Plataforma PMO Inteligente
+Plataforma PMO Inteligente para projetos de consultoria em Governança e Segurança de Tecnologia Operacional.
 
-## Stack Tecnológica
+## 🚀 Tech Stack
 
-- **Frontend**: Next.js 14, React 18, TypeScript, TailwindCSS, shadcn/ui
-- **Backend**: Express.js, TypeScript, Prisma
-- **Database**: Supabase (PostgreSQL gerenciado + pgvector)
-- **Storage**: Supabase Storage
-- **Auth**: Supabase Auth
-- **Realtime**: Supabase Realtime
-- **IA**: Claude API (Anthropic)
-- **Jobs**: Bull/Redis
+### Frontend
+- **Next.js 14** (App Router)
+- **React 18** + **TypeScript**
+- **TailwindCSS** + **shadcn/ui**
+- **Supabase Auth** (autenticação)
+- **Ness Design System**
 
-## Configuração Inicial
+### Backend
+- **Express.js** + **TypeScript**
+- **Prisma ORM** (PostgreSQL)
+- **Supabase** (Auth, Storage, Realtime, PostgreSQL)
+- **Claude API** (Anthropic) - Processamento com IA
+- **Redis** (cache e jobs)
 
-### 1. Variáveis de Ambiente
+### Database
+- **PostgreSQL** (via Supabase)
+- **pgvector** (busca semântica)
+- **Row Level Security (RLS)**
 
-Copie `.env.example` para `.env.local` e configure:
+## 📋 Pré-requisitos
+
+- Node.js 18+
+- npm ou yarn
+- Docker (para Redis local)
+- Conta Supabase
+- Conta Anthropic (Claude API)
+
+## 🛠️ Setup Local
+
+### 1. Clone o repositório
 
 ```bash
-cp .env.example .env.local
+git clone https://github.com/resper1965/OT2net.git
+cd OT2net
 ```
 
-**Credenciais Supabase já configuradas:**
-- URL: `https://hyeifxvxifhrapfdvfry.supabase.co`
-- Publishable Key (Anon Key): `sb_publishable_RMMpXpKBjUDFNQt9_X0aog_GzLv4jzd`
-  - ✅ Segura para frontend - Pode ser commitada (é pública)
-  - ✅ Respeita políticas RLS
+### 2. Configure variáveis de ambiente
 
-⚠️ **CRÍTICO - SEGURANÇA**: 
-- A `SUPABASE_SERVICE_ROLE_KEY` **NUNCA** deve ser commitada no git!
-- Ela tem acesso total ao banco de dados, bypassando RLS
-- Mantenha apenas em `.env.local` (que está no `.gitignore`)
-- Obtenha a Service Role Key no dashboard do Supabase:
-  1. Acesse: https://app.supabase.com/project/hyeifxvxifhrapfdvfry/settings/api
-  2. Copie a "service_role" key
-  3. Adicione em `.env.local` (nunca commite!)
+#### Frontend (`frontend/.env.local`)
 
-### 2. Instalar Dependências
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://hyeifxvxifhrapfdvfry.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_RMMpXpKBjUDFNQt9_X0aog_GzLv4jzd
+```
+
+#### Backend (`backend/.env.local`)
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://hyeifxvxifhrapfdvfry.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=sb_secret_...
+DATABASE_URL=postgresql://...
+DIRECT_URL=postgresql://...
+ANTHROPIC_API_KEY=sk-ant-...
+REDIS_URL=redis://localhost:6379
+PORT=3001
+NODE_ENV=development
+```
+
+### 3. Instale dependências
 
 ```bash
 # Frontend
@@ -46,40 +70,27 @@ cd frontend
 npm install
 
 # Backend
-cd backend
+cd ../backend
 npm install
 ```
 
-### 3. Configurar Supabase
-
-Siga o guia completo em: [docs/supabase-setup.md](./docs/supabase-setup.md)
-
-**Resumo rápido:**
-1. Habilitar extensões no Supabase (pgvector, uuid-ossp, pg_trgm)
-2. Configurar RLS policies
-3. Criar buckets de storage
-
-### 4. Executar Migrations
+### 4. Configure Prisma
 
 ```bash
 cd backend
-npx prisma migrate dev
+npm run prisma:generate
+# Quando tiver DATABASE_URL configurado:
+# npm run prisma:migrate
+# npm run prisma:seed
 ```
 
-### 5. Iniciar Redis (para Bull jobs)
+### 5. Inicie Redis (Docker)
 
 ```bash
-# Iniciar Redis via Docker Compose
 docker-compose up -d redis
-
-# Verificar se está rodando
-docker-compose ps
-
-# Ver logs
-docker-compose logs -f redis
 ```
 
-### 6. Iniciar Desenvolvimento
+### 6. Inicie os servidores
 
 ```bash
 # Terminal 1 - Frontend
@@ -91,26 +102,92 @@ cd backend
 npm run dev
 ```
 
-## Estrutura do Projeto
+Acesse:
+- Frontend: http://localhost:3000
+- Backend: http://localhost:3001
+
+## 📚 Documentação
+
+- [Autenticação](./docs/authentication.md)
+- [Supabase Setup](./docs/supabase-setup.md)
+- [Prisma Setup](./docs/prisma-setup.md)
+- [Deploy Vercel](./docs/vercel-deployment.md)
+- [Supabase Auto REST APIs](./docs/supabase-auto-rest-apis.md)
+- [Ness Design System](./docs/ness-design-system.md)
+
+## 🚢 Deploy na Vercel
+
+Veja [docs/vercel-deployment.md](./docs/vercel-deployment.md) para instruções completas.
+
+### Quick Start
+
+1. Conecte repositório na Vercel
+2. Configure variáveis de ambiente
+3. Deploy automático via Git push
+
+## 📁 Estrutura do Projeto
 
 ```
-ot2net/
+OT2net/
 ├── frontend/          # Next.js App
+│   ├── src/
+│   │   ├── app/      # App Router pages
+│   │   ├── lib/      # Utilities, Supabase clients
+│   │   ├── contexts/ # React Contexts
+│   │   └── types/    # TypeScript types
+│   └── package.json
 ├── backend/           # Express API
-├── shared/            # Tipos compartilhados
-├── docker/            # Docker configs
+│   ├── src/
+│   │   ├── middleware/ # Auth, validation, errors
+│   │   ├── routes/     # API routes
+│   │   ├── services/   # Business logic (Claude API, etc)
+│   │   └── utils/      # Helpers
+│   ├── prisma/         # Prisma schema e migrations
+│   └── package.json
 ├── docs/              # Documentação
-└── specs/             # Spec Kit (especificações)
+├── specs/             # Especificações do projeto
+└── docker-compose.yml # Redis local
 ```
 
-## Documentação
+## 🔐 Segurança
 
-- [Plano Técnico](./specs/001-governanca-to-pmo/plan.md)
-- [Tarefas](./specs/001-governanca-to-pmo/tasks.md)
-- [Setup Supabase](./docs/supabase-setup.md)
-- [Avaliação Supabase](./specs/001-governanca-to-pmo/supabase-evaluation.md)
+- ⚠️ **NUNCA** commite arquivos `.env.local`
+- ⚠️ **NUNCA** exponha `SUPABASE_SERVICE_ROLE_KEY` no frontend
+- ✅ Use Row Level Security (RLS) no Supabase
+- ✅ Valide todas as entradas do usuário
+- ✅ Use HTTPS em produção
 
-## Links Úteis
+## 📝 Scripts Úteis
 
-- **Supabase Dashboard**: https://app.supabase.com/project/hyeifxvxifhrapfdvfry
-- **Supabase Docs**: https://supabase.com/docs
+### Frontend
+```bash
+npm run dev          # Desenvolvimento
+npm run build        # Build produção
+npm run lint         # Linter
+npm run format       # Formatter
+```
+
+### Backend
+```bash
+npm run dev          # Desenvolvimento
+npm run build        # Build TypeScript
+npm run start        # Produção
+npm run prisma:generate  # Gerar Prisma Client
+npm run prisma:migrate   # Executar migrations
+npm run prisma:seed      # Popular banco
+```
+
+## 🤝 Contribuindo
+
+1. Crie uma branch: `git checkout -b feature/nova-feature`
+2. Commit: `git commit -m 'feat: adiciona nova feature'`
+3. Push: `git push origin feature/nova-feature`
+4. Abra um Pull Request
+
+## 📄 Licença
+
+[Adicionar licença]
+
+## 👥 Equipe
+
+[Adicionar informações da equipe]
