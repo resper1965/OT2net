@@ -13,8 +13,14 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true,
+}));
 app.use(express.json());
+
+// Rate limiting
+app.use(rateLimiter(15 * 60 * 1000, 100)); // 100 requests per 15 minutes
 
 // Health check (público)
 app.get("/health", (req, res) => {
@@ -44,6 +50,9 @@ app.get("/api/admin/users", authenticate, requireAdmin, (req, res) => {
 });
 
 // Routes will be added here
+
+// Error handler (deve ser o último middleware)
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`🚀 Backend server running on http://localhost:${PORT}`);
