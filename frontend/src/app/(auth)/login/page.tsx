@@ -14,7 +14,6 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Verificar se já está autenticado ao carregar a página
   useEffect(() => {
@@ -24,7 +23,6 @@ function LoginForm() {
           data: { session },
         } = await supabase.auth.getSession();
         if (session) {
-          setIsAuthenticated(true);
           const redirectTo = searchParams?.get("redirect") || "/dashboard";
           router.push(redirectTo);
         }
@@ -63,26 +61,13 @@ function LoginForm() {
         } = await supabase.auth.getSession();
 
         if (verifiedSession) {
-          setIsAuthenticated(true);
           const redirectTo = searchParams?.get("redirect") || "/dashboard";
           
           // Aguarda um pouco mais para garantir que os cookies foram salvos
           await new Promise((resolve) => setTimeout(resolve, 300));
           
-          // Tenta usar router.push primeiro, se falhar usa window.location
-          try {
-            router.push(redirectTo);
-            // Fallback: se após 1.5 segundos ainda estiver na página de login, força redirect
-            setTimeout(() => {
-              if (window.location.pathname === "/login") {
-                console.log("Forçando redirecionamento via window.location");
-                window.location.href = redirectTo;
-              }
-            }, 1500);
-          } catch (redirectError) {
-            console.error("Erro no redirecionamento:", redirectError);
-            window.location.href = redirectTo;
-          }
+          router.push(redirectTo);
+          router.refresh();
         } else {
           setError("Sessão não foi criada corretamente. Tente novamente.");
           setSuccess(false);

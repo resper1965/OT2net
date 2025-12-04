@@ -37,11 +37,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
 
       // Redirecionar após login/logout
-      if (_event === "SIGNED_IN") {
-        router.push("/dashboard");
-        router.refresh();
-      } else if (_event === "SIGNED_OUT") {
+      if (_event === "SIGNED_OUT") {
         router.push("/login");
+        router.refresh();
+      } else if (_event === "SIGNED_IN") {
         router.refresh();
       }
     });
