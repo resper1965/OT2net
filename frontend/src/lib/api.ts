@@ -35,10 +35,22 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}): Promi
   // Caso contrário, usa endpoint relativo que será servido pelas serverless functions no Vercel
   const url = API_URL ? `${API_URL}${endpoint}` : endpoint;
 
-  return fetch(url, {
+  const response = await fetch(url, {
     ...options,
     headers,
   });
+
+  // Verificar se a resposta é JSON antes de retornar
+  const contentType = response.headers.get("content-type");
+  if (!contentType || !contentType.includes("application/json")) {
+    if (!response.ok) {
+      throw new Error(`Erro ${response.status}: ${response.statusText}`);
+    }
+    // Se não for JSON mas estiver OK, retornar resposta vazia
+    return response;
+  }
+
+  return response;
 }
 
 export const api = {
