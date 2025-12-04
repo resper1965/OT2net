@@ -56,7 +56,7 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}): Promi
 export const api = {
   // Clientes
   clientes: {
-    list: () => fetchWithAuth("/api/clientes").then((r) => r.json()),
+    list: () => fetchWithAuth("/api/clientes").then((r) => r.json()).then((data) => data.clientes || []),
     get: (id: string) => fetchWithAuth(`/api/clientes/${id}`).then((r) => r.json()),
     create: (data: Record<string, unknown>) =>
       fetchWithAuth("/api/clientes", {
@@ -170,7 +170,7 @@ export const api = {
   projetos: {
     list: (clienteId?: string) => {
       const url = clienteId ? `/api/projetos?cliente_id=${clienteId}` : "/api/projetos";
-      return fetchWithAuth(url).then((r) => r.json());
+      return fetchWithAuth(url).then((r) => r.json()).then((data) => data.projetos || []);
     },
     get: (id: string) => fetchWithAuth(`/api/projetos/${id}`).then((r) => r.json()),
     create: (data: Record<string, unknown>) =>
