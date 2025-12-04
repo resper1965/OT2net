@@ -19,17 +19,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     switch (req.method) {
       case 'GET':
-        // Listar projetos (com filtro opcional por cliente_id)
-        const clienteId = req.query.cliente_id as string | undefined
-
-        const projetos = await prisma.projeto.findMany({
-          where: clienteId ? { cliente_id: clienteId } : undefined,
+        // Listar clientes
+        const clientes = await prisma.cliente.findMany({
           include: {
-            cliente: {
+            empresas: {
               select: {
                 id: true,
-                razao_social: true,
-                cnpj: true,
+                identificacao: true,
+                tipo: true,
+                status: true,
+              },
+            },
+            _count: {
+              select: {
+                projetos: true,
               },
             },
           },
@@ -38,29 +41,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           },
         })
 
-        return res.json({ projetos })
+        return res.json({ clientes })
 
       case 'POST':
-        // Criar projeto (requer permissão)
-        const { nome, descricao, cliente_id, fase_atual } = req.body
+        // Criar cliente
+        const { razao_social, cnpj, endereco, contatos, classificacao, estrutura, agencias_reguladoras, certificacoes } = req.body
 
-        if (!nome || !cliente_id) {
+        if (!razao_social || !cnpj) {
           return res.status(400).json({
-            error: 'Campos obrigatórios: nome, cliente_id',
+            error: 'Campos obrigatórios: razao_social, cnpj',
           })
         }
 
-        const novoProjeto = await prisma.projeto.create({
+        const novoCliente = await prisma.cliente.create({
           data: {
-            nome,
-            descricao,
-            cliente_id,
-            fase_atual: fase_atual || 'fase-0',
-            progresso_geral: 0,
+            razao_social,
+            cnpj,
+            endereco: endereco || null,
+            contatos: contatos || null,
+            classificacao: classificacao || null,
+            estrutura: estrutura || null,
+            agencias_reguladoras: agencias_reguladoras || [],
+            certificacoes: certificacoes || [],
           },
         })
 
-        return res.status(201).json({ projeto: novoProjeto })
+        return res.status(201).json({ cliente: novoCliente })
 
       default:
         return res.status(405).json({ error: 'Method not allowed' })
@@ -73,7 +79,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       })
     }
 
-    console.error('Erro em /api/projetos:', error)
+    if (error.code === 'P2002') {
+      return res.status(409).json({
+        error: 'Cliente já existe',
+        message: 'Já existe um cliente com este CNPJ',
+      })
+    }
+
+    console.error('Erro em /api/clientes:', error)
     return res.status(500).json({
       error: 'Erro interno do servidor',
       message: error.message,

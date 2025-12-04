@@ -19,10 +19,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     switch (req.method) {
       case 'GET':
-        // Listar projetos (com filtro opcional por cliente_id)
+        // Listar empresas (com filtro opcional por cliente_id)
         const clienteId = req.query.cliente_id as string | undefined
 
-        const projetos = await prisma.projeto.findMany({
+        const empresas = await prisma.empresa.findMany({
           where: clienteId ? { cliente_id: clienteId } : undefined,
           include: {
             cliente: {
@@ -32,35 +32,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 cnpj: true,
               },
             },
+            _count: {
+              select: {
+                sites: true,
+              },
+            },
           },
           orderBy: {
             created_at: 'desc',
           },
         })
 
-        return res.json({ projetos })
+        return res.json({ empresas })
 
       case 'POST':
-        // Criar projeto (requer permissão)
-        const { nome, descricao, cliente_id, fase_atual } = req.body
+        // Criar empresa
+        const { identificacao, cliente_id, tipo, participacao_acionaria, ambito_operacional, contexto_operacional, status } = req.body
 
-        if (!nome || !cliente_id) {
+        if (!identificacao) {
           return res.status(400).json({
-            error: 'Campos obrigatórios: nome, cliente_id',
+            error: 'Campo obrigatório: identificacao',
           })
         }
 
-        const novoProjeto = await prisma.projeto.create({
+        const novaEmpresa = await prisma.empresa.create({
           data: {
-            nome,
-            descricao,
-            cliente_id,
-            fase_atual: fase_atual || 'fase-0',
-            progresso_geral: 0,
+            identificacao,
+            cliente_id: cliente_id || null,
+            tipo: tipo || null,
+            participacao_acionaria: participacao_acionaria || null,
+            ambito_operacional: ambito_operacional || null,
+            contexto_operacional: contexto_operacional || null,
+            status: status || null,
           },
         })
 
-        return res.status(201).json({ projeto: novoProjeto })
+        return res.status(201).json({ empresa: novaEmpresa })
 
       default:
         return res.status(405).json({ error: 'Method not allowed' })
@@ -73,7 +80,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       })
     }
 
-    console.error('Erro em /api/projetos:', error)
+    console.error('Erro em /api/empresas:', error)
     return res.status(500).json({
       error: 'Erro interno do servidor',
       message: error.message,
