@@ -1,48 +1,9 @@
-# Arquivos e pastas a ignorar no deploy Vercel
-
-# Backend (se não usar serverless functions)
 backend/
-!backend/api/
-
-# Documentação
-docs/
+node_modules/
 *.md
 !README.md
-
-# Configuração local
-.env.local
-.env*.local
-
-# Dependências (instaladas no build)
-node_modules/
-
-# Build artifacts
-.next/
-dist/
-build/
-
-# Logs
-*.log
-logs/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Git
-.git/
-.gitignore
-
-# Docker
-docker-compose.yml
-.dockerignore
-
-# Prisma (migrations serão executadas separadamente)
-prisma/migrations/
-
+.env*
+!.env.example
+secure-ot-browser/
+docs/
+specs/

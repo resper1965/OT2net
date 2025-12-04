@@ -18,7 +18,8 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: "OT2net - Sistema de Gestão de Governança e Segurança de TO",
-  description: "Plataforma PMO Inteligente para projetos de consultoria em Governança e Segurança de Tecnologia Operacional",
+  description:
+    "Plataforma PMO Inteligente para projetos de consultoria em Governança e Segurança de Tecnologia Operacional",
 };
 
 export default function RootLayout({
@@ -28,9 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body
-        className={`${inter.variable} ${montserrat.variable} font-sans text-sm antialiased`}
-      >
+      <body className={`${inter.variable} ${montserrat.variable} font-sans text-sm antialiased`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

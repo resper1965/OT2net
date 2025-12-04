@@ -1,0 +1,17 @@
+{
+  "name": "ot2net-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prisma:generate": "prisma generate --schema=./prisma/schema.prisma"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "@supabase/supabase-js": "^2.86.0",
+    "@vercel/node": "^3.2.29"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.0"
+  }
+}
+

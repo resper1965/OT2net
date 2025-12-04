@@ -1,5 +1,5 @@
 import { VercelRequest } from '@vercel/node'
-import { verifySupabaseToken } from '../../backend/src/lib/supabase'
+import { verifySupabaseToken } from './supabase'
 
 export interface AuthenticatedRequest extends VercelRequest {
   user?: any

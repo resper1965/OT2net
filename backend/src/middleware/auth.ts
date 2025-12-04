@@ -76,3 +76,8 @@ export async function optionalAuthenticate(
   }
 }
 
+/**
+ * Alias para compatibilidade com rotas existentes
+ */
+export const authenticateToken = authenticate
+

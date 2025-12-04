@@ -180,3 +180,5 @@ docker-compose up -d redis
 
 Para dúvidas ou problemas, consulte a documentação em `docs/` ou abra uma issue no GitHub.
 
+
+

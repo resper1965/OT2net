@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node'
-import { verifySupabaseToken } from '../../backend/src/lib/supabase'
-import prisma from '../../backend/src/lib/prisma'
+import { verifySupabaseToken } from '../_helpers/supabase'
+import prisma from '../_helpers/prisma'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Autenticação

@@ -1,0 +1,359 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import { api } from "@/lib/api";
+
+interface DescricaoRaw {
+  id: string;
+  titulo: string;
+  descricao_completa: string;
+  frequencia?: string;
+  impacto?: string;
+  dificuldades?: string;
+  status_processamento: string;
+  resultado_processamento?: any;
+  created_at: string;
+}
+
+interface ProcessoNormalizado {
+  id: string;
+  nome: string;
+  objetivo?: string;
+  gatilho?: string;
+  frequencia?: string;
+  duracao_estimada?: string;
+  criticidade?: string;
+  dependencias?: string[];
+  observacoes_gerais?: string;
+  nivel_confianca_normalizacao?: number;
+  status: string;
+}
+
+export default function RevisaoProcessoPage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
+  const [descricaoRaw, setDescricaoRaw] = useState<DescricaoRaw | null>(null);
+  const [processoNormalizado, setProcessoNormalizado] = useState<ProcessoNormalizado | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (id) {
+      loadData();
+    }
+  }, [id]);
+
+  async function loadData() {
+    try {
+      setLoading(true);
+      const [descricao] = await Promise.all([
+        api.descricoesRaw.get(id),
+        api.descricoesRaw.get(id).then(async (d) => {
+          // Buscar processo normalizado relacionado
+          if (d.resultado_processamento?.processo_id) {
+            try {
+              // Assumindo que existe uma API para buscar processo normalizado
+              // Por enquanto, vamos usar o resultado do processamento
+              return d.resultado_processamento;
+            } catch {
+              return null;
+            }
+          }
+          return null;
+        }),
+      ]);
+
+      setDescricaoRaw(descricao);
+      if (descricao.resultado_processamento) {
+        setProcessoNormalizado(descricao.resultado_processamento);
+      }
+      setError(null);
+    } catch (err: any) {
+      setError(err.message || "Erro ao carregar dados");
+      console.error("Erro:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleAprovar() {
+    if (!confirm("Aprovar este processo normalizado?")) return;
+
+    try {
+      setSaving(true);
+      // Atualizar status do processo normalizado
+      if (processoNormalizado) {
+        // Assumindo que existe uma API para atualizar processo
+        // await api.processosNormalizados.update(processoNormalizado.id, { status: 'aprovado' })
+        alert("Processo aprovado com sucesso!");
+        router.push("/dashboard/processos");
+      }
+    } catch (err: any) {
+      alert("Erro ao aprovar: " + (err.message || "Erro desconhecido"));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleRejeitar() {
+    if (!confirm("Rejeitar este processo normalizado? Será necessário reprocessar.")) return;
+
+    try {
+      setSaving(true);
+      // Atualizar status
+      await api.descricoesRaw.update(id, { status_processamento: "pendente" });
+      alert("Processo rejeitado. Você pode reprocessar quando desejar.");
+      router.push("/dashboard/processos");
+    } catch (err: any) {
+      alert("Erro ao rejeitar: " + (err.message || "Erro desconhecido"));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-12">
+            <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !descricaoRaw) {
+    return (
+      <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <Link
+              href="/dashboard/processos"
+              className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
+            >
+              ← Voltar para Processos
+            </Link>
+          </div>
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
+            <p className="text-red-800 dark:text-red-200">{error || "Descrição não encontrada"}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!processoNormalizado) {
+    return (
+      <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8">
+            <Link
+              href="/dashboard/processos"
+              className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
+            >
+              ← Voltar para Processos
+            </Link>
+          </div>
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
+            <p className="text-yellow-800 dark:text-yellow-200">
+              Esta descrição ainda não foi processada. Processe-a primeiro para poder revisar.
+            </p>
+            <Link
+              href="/dashboard/processos"
+              className="mt-4 inline-block px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200"
+            >
+              Voltar
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8">
+          <Link
+            href="/dashboard/processos"
+            className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
+          >
+            ← Voltar para Processos
+          </Link>
+          <div className="flex justify-between items-center">
+            <h1 className="text-3xl font-bold text-black dark:text-zinc-50">
+              Revisão: {descricaoRaw.titulo}
+            </h1>
+            <div className="flex gap-2">
+              <button
+                onClick={handleAprovar}
+                disabled={saving}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+              >
+                {saving ? "Salvando..." : "Aprovar"}
+              </button>
+              <button
+                onClick={handleRejeitar}
+                disabled={saving}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+              >
+                Rejeitar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-6">
+          {/* Coluna Esquerda: Descrição Raw */}
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+            <h2 className="text-xl font-semibold mb-4 text-black dark:text-zinc-50 border-b border-zinc-200 dark:border-zinc-700 pb-2">
+              Descrição Original
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                  Título
+                </h3>
+                <p className="text-black dark:text-zinc-50">{descricaoRaw.titulo}</p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                  Descrição Completa
+                </h3>
+                <p className="text-black dark:text-zinc-50 whitespace-pre-wrap">
+                  {descricaoRaw.descricao_completa}
+                </p>
+              </div>
+              {descricaoRaw.frequencia && (
+                <div>
+                  <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Frequência
+                  </h3>
+                  <p className="text-black dark:text-zinc-50">{descricaoRaw.frequencia}</p>
+                </div>
+              )}
+              {descricaoRaw.impacto && (
+                <div>
+                  <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Impacto
+                  </h3>
+                  <p className="text-black dark:text-zinc-50">{descricaoRaw.impacto}</p>
+                </div>
+              )}
+              {descricaoRaw.dificuldades && (
+                <div>
+                  <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Dificuldades
+                  </h3>
+                  <p className="text-black dark:text-zinc-50">{descricaoRaw.dificuldades}</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Coluna Direita: Processo Normalizado */}
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+            <h2 className="text-xl font-semibold mb-4 text-black dark:text-zinc-50 border-b border-zinc-200 dark:border-zinc-700 pb-2">
+              Processo Normalizado
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">Nome</h3>
+                <p className="text-black dark:text-zinc-50">{processoNormalizado.nome}</p>
+              </div>
+              {processoNormalizado.objetivo && (
+                <div>
+                  <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Objetivo
+                  </h3>
+                  <p className="text-black dark:text-zinc-50">{processoNormalizado.objetivo}</p>
+                </div>
+              )}
+              {processoNormalizado.gatilho && (
+                <div>
+                  <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Gatilho
+                  </h3>
+                  <p className="text-black dark:text-zinc-50">{processoNormalizado.gatilho}</p>
+                </div>
+              )}
+              {processoNormalizado.frequencia && (
+                <div>
+                  <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Frequência
+                  </h3>
+                  <p className="text-black dark:text-zinc-50">{processoNormalizado.frequencia}</p>
+                </div>
+              )}
+              {processoNormalizado.duracao_estimada && (
+                <div>
+                  <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Duração Estimada
+                  </h3>
+                  <p className="text-black dark:text-zinc-50">
+                    {processoNormalizado.duracao_estimada}
+                  </p>
+                </div>
+              )}
+              {processoNormalizado.criticidade && (
+                <div>
+                  <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Criticidade
+                  </h3>
+                  <p className="text-black dark:text-zinc-50">{processoNormalizado.criticidade}</p>
+                </div>
+              )}
+              {processoNormalizado.dependencias && processoNormalizado.dependencias.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Dependências
+                  </h3>
+                  <ul className="list-disc list-inside text-black dark:text-zinc-50">
+                    {processoNormalizado.dependencias.map((dep, idx) => (
+                      <li key={idx}>{dep}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {processoNormalizado.observacoes_gerais && (
+                <div>
+                  <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Observações Gerais
+                  </h3>
+                  <p className="text-black dark:text-zinc-50 whitespace-pre-wrap">
+                    {processoNormalizado.observacoes_gerais}
+                  </p>
+                </div>
+              )}
+              {processoNormalizado.nivel_confianca_normalizacao !== undefined && (
+                <div>
+                  <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                    Nível de Confiança
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
+                      <div
+                        className="bg-blue-600 h-2 rounded-full"
+                        style={{
+                          width: `${processoNormalizado.nivel_confianca_normalizacao * 100}%`,
+                        }}
+                      />
+                    </div>
+                    <span className="text-sm text-black dark:text-zinc-50">
+                      {(processoNormalizado.nivel_confianca_normalizacao * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

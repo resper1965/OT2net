@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node'
 import { authenticate, AuthenticatedRequest } from '../_helpers/auth'
-import prisma from '../../backend/src/lib/prisma'
+import prisma from '../_helpers/prisma'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {

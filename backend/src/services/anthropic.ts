@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { logger } from '@/utils/logger'
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { AppError } from '@/middleware/errorHandler'
 
 const anthropic = new Anthropic({

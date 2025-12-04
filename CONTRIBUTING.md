@@ -67,3 +67,5 @@ Siga o guia em `docs/quick-start.md` para configurar seu ambiente de desenvolvim
 
 Abra uma issue no GitHub ou entre em contato com a equipe.
 
+
+

@@ -13,7 +13,8 @@
     "prisma:push": "prisma db push",
     "prisma:pull": "prisma db pull",
     "prisma:seed": "tsx prisma/seed.ts",
-    "scripts:import-frameworks": "tsx scripts/import-frameworks.ts"
+    "scripts:import-frameworks": "tsx scripts/import-frameworks.ts",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -21,9 +22,11 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.0",
     "@prisma/client": "^6.19.0",
+    "@types/pdfkit": "^0.17.4",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "pdfkit": "^0.17.2",
     "tsconfig-paths": "^4.2.0",
     "zod": "^4.1.13"
   },

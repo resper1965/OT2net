@@ -2,8 +2,12 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
-import { authenticate, optionalAuthenticate } from "./middleware/auth";
+import routes from "./routes";
+import { authenticate } from "./middleware/auth";
 import { requirePermission, requireAdmin } from "./middleware/permissions";
+import { errorHandler } from "./middleware/errorHandler";
+import { rateLimiter } from "./middleware/rateLimiter";
+import { logger } from "./utils/logger";
 
 // Carregar variáveis de ambiente (.env.local tem prioridade)
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });

@@ -41,3 +41,5 @@
 
 -- RLS Policies serão criadas separadamente (ver docs/supabase-storage-setup.md)
 
+
+

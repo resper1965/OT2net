@@ -26,3 +26,5 @@ AND indexname = 'requisitos_framework_embedding_idx';
 -- Nota: A criação do índice pode demorar dependendo do número de registros
 -- Para grandes volumes, considere criar o índice em horário de baixo tráfego
 
+
+

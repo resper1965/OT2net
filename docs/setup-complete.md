@@ -24,36 +24,52 @@ Este documento lista todos os passos necessários para completar o setup do proj
 
 ## ⏳ Configuração Manual no Supabase
 
-### 1. Connection Strings do Prisma
+### ✅ 1. Buckets de Storage (CONCLUÍDO)
+
+Os buckets foram criados via MCP:
+- ✅ `documentos` (privado, 50 MB) - PDFs e DOCX
+- ✅ `questionarios` (privado, 10 MB) - Anexos de questionários
+- ✅ `evidencias` (privado, 50 MB) - Evidências de conformidade
+- ✅ `diagramas` (privado, 5 MB) - Diagramas Mermaid exportados
+
+### ✅ 2. RLS Policies de Storage (CONCLUÍDO)
+
+As policies foram criadas via migration:
+- ✅ Policies para bucket `documentos` (upload, read, update, delete)
+- ✅ Policies para bucket `questionarios` (upload, read)
+- ✅ Policies para bucket `evidencias` (upload, read)
+- ✅ Policies para bucket `diagramas` (upload, read)
+
+### ✅ 3. Realtime Habilitado (CONCLUÍDO)
+
+As seguintes tabelas estão habilitadas para Realtime:
+- ✅ `chamadas_ia` - Notificações de processamento IA
+- ✅ `iniciativas` - Updates de progresso e status
+- ✅ `processos_normalizados` - Status de processamento
+- ✅ `projetos` - Updates de progresso geral
+- ✅ `respostas_questionario` - Novas respostas
+
+### ✅ 4. Índice HNSW Criado (CONCLUÍDO)
+
+- ✅ Índice `requisitos_framework_embedding_idx` criado para busca semântica
+
+### ⏳ 5. Connection Strings do Prisma (PENDENTE)
 
 1. Acesse: https://app.supabase.com/project/hyeifxvxifhrapfdvfry/settings/database
 2. Copie:
    - **Connection pooling** (Transaction mode) → `DATABASE_URL`
    - **Direct connection** → `DIRECT_URL`
-3. Adicione em `backend/.env.local`
-
-### 2. Criar Buckets de Storage
-
-1. Acesse: https://app.supabase.com/project/hyeifxvxifhrapfdvfry/storage/buckets
-2. Criar buckets:
-   - `documentos` (privado, 50 MB)
-   - `questionarios` (privado, 10 MB)
-   - `evidencias` (privado, 50 MB)
-   - `diagramas` (privado, 5 MB)
-
-Ou execute o script SQL: `backend/scripts/create-storage-buckets.sql`
-
-### 3. Configurar RLS Policies para Storage
-
-Execute: `backend/scripts/create-storage-rls-policies.sql` no Supabase SQL Editor
-
-### 4. Habilitar Realtime
-
-Execute: `backend/scripts/enable-realtime.sql` no Supabase SQL Editor
-
-### 5. Criar Índice HNSW
-
-Execute: `backend/scripts/create-hnsw-index.sql` no Supabase SQL Editor
+3. Adicione em `backend/.env.local`:
+   ```env
+   DATABASE_URL=postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true
+   DIRECT_URL=postgresql://postgres:[password]@db.[ref].supabase.co:5432/postgres
+   ```
+4. Copie também o arquivo `.env.example` para `.env.local`:
+   ```bash
+   cd backend
+   cp .env.example .env.local
+   # Edite .env.local e adicione as connection strings
+   ```
 
 ### 6. Importar Frameworks Regulatórios
 
@@ -125,4 +141,6 @@ Toda documentação está em `docs/`:
 - Uso de serviços
 - Deploy
 - Troubleshooting
+
+
 
