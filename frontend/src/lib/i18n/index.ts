@@ -40,3 +40,5 @@ export function useTranslation(locale: string = "pt-BR") {
 
 export default translations;
 
+
+

@@ -59,3 +59,5 @@ Edite o arquivo `src/lib/i18n/pt-BR.json` e adicione as novas chaves:
 
 Depois use: `t("minhaNovaChave.subChave")`
 
+
+
