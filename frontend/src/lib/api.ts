@@ -65,7 +65,7 @@ export const api = {
       }).then((r) => r.json()),
     update: (id: string, data: Record<string, unknown>) =>
       fetchWithAuth(`/api/clientes/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify(data),
       }).then((r) => r.json()),
     delete: (id: string) =>
@@ -78,7 +78,7 @@ export const api = {
   empresas: {
     list: (clienteId?: string) => {
       const url = clienteId ? `/api/empresas?cliente_id=${clienteId}` : "/api/empresas";
-      return fetchWithAuth(url).then((r) => r.json());
+      return fetchWithAuth(url).then((r) => r.json()).then((data) => data.empresas || []);
     },
     get: (id: string) => fetchWithAuth(`/api/empresas/${id}`).then((r) => r.json()),
     create: (data: Record<string, unknown>) =>
@@ -88,7 +88,7 @@ export const api = {
       }).then((r) => r.json()),
     update: (id: string, data: Record<string, unknown>) =>
       fetchWithAuth(`/api/empresas/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify(data),
       }).then((r) => r.json()),
     delete: (id: string) =>
@@ -111,7 +111,7 @@ export const api = {
       }).then((r) => r.json()),
     update: (id: string, data: Record<string, unknown>) =>
       fetchWithAuth(`/api/sites/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify(data),
       }).then((r) => r.json()),
     delete: (id: string) =>
@@ -134,7 +134,7 @@ export const api = {
       }).then((r) => r.json()),
     update: (id: string, data: Record<string, unknown>) =>
       fetchWithAuth(`/api/stakeholders/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify(data),
       }).then((r) => r.json()),
     delete: (id: string) =>
@@ -157,7 +157,7 @@ export const api = {
       }).then((r) => r.json()),
     update: (id: string, data: Record<string, unknown>) =>
       fetchWithAuth(`/api/membros-equipe/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify(data),
       }).then((r) => r.json()),
     delete: (id: string) =>
@@ -180,7 +180,7 @@ export const api = {
       }).then((r) => r.json()),
     update: (id: string, data: Record<string, unknown>) =>
       fetchWithAuth(`/api/projetos/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify(data),
       }).then((r) => r.json()),
     delete: (id: string) =>
@@ -218,7 +218,7 @@ export const api = {
       }).then((r) => r.json()),
     update: (id: string, data: Record<string, unknown>) =>
       fetchWithAuth(`/api/descricoes-raw/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify(data),
       }).then((r) => r.json()),
     delete: (id: string) =>
@@ -245,7 +245,7 @@ export const api = {
     get: (id: string) => fetchWithAuth(`/api/processos-normalizados/${id}`).then((r) => r.json()),
     update: (id: string, data: Record<string, unknown>) =>
       fetchWithAuth(`/api/processos-normalizados/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify(data),
       }).then((r) => r.json()),
     getDiagrama: (id: string, tipo: "flowchart" | "sequence" | "state" = "flowchart") =>
