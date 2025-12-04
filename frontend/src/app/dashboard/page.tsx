@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { supabase } from "@/lib/supabase/client";
 
 export default function DashboardPage() {
   const [stats, setStats] = useState({
@@ -11,8 +12,29 @@ export default function DashboardPage() {
     projetos: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
+    async function checkAuth() {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (session) {
+          setIsAuthenticated(true);
+          setUserEmail(session.user.email || null);
+        } else {
+          setIsAuthenticated(false);
+          // Redireciona para login se não estiver autenticado
+          window.location.href = "/login";
+        }
+      } catch (error) {
+        console.error("Erro ao verificar autenticação:", error);
+        setIsAuthenticated(false);
+      }
+    }
+
     async function loadStats() {
       try {
         const [clientes, empresas, projetos] = await Promise.all([
@@ -33,6 +55,7 @@ export default function DashboardPage() {
       }
     }
 
+    checkAuth();
     loadStats();
   }, []);
 
@@ -90,7 +113,20 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-black dark:text-zinc-50">Dashboard</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-black dark:text-zinc-50">Dashboard</h1>
+          {isAuthenticated && userEmail && (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-md">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-green-400 font-medium">Autenticado</span>
+              </div>
+              <div className="text-sm text-zinc-600 dark:text-zinc-400">
+                {userEmail}
+              </div>
+            </div>
+          )}
+        </div>
 
         {loading ? (
           <div className="text-center py-12">

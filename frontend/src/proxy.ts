@@ -31,12 +31,10 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  // Atualizar sessão se necessário
-  await supabase.auth.getUser();
-
   // Proteger rotas que requerem autenticação
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
 
   const isAuthPage =
