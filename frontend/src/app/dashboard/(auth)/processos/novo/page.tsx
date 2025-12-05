@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
+import { usePageTitleEffect } from "@/hooks/use-page-title";
 import { Button } from "@/components/ui/button";
 
 export default function NovaDescricaoPage() {
+  usePageTitleEffect("Nova Descrição Operacional");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const toast = useToast();
@@ -42,16 +44,6 @@ export default function NovaDescricaoPage() {
   return (
     <div>
       <div className="max-w-full">
-        <div className="mb-8">
-          <Link
-            href="/dashboard/processos"
-            className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
-          >
-          </Link>
-          <h1 className="text-3xl font-bold text-black dark:text-zinc-50">
-            Nova Descrição Operacional
-          </h1>
-        </div>
 
         <form
           onSubmit={handleSubmit}
