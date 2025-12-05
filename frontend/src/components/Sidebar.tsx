@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import NessLogo from "./NessLogo";
+import { ThemeToggle } from "./ThemeToggle";
 import clsx from "clsx";
 
 interface MenuItem {
@@ -133,7 +134,7 @@ export function Sidebar() {
           {/* Logo */}
           <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
             <Link href="/dashboard" onClick={() => setIsOpen(false)}>
-              <NessLogo variant="dark" />
+              <NessLogo variant="default" />
             </Link>
           </div>
 
@@ -172,13 +173,17 @@ export function Sidebar() {
             </ul>
           </nav>
 
-          {/* User info and logout */}
-          <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
+          {/* User info, theme toggle and logout */}
+          <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 space-y-3">
             {userEmail && (
-              <div className="mb-3 px-3 py-2 text-xs text-zinc-600 dark:text-zinc-400 truncate">
+              <div className="px-3 py-2 text-xs text-zinc-600 dark:text-zinc-400 truncate">
                 {userEmail}
               </div>
             )}
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs text-zinc-600 dark:text-zinc-400 px-3">Tema</span>
+              <ThemeToggle />
+            </div>
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
