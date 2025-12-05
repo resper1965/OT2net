@@ -60,8 +60,9 @@ export default function ClienteDetalhesPage() {
       setCliente(data);
       setTitle(data.razao_social || "Cliente");
       setError(null);
-    } catch (err) {
-      setError(err.message || "Erro ao carregar cliente");
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || "Erro ao carregar cliente");
       // Erro já tratado
     } finally {
       setLoading(false);
