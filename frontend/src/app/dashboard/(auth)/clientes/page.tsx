@@ -12,7 +12,6 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
 import { Building2, Search, Filter, Plus, Download } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
-import { usePageTitleEffect } from "@/hooks/use-page-title";
 
 interface Cliente {
   id: string;
