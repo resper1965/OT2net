@@ -133,11 +133,6 @@ export default function ContaPage() {
       <div className="max-w-full">
         {/* Header */}
         <div className="mb-8">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-zinc-50 mb-4"
-          >
-            <ArrowLeft className="h-4 w-4" />
         </div>
 
         {/* Profile Card */}
