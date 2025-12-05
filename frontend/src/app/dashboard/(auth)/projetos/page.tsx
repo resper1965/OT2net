@@ -237,7 +237,6 @@ export default function ProjetosPage() {
               </div>
             </div>
           </div>
-        </div>
 
         {/* Content */}
         {loading ? (
