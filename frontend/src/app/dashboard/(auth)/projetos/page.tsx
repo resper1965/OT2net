@@ -137,24 +137,8 @@ export default function ProjetosPage() {
   return (
     <div>
       <div>
-        {/* Ações */}
+        {/* KPI Cards */}
         <div className="mb-8">
-          <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-4 mb-6">
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Exportar
-              </Button>
-              <Link href="/dashboard/projetos/novo">
-                <Button variant="primary">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Novo Projeto
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
               <div className="flex items-center justify-between mb-4">
@@ -205,8 +189,42 @@ export default function ProjetosPage() {
             </div>
           </div>
 
-          {/* Filtros e Busca */}
-          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4 mb-6">
+          {/* Ações */}
+          <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-4 mb-6">
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Exportar
+              </Button>
+              <Link href="/dashboard/projetos/novo">
+                <Button variant="primary">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Projeto
+                </Button>
+              </Link>
+            </div>
+            </div>
+          </div>
+
+          {/* Ações */}
+          <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-4 mb-6">
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Exportar
+              </Button>
+              <Link href="/dashboard/projetos/novo">
+                <Button variant="primary">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Projeto
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Filtros e Busca */}
+        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4 mb-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-400" />

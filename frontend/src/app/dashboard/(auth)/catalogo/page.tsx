@@ -106,13 +106,6 @@ export default function CatalogoPage() {
       <div>
         {/* Header */}
         <div className="mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div>
-              <p className="text-zinc-600 dark:text-zinc-400">
-                Visualize e explore processos normalizados
-              </p>
-            </div>
-          </div>
 
           {/* Filtros e Busca */}
           <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4 mb-6">
