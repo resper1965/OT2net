@@ -4,10 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useToast } from "@/lib/hooks/useToast";
+import { Button } from "@/components/ui/button";
 
 export default function NovaDescricaoPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
   const [formData, setFormData] = useState({
     titulo: "",
     descricao_completa: "",
@@ -25,9 +28,11 @@ export default function NovaDescricaoPage() {
 
     try {
       await api.descricoesRaw.create(formData);
+      toast.success("Descrição criada com sucesso");
       router.push("/dashboard/processos");
-    } catch (error: any) {
-      alert("Erro ao criar descrição: " + (error.message || "Erro desconhecido"));
+    } catch (error: unknown) {
+      const err = error as Error;
+      toast.error(err.message || "Erro ao criar descrição");
       console.error("Erro:", error);
     } finally {
       setLoading(false);
@@ -148,18 +153,13 @@ export default function NovaDescricaoPage() {
           </div>
 
           <div className="flex gap-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-50"
-            >
-              {loading ? "Salvando..." : "Salvar"}
-            </button>
-            <Link
-              href="/dashboard/processos"
-              className="px-6 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-50 hover:bg-zinc-50 dark:hover:bg-zinc-800"
-            >
-              Cancelar
+            <Button type="submit" disabled={loading} isLoading={loading} variant="primary">
+              Salvar
+            </Button>
+            <Link href="/dashboard/processos">
+              <Button type="button" variant="outline">
+                Cancelar
+              </Button>
             </Link>
           </div>
         </form>

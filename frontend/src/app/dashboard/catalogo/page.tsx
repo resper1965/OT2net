@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useToast } from "@/lib/hooks/useToast";
 import dynamic from "next/dynamic";
 
 // Carregar Mermaid dinamicamente (client-side only)
@@ -32,6 +33,7 @@ export default function CatalogoPage() {
   const [diagramaTipo, setDiagramaTipo] = useState<"flowchart" | "sequence" | "state">("flowchart");
   const [loadingDiagrama, setLoadingDiagrama] = useState(false);
   const [filtroStatus, setFiltroStatus] = useState<string>("");
+  const toast = useToast();
 
   useEffect(() => {
     loadProcessos();
@@ -54,9 +56,10 @@ export default function CatalogoPage() {
       setLoadingDiagrama(true);
       const data = await api.processosNormalizados.getDiagrama(processoId, diagramaTipo);
       setDiagrama(data.diagrama);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       console.error("Erro ao carregar diagrama:", error);
-      alert("Erro ao carregar diagrama: " + (error.message || "Erro desconhecido"));
+      toast.error(err.message || "Erro ao carregar diagrama");
     } finally {
       setLoadingDiagrama(false);
     }

@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useToast } from "@/lib/hooks/useToast";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
 
 interface DescricaoRaw {
   id: string;
@@ -16,6 +19,11 @@ export default function ProcessosPage() {
   const [descricoes, setDescricoes] = useState<DescricaoRaw[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtroStatus, setFiltroStatus] = useState<string>("");
+  const [processDialog, setProcessDialog] = useState<{ open: boolean; id: string | null }>({
+    open: false,
+    id: null,
+  });
+  const toast = useToast();
 
   useEffect(() => {
     loadDescricoes();
@@ -34,15 +42,21 @@ export default function ProcessosPage() {
     }
   }
 
-  async function handleProcessar(id: string) {
-    if (!confirm("Processar esta descrição com IA?")) return;
+  function handleProcessarClick(id: string) {
+    setProcessDialog({ open: true, id });
+  }
+
+  async function handleProcessarConfirm() {
+    if (!processDialog.id) return;
 
     try {
-      await api.descricoesRaw.processar(id, true);
-      alert("Processamento iniciado! Verifique o status em alguns instantes.");
+      await api.descricoesRaw.processar(processDialog.id, true);
+      toast.success("Processamento iniciado! Verifique o status em alguns instantes.");
       await loadDescricoes();
-    } catch (error: any) {
-      alert("Erro ao processar: " + (error.message || "Erro desconhecido"));
+      setProcessDialog({ open: false, id: null });
+    } catch (error: unknown) {
+      const err = error as Error;
+      toast.error(err.message || "Erro ao processar");
     }
   }
 
@@ -66,11 +80,8 @@ export default function ProcessosPage() {
           <h1 className="text-3xl font-bold text-black dark:text-zinc-50">
             Processos - Coleta de Descrições
           </h1>
-          <Link
-            href="/dashboard/processos/novo"
-            className="px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-          >
-            Nova Descrição
+          <Link href="/dashboard/processos/novo">
+            <Button variant="primary">Nova Descrição</Button>
           </Link>
         </div>
 
@@ -131,12 +142,13 @@ export default function ProcessosPage() {
                     Ver Detalhes
                   </Link>
                   {descricao.status_processamento === "pendente" && (
-                    <button
-                      onClick={() => handleProcessar(descricao.id)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => handleProcessarClick(descricao.id)}
                     >
                       Processar com IA
-                    </button>
+                    </Button>
                   )}
                   {descricao.status_processamento === "processado" && (
                     <Link
@@ -151,6 +163,17 @@ export default function ProcessosPage() {
             ))}
           </div>
         )}
+
+        <ConfirmDialog
+          open={processDialog.open}
+          onOpenChange={(open) => setProcessDialog({ open, id: processDialog.id })}
+          title="Processar com IA"
+          description="Deseja processar esta descrição com IA? O processamento pode levar alguns instantes."
+          confirmText="Processar"
+          cancelText="Cancelar"
+          variant="default"
+          onConfirm={handleProcessarConfirm}
+        />
       </div>
     </div>
   );

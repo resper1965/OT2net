@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useToast } from "@/lib/hooks/useToast";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
 
 interface DescricaoRaw {
   id: string;
@@ -40,6 +43,9 @@ export default function RevisaoProcessoPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [approveDialog, setApproveDialog] = useState(false);
+  const [rejectDialog, setRejectDialog] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     if (id) {
@@ -80,36 +86,34 @@ export default function RevisaoProcessoPage() {
     }
   }
 
-  async function handleAprovar() {
-    if (!confirm("Aprovar este processo normalizado?")) return;
-
+  async function handleAprovarConfirm() {
     try {
       setSaving(true);
       // Atualizar status do processo normalizado
       if (processoNormalizado) {
         // Assumindo que existe uma API para atualizar processo
         // await api.processosNormalizados.update(processoNormalizado.id, { status: 'aprovado' })
-        alert("Processo aprovado com sucesso!");
+        toast.success("Processo aprovado com sucesso!");
         router.push("/dashboard/processos");
       }
-    } catch (err: any) {
-      alert("Erro ao aprovar: " + (err.message || "Erro desconhecido"));
+    } catch (err: unknown) {
+      const error = err as Error;
+      toast.error(error.message || "Erro ao aprovar");
     } finally {
       setSaving(false);
     }
   }
 
-  async function handleRejeitar() {
-    if (!confirm("Rejeitar este processo normalizado? Será necessário reprocessar.")) return;
-
+  async function handleRejeitarConfirm() {
     try {
       setSaving(true);
       // Atualizar status
       await api.descricoesRaw.update(id, { status_processamento: "pendente" });
-      alert("Processo rejeitado. Você pode reprocessar quando desejar.");
+      toast.success("Processo rejeitado. Você pode reprocessar quando desejar.");
       router.push("/dashboard/processos");
-    } catch (err: any) {
-      alert("Erro ao rejeitar: " + (err.message || "Erro desconhecido"));
+    } catch (err: unknown) {
+      const error = err as Error;
+      toast.error(error.message || "Erro ao rejeitar");
     } finally {
       setSaving(false);
     }
@@ -190,20 +194,21 @@ export default function RevisaoProcessoPage() {
               Revisão: {descricaoRaw.titulo}
             </h1>
             <div className="flex gap-2">
-              <button
-                onClick={handleAprovar}
+              <Button
+                variant="primary"
+                onClick={() => setApproveDialog(true)}
                 disabled={saving}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                isLoading={saving}
               >
-                {saving ? "Salvando..." : "Aprovar"}
-              </button>
-              <button
-                onClick={handleRejeitar}
+                Aprovar
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => setRejectDialog(true)}
                 disabled={saving}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
               >
                 Rejeitar
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -353,6 +358,28 @@ export default function RevisaoProcessoPage() {
             </div>
           </div>
         </div>
+
+        <ConfirmDialog
+          open={approveDialog}
+          onOpenChange={setApproveDialog}
+          title="Aprovar Processo"
+          description="Deseja aprovar este processo normalizado?"
+          confirmText="Aprovar"
+          cancelText="Cancelar"
+          variant="default"
+          onConfirm={handleAprovarConfirm}
+        />
+
+        <ConfirmDialog
+          open={rejectDialog}
+          onOpenChange={setRejectDialog}
+          title="Rejeitar Processo"
+          description="Deseja rejeitar este processo normalizado? Será necessário reprocessar."
+          confirmText="Rejeitar"
+          cancelText="Cancelar"
+          variant="destructive"
+          onConfirm={handleRejeitarConfirm}
+        />
       </div>
     </div>
   );
