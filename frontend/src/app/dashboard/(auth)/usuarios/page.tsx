@@ -130,15 +130,10 @@ export default function UsuariosPage() {
 
   return (
     <div>
-      <div className="max-w-7xl mx-auto">
+      <div>
         {/* Header */}
         <div className="mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div>
-              <p className="text-zinc-600 dark:text-zinc-400">
-                Gerencie usuários e permissões do sistema
-              </p>
-            </div>
+          <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-4 mb-6">
             <div className="flex gap-2">
               <Button variant="outline" size="sm">
                 <Download className="h-4 w-4 mr-2" />

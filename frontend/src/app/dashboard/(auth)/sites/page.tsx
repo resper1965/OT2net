@@ -51,15 +51,10 @@ export default function SitesPage() {
 
   return (
     <div>
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
+      <div>
+        {/* Ações */}
         <div className="mb-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div>
-              <p className="text-zinc-600 dark:text-zinc-400">
-                Gerencie sites operacionais das empresas
-              </p>
-            </div>
+          <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-4 mb-6">
             <div className="flex gap-2">
               <Button variant="outline" size="sm">
                 <Download className="h-4 w-4 mr-2" />

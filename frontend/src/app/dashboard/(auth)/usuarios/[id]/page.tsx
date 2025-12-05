@@ -83,7 +83,7 @@ export default function UsuarioDetalhesPage() {
   if (loading) {
     return (
       <div>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-full">
           <div className="text-center py-12">
             <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
           </div>
@@ -95,13 +95,12 @@ export default function UsuarioDetalhesPage() {
   if (error || !usuario) {
     return (
       <div>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-full">
           <div className="mb-8">
             <Link
               href="/dashboard/usuarios"
               className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
             >
-              ← Voltar para Usuários
             </Link>
           </div>
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
@@ -114,13 +113,12 @@ export default function UsuarioDetalhesPage() {
 
   return (
     <div>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-full">
         <div className="mb-8">
           <Link
             href="/dashboard/usuarios"
             className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
           >
-            ← Voltar para Usuários
           </Link>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">

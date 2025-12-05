@@ -105,7 +105,7 @@ export default function ContaPage() {
   if (loading) {
     return (
       <div>
-        <div className="max-w-4xl mx-auto">
+        <div>
           <div className="text-center py-12">
             <p className="text-zinc-600 dark:text-zinc-400">Carregando informações da conta...</p>
           </div>
@@ -117,7 +117,7 @@ export default function ContaPage() {
   if (!profile) {
     return (
       <div>
-        <div className="max-w-4xl mx-auto">
+        <div>
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
             <p className="text-red-800 dark:text-red-200">
               Erro ao carregar informações da conta
@@ -130,7 +130,7 @@ export default function ContaPage() {
 
   return (
     <div>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-full">
         {/* Header */}
         <div className="mb-8">
           <Link
@@ -138,11 +138,6 @@ export default function ContaPage() {
             className="inline-flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-zinc-50 mb-4"
           >
             <ArrowLeft className="h-4 w-4" />
-            Voltar ao Dashboard
-          </Link>
-          <p className="text-zinc-600 dark:text-zinc-400">
-            Gerencie suas informações pessoais e preferências
-          </p>
         </div>
 
         {/* Profile Card */}

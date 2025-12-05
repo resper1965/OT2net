@@ -39,13 +39,12 @@ export default function NovoUsuarioPage() {
 
   return (
     <div>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-full">
         <div className="mb-8">
           <Link
             href="/dashboard/usuarios"
             className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
           >
-            ← Voltar para Usuários
           </Link>
           <h1 className="text-3xl font-bold text-black dark:text-zinc-50">Novo Usuário</h1>
         </div>

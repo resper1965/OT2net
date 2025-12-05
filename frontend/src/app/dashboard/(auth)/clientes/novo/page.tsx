@@ -90,13 +90,12 @@ export default function NovoClientePage() {
 
   return (
     <div>
-      <div className="max-w-4xl mx-auto">
+      <div>
         <div className="mb-8">
           <Link
             href="/dashboard/clientes"
             className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
           >
-            ← Voltar para Clientes
           </Link>
         </div>
 

@@ -83,14 +83,6 @@ export default function ClienteDetalhesPage() {
     return (
       <div>
         <div className="max-w-4xl mx-auto">
-          <div className="mb-8">
-            <Link
-              href="/dashboard/clientes"
-              className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
-            >
-              ← Voltar para Clientes
-            </Link>
-          </div>
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
             <p className="text-red-800 dark:text-red-200">{error || "Cliente não encontrado"}</p>
           </div>
@@ -103,13 +95,7 @@ export default function ClienteDetalhesPage() {
     <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <Link
-            href="/dashboard/clientes"
-            className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
-          >
-            ← Voltar para Clientes
-          </Link>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-end items-center">
             <div className="flex gap-2">
               <Link href={`/dashboard/clientes/${id}/editar`}>
                 <Button variant="primary">Editar</Button>

@@ -136,7 +136,7 @@ export default function EditarClientePage() {
   if (loadingData) {
     return (
       <div>
-        <div className="max-w-4xl mx-auto">
+        <div>
           <div className="text-center py-12">
             <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
           </div>
@@ -147,13 +147,12 @@ export default function EditarClientePage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-full">
         <div className="mb-8">
           <Link
             href={`/dashboard/clientes/${id}`}
             className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
           >
-            ← Voltar para Detalhes
           </Link>
         </div>
 

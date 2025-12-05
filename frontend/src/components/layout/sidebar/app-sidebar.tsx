@@ -38,8 +38,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton className="hover:text-foreground h-10 group-data-[collapsible=icon]:px-0! hover:bg-[var(--primary)]/5 justify-center">
+            <SidebarMenuButton className="hover:text-foreground h-10 group-data-[collapsible=icon]:px-0! hover:bg-[var(--primary)]/5 justify-start">
               <Logo />
+              <span className="font-semibold ml-2 group-data-[collapsible=icon]:hidden">OT2net</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

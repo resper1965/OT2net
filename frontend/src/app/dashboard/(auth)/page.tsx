@@ -195,7 +195,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div>
-        <div className="max-w-7xl mx-auto">
+        <div>
           <div className="mb-8">
             <Skeleton className="h-10 w-64 mb-2" />
             <Skeleton className="h-5 w-96" />
@@ -212,13 +212,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <div className="max-w-7xl mx-auto">
-        {/* Descrição */}
-        <div className="mb-8">
-          <p className="text-zinc-600 dark:text-zinc-400">
-            Visão geral do sistema e métricas principais
-          </p>
-        </div>
+      <div>
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

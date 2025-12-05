@@ -122,7 +122,7 @@ export default function RevisaoProcessoPage() {
   if (loading) {
     return (
       <div>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-full">
           <div className="text-center py-12">
             <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
           </div>
@@ -134,13 +134,12 @@ export default function RevisaoProcessoPage() {
   if (error || !descricaoRaw) {
     return (
       <div>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-full">
           <div className="mb-8">
             <Link
               href="/dashboard/processos"
               className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
             >
-              ← Voltar para Processos
             </Link>
           </div>
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
@@ -154,13 +153,12 @@ export default function RevisaoProcessoPage() {
   if (!processoNormalizado) {
     return (
       <div>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-full">
           <div className="mb-8">
             <Link
               href="/dashboard/processos"
               className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
             >
-              ← Voltar para Processos
             </Link>
           </div>
           <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
@@ -181,13 +179,12 @@ export default function RevisaoProcessoPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-full">
         <div className="mb-8">
           <Link
             href="/dashboard/processos"
             className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
           >
-            ← Voltar para Processos
           </Link>
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-black dark:text-zinc-50">
