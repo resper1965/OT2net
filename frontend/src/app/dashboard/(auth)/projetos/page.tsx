@@ -203,10 +203,10 @@ export default function ProjetosPage() {
                 </Button>
               </Link>
             </div>
-            </div>
           </div>
+        </div>
 
-          {/* Ações */}
+        {/* Filtros e Busca */}
           <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-4 mb-6">
             <div className="flex gap-2">
               <Button variant="outline" size="sm">
