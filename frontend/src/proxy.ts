@@ -34,7 +34,6 @@ export async function proxy(request: NextRequest) {
   // Proteger rotas que requerem autenticação
   const {
     data: { user },
-    error: authError,
   } = await supabase.auth.getUser();
 
   const isAuthPage =

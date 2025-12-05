@@ -38,6 +38,16 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  
+  /* Status colors */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  
+  /* Radius */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -106,6 +116,15 @@
   --input: 30 41 59; /* slate-800 - inputs */
   --ring: 0 173 232; /* cyan - focus ring */
 
+  /* Status Colors - Adicionado */
+  --success: 16 185 129; /* green-500 */
+  --success-foreground: 255 255 255;
+  --warning: 245 158 11; /* amber-500 */
+  --warning-foreground: 255 255 255;
+  --info: 59 130 246; /* blue-500 */
+  --info-foreground: 255 255 255;
+
+  /* Chart Colors */
   --chart-1: 0 173 232; /* cyan */
   --chart-2: 34 197 94; /* green-500 */
   --chart-3: 251 191 36; /* yellow-500 */

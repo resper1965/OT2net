@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState, useCallback } from "react";
 import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
@@ -37,21 +36,21 @@ export default function CatalogoPage() {
   const [filtroStatus, setFiltroStatus] = useState<string>("");
   const toast = useToast();
 
-  useEffect(() => {
-    loadProcessos();
-  }, [filtroStatus]);
-
-  async function loadProcessos() {
+  const loadProcessos = useCallback(async () => {
     try {
       setLoading(true);
       const data = await api.processosNormalizados.list(undefined, filtroStatus || undefined);
       setProcessos(Array.isArray(data) ? data : []);
-    } catch (error) {
+    } catch {
       // Erro já tratado
     } finally {
       setLoading(false);
     }
-  }
+  }, [filtroStatus]);
+
+  useEffect(() => {
+    loadProcessos();
+  }, [loadProcessos]);
 
   async function loadDiagrama(processoId: string) {
     try {

@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
 import { useToast } from "@/lib/hooks/useToast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { User, Mail, Calendar, ArrowLeft } from "lucide-react";
+import { User, Mail, Calendar } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
 
 interface UserProfile {
@@ -39,11 +40,7 @@ export default function ContaPage() {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  async function loadProfile() {
+  const loadProfile = useCallback(async () => {
     try {
       setLoading(true);
       const {
@@ -71,12 +68,16 @@ export default function ContaPage() {
         name,
         email,
       });
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar informações da conta");
     } finally {
       setLoading(false);
     }
-  }
+  }, [router, toast]);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
 
   async function handleSave() {
     try {
@@ -146,9 +147,11 @@ export default function ContaPage() {
             {/* Avatar Section */}
             <div className="flex items-center gap-6">
               {profile.avatar_url ? (
-                <img
+                <Image
                   src={profile.avatar_url}
                   alt={profile.name || profile.email}
+                  width={80}
+                  height={80}
                   className="h-20 w-20 rounded-full object-cover border-2 border-zinc-200 dark:border-zinc-700"
                 />
               ) : (

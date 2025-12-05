@@ -15,7 +15,7 @@ export function t(key: TranslationKey, locale: string = "pt-BR"): string {
   const localeTranslations = translations[locale] || translations["pt-BR"];
   
   const keys = key.split(".");
-  let value: any = localeTranslations;
+  let value: unknown = localeTranslations;
   
   for (const k of keys) {
     if (value && typeof value === "object" && k in value) {

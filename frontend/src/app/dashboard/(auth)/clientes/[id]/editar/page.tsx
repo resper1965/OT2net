@@ -7,7 +7,6 @@ import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 export default function EditarClientePage() {
   usePageTitleEffect("Editar Cliente");

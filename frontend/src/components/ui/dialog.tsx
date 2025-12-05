@@ -60,7 +60,7 @@ export function DialogTrigger({
     return React.cloneElement(children, {
       onClick: () => setOpen(true),
       ...props,
-    } as any);
+    } as React.HTMLAttributes<HTMLElement>);
   }
 
   return (

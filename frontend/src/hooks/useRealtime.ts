@@ -4,12 +4,16 @@ import { useEffect, useState } from "react";
 import { RealtimeChannel } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase/client";
 
+interface RealtimePayload {
+  [key: string]: unknown;
+}
+
 interface UseRealtimeOptions {
   table: string;
   filter?: string;
-  onInsert?: (payload: any) => void;
-  onUpdate?: (payload: any) => void;
-  onDelete?: (payload: any) => void;
+  onInsert?: (payload: RealtimePayload) => void;
+  onUpdate?: (payload: RealtimePayload) => void;
+  onDelete?: (payload: RealtimePayload) => void;
 }
 
 /**
@@ -84,16 +88,16 @@ export function useRealtime(options: UseRealtimeOptions) {
  * Hook específico para notificações de processamento IA
  */
 export function useIAProcessingNotifications(projetoId?: string) {
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<RealtimePayload[]>([]);
 
   const { isConnected } = useRealtime({
     table: "chamadas_ia",
     filter: projetoId ? `projeto_id=eq.${projetoId}` : undefined,
     onInsert: (payload) => {
-      setNotifications((prev) => [payload.new, ...prev]);
+      setNotifications((prev) => [payload.new as RealtimePayload, ...prev]);
     },
     onUpdate: (payload) => {
-      setNotifications((prev) => prev.map((n) => (n.id === payload.new.id ? payload.new : n)));
+      setNotifications((prev) => prev.map((n) => ((n.id === (payload.new as RealtimePayload).id) ? (payload.new as RealtimePayload) : n)));
     },
   });
 
@@ -107,13 +111,13 @@ export function useIAProcessingNotifications(projetoId?: string) {
  * Hook específico para updates de iniciativas
  */
 export function useIniciativasUpdates(projetoId: string) {
-  const [updates, setUpdates] = useState<any[]>([]);
+  const [updates, setUpdates] = useState<RealtimePayload[]>([]);
 
   const { isConnected } = useRealtime({
     table: "iniciativas",
     filter: `projeto_id=eq.${projetoId}`,
     onUpdate: (payload) => {
-      setUpdates((prev) => [payload.new, ...prev]);
+      setUpdates((prev) => [payload.new as RealtimePayload, ...prev]);
     },
   });
 
@@ -127,13 +131,13 @@ export function useIniciativasUpdates(projetoId: string) {
  * Hook específico para novas respostas de questionários
  */
 export function useQuestionarioResponses(questionarioId: string) {
-  const [responses, setResponses] = useState<any[]>([]);
+  const [responses, setResponses] = useState<RealtimePayload[]>([]);
 
   const { isConnected } = useRealtime({
     table: "respostas_questionario",
     filter: `questionario_id=eq.${questionarioId}`,
     onInsert: (payload) => {
-      setResponses((prev) => [payload.new, ...prev]);
+      setResponses((prev) => [payload.new as RealtimePayload, ...prev]);
     },
   });
 

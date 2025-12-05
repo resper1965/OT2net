@@ -29,7 +29,7 @@ function LoginForm() {
           const redirectTo = searchParams?.get("redirect") || "/dashboard";
           router.push(redirectTo);
         }
-      } catch (err) {
+      } catch {
         // Erro ao verificar autenticação - ignora silenciosamente
       }
     };

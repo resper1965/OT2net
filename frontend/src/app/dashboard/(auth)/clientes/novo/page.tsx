@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
-import { usePageTitleEffect } from "@/hooks/use-page-title";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -70,22 +69,6 @@ export default function NovoClientePage() {
     });
   }
 
-  function addCertificacao() {
-    if (certificacaoInput.trim()) {
-      setFormData({
-        ...formData,
-        certificacoes: [...formData.certificacoes, certificacaoInput.trim()],
-      });
-      setCertificacaoInput("");
-    }
-  }
-
-  function removeCertificacao(index: number) {
-    setFormData({
-      ...formData,
-      certificacoes: formData.certificacoes.filter((_, i) => i !== index),
-    });
-  }
 
   return (
     <div>
@@ -231,9 +214,9 @@ export default function NovoClientePage() {
               </button>
             </div>
             <div className="flex flex-wrap gap-2">
-              {formData.agencias_reguladoras.map((agencia) => (
+              {formData.agencias_reguladoras.map((agencia, index) => (
                 <span
-                  key={agencia}
+                  key={`${agencia}-${index}`}
                   className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm text-black dark:text-zinc-50 flex items-center gap-2"
                 >
                   {agencia}
