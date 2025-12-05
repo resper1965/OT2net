@@ -126,7 +126,6 @@ export default function StakeholdersPage() {
               </Button>
             </div>
           </div>
-        </div>
 
         {/* Content */}
         {loading ? (
