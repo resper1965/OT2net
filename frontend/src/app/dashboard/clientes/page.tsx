@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import { Building2 } from "lucide-react";
 
 interface Cliente {
   id: string;
@@ -64,11 +65,60 @@ export default function ClientesPage() {
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-black dark:text-zinc-50">Clientes</h1>
-          <Link href="/dashboard/clientes/novo">
-            <Button variant="primary">Novo Cliente</Button>
-          </Link>
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-black dark:text-zinc-50 mb-2">Clientes</h1>
+              <p className="text-zinc-600 dark:text-zinc-400">
+                Gerencie seus clientes e organizações
+              </p>
+            </div>
+            <Link href="/dashboard/clientes/novo">
+              <Button variant="primary">Novo Cliente</Button>
+            </Link>
+          </div>
+
+          {/* KPI Card */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Total de Clientes</p>
+                  <p className="text-2xl font-bold text-black dark:text-zinc-50">{clientes.length}</p>
+                </div>
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <Building2 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+              </div>
+            </div>
+            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Com Classificação</p>
+                  <p className="text-2xl font-bold text-black dark:text-zinc-50">
+                    {clientes.filter((c) => c.classificacao).length}
+                  </p>
+                </div>
+                <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <Building2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+              </div>
+            </div>
+            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Cadastrados</p>
+                  <p className="text-2xl font-bold text-black dark:text-zinc-50">
+                    {new Date().getFullYear()}
+                  </p>
+                </div>
+                <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                  <Building2 className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {error && (
@@ -77,73 +127,92 @@ export default function ClientesPage() {
           </div>
         )}
 
-        {loading ? (
-          <div className="text-center py-12">
-            <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
-          </div>
-        ) : clientes.length === 0 ? (
-          <div className="text-center py-12 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
-            <p className="text-zinc-600 dark:text-zinc-400 mb-4">Nenhum cliente cadastrado</p>
-            <Link href="/dashboard/clientes/novo" className="text-black dark:text-white underline">
-              Cadastrar primeiro cliente
-            </Link>
-          </div>
-        ) : (
-          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-zinc-50 dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-700">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                    Razão Social
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                    CNPJ
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                    Classificação
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
-                {clientes.map((cliente) => (
-                  <tr key={cliente.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Link
-                        href={`/dashboard/clientes/${cliente.id}`}
-                        className="text-sm font-medium text-black dark:text-zinc-50 hover:underline"
-                      >
-                        {cliente.razao_social}
-                      </Link>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-600 dark:text-zinc-400">
-                      {cliente.cnpj}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-600 dark:text-zinc-400">
-                      {cliente.classificacao || "-"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link
-                        href={`/dashboard/clientes/${cliente.id}/editar`}
-                        className="text-blue-600 dark:text-blue-400 hover:underline mr-4"
-                      >
-                        Editar
-                      </Link>
-                      <button
-                        onClick={() => handleDeleteClick(cliente.id)}
-                        className="text-red-600 dark:text-red-400 hover:underline"
-                      >
-                        Excluir
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        {/* Content Card */}
+        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
+            </div>
+          ) : clientes.length === 0 ? (
+            <div className="text-center py-12 p-6">
+              <Building2 className="h-12 w-12 text-zinc-400 mx-auto mb-4" />
+              <p className="text-zinc-600 dark:text-zinc-400 mb-4">Nenhum cliente cadastrado</p>
+              <Link href="/dashboard/clientes/novo">
+                <Button variant="primary">Cadastrar primeiro cliente</Button>
+              </Link>
+            </div>
+          ) : (
+            <>
+              <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
+                <h2 className="text-lg font-semibold text-black dark:text-zinc-50">
+                  Lista de Clientes
+                </h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-zinc-50 dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-700">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                        Razão Social
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                        CNPJ
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                        Classificação
+                      </th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                        Ações
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
+                    {clientes.map((cliente) => (
+                      <tr key={cliente.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <Link
+                            href={`/dashboard/clientes/${cliente.id}`}
+                            className="text-sm font-medium text-black dark:text-zinc-50 hover:underline"
+                          >
+                            {cliente.razao_social}
+                          </Link>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-600 dark:text-zinc-400">
+                          {cliente.cnpj}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {cliente.classificacao ? (
+                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200">
+                              {cliente.classificacao}
+                            </span>
+                          ) : (
+                            <span className="text-sm text-zinc-400">-</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <div className="flex items-center justify-end gap-3">
+                            <Link
+                              href={`/dashboard/clientes/${cliente.id}/editar`}
+                              className="text-blue-600 dark:text-blue-400 hover:underline"
+                            >
+                              Editar
+                            </Link>
+                            <button
+                              onClick={() => handleDeleteClick(cliente.id)}
+                              className="text-red-600 dark:text-red-400 hover:underline"
+                            >
+                              Excluir
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+        </div>
 
         <ConfirmDialog
           open={deleteDialog.open}
