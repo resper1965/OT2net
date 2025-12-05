@@ -5,10 +5,12 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
+import { usePageTitleEffect } from "@/hooks/use-page-title";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function EditarClientePage() {
+  usePageTitleEffect("Editar Cliente");
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
@@ -153,7 +155,6 @@ export default function EditarClientePage() {
           >
             ← Voltar para Detalhes
           </Link>
-          <h1 className="text-3xl font-bold text-black dark:text-zinc-50">Editar Cliente</h1>
         </div>
 
         <form

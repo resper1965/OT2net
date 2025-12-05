@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
+import { usePageTitle } from "@/contexts/PageTitleContext";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
 
@@ -26,6 +27,7 @@ export default function ClienteDetalhesPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
+  const { setTitle } = usePageTitle();
   const [cliente, setCliente] = useState<Cliente | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,6 +46,7 @@ export default function ClienteDetalhesPage() {
       setLoading(true);
       const data = await api.clientes.get(id);
       setCliente(data);
+      setTitle(data.razao_social || "Cliente");
       setError(null);
     } catch (err: any) {
       setError(err.message || "Erro ao carregar cliente");
@@ -107,7 +110,6 @@ export default function ClienteDetalhesPage() {
             ← Voltar para Clientes
           </Link>
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-black dark:text-zinc-50">
               {cliente.razao_social}
             </h1>
             <div className="flex gap-2">
