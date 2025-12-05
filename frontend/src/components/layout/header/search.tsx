@@ -50,8 +50,8 @@ export default function Search() {
         </div>
       </div>
       <div className="block lg:hidden">
-        <Button size="icon" variant="ghost" onClick={() => setOpen(true)}>
-          <SearchIcon />
+        <Button variant="ghost" className="h-9 w-9 p-0" onClick={() => setOpen(true)}>
+          <SearchIcon className="h-4 w-4" />
         </Button>
       </div>
       <CommandDialog open={open} onOpenChange={setOpen}>
