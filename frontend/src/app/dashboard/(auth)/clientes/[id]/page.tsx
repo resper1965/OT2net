@@ -110,8 +110,6 @@ export default function ClienteDetalhesPage() {
             ← Voltar para Clientes
           </Link>
           <div className="flex justify-between items-center">
-              {cliente.razao_social}
-            </h1>
             <div className="flex gap-2">
               <Link href={`/dashboard/clientes/${id}/editar`}>
                 <Button variant="primary">Editar</Button>
