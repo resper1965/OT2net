@@ -6,6 +6,18 @@ import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Workflow,
+  Search,
+  Filter,
+  Plus,
+  Download,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+  FileText,
+} from "lucide-react";
 
 interface DescricaoRaw {
   id: string;
@@ -18,7 +30,8 @@ interface DescricaoRaw {
 export default function ProcessosPage() {
   const [descricoes, setDescricoes] = useState<DescricaoRaw[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filtroStatus, setFiltroStatus] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filtroStatus, setFiltroStatus] = useState<string>("all");
   const [processDialog, setProcessDialog] = useState<{ open: boolean; id: string | null }>({
     open: false,
     id: null,
@@ -33,7 +46,8 @@ export default function ProcessosPage() {
   async function loadDescricoes() {
     try {
       setLoading(true);
-      const data = await api.descricoesRaw.list(undefined, undefined, filtroStatus || undefined);
+      const statusFilter = filtroStatus === "all" ? undefined : filtroStatus;
+      const data = await api.descricoesRaw.list(undefined, undefined, statusFilter);
       setDescricoes(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Erro:", error);
@@ -60,107 +74,247 @@ export default function ProcessosPage() {
     }
   }
 
+  // Cálculos de estatísticas
+  const processosPendentes = descricoes.filter((p) => p.status_processamento === "pendente").length;
+  const processosProcessando = descricoes.filter((p) => p.status_processamento === "processando")
+    .length;
+  const processosProcessados = descricoes.filter((p) => p.status_processamento === "processado")
+    .length;
+  const processosComErro = descricoes.filter((p) => p.status_processamento === "erro").length;
+
+  // Filtros
+  const filteredDescricoes = descricoes.filter((descricao) => {
+    const matchesSearch =
+      descricao.titulo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      descricao.descricao_completa.toLowerCase().includes(searchQuery.toLowerCase());
+
+    if (!matchesSearch) return false;
+
+    if (filtroStatus === "all") return true;
+    return descricao.status_processamento === filtroStatus;
+  });
+
   function getStatusColor(status: string) {
     switch (status) {
       case "processado":
-        return "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200";
+        return {
+          className: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200",
+          icon: CheckCircle2,
+        };
       case "processando":
-        return "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200";
+        return {
+          className: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200",
+          icon: Clock,
+        };
       case "erro":
-        return "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200";
+        return {
+          className: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200",
+          icon: AlertCircle,
+        };
       default:
-        return "bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200";
+        return {
+          className: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200",
+          icon: Clock,
+        };
     }
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-black dark:text-zinc-50">
-            Processos - Coleta de Descrições
-          </h1>
-          <Link href="/dashboard/processos/novo">
-            <Button variant="primary">Nova Descrição</Button>
-          </Link>
-        </div>
-
-        <div className="mb-4">
-          <select
-            value={filtroStatus}
-            onChange={(e) => setFiltroStatus(e.target.value)}
-            className="px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50"
-          >
-            <option value="">Todos os status</option>
-            <option value="pendente">Pendente</option>
-            <option value="processando">Processando</option>
-            <option value="processado">Processado</option>
-            <option value="erro">Erro</option>
-          </select>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-12">
-            <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-black dark:text-zinc-50 mb-2">
+                Processos - Coleta de Descrições
+              </h1>
+              <p className="text-zinc-600 dark:text-zinc-400">
+                Gerencie e processe descrições operacionais com IA
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Exportar
+              </Button>
+              <Link href="/dashboard/processos/novo">
+                <Button variant="primary">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nova Descrição
+                </Button>
+              </Link>
+            </div>
           </div>
-        ) : descricoes.length === 0 ? (
-          <div className="text-center py-12 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
-            <p className="text-zinc-600 dark:text-zinc-400 mb-4">Nenhuma descrição cadastrada</p>
-            <Link href="/dashboard/processos/novo" className="text-black dark:text-white underline">
-              Cadastrar primeira descrição
-            </Link>
+
+          {/* KPI Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                  <Workflow className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                </div>
+                <span className="text-2xl font-bold text-black dark:text-zinc-50">
+                  {descricoes.length}
+                </span>
+              </div>
+              <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                Total de Processos
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                  <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                </div>
+                <span className="text-2xl font-bold text-black dark:text-zinc-50">
+                  {processosPendentes}
+                </span>
+              </div>
+              <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Pendentes</p>
+            </div>
+
+            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <span className="text-2xl font-bold text-black dark:text-zinc-50">
+                  {processosProcessando}
+                </span>
+              </div>
+              <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Processando</p>
+            </div>
+
+            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+                <span className="text-2xl font-bold text-black dark:text-zinc-50">
+                  {processosProcessados}
+                </span>
+              </div>
+              <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Processados</p>
+            </div>
+          </div>
+
+          {/* Filtros e Busca */}
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                <Input
+                  type="text"
+                  placeholder="Buscar por título ou descrição..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="flex gap-2">
+                <select
+                  value={filtroStatus}
+                  onChange={(e) => setFiltroStatus(e.target.value)}
+                  className="px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="all">Todos os status</option>
+                  <option value="pendente">Pendente</option>
+                  <option value="processando">Processando</option>
+                  <option value="processado">Processado</option>
+                  <option value="erro">Erro</option>
+                </select>
+                <Button variant="outline" size="sm">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filtros
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        {loading ? (
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-12 text-center">
+            <p className="text-zinc-600 dark:text-zinc-400">Carregando processos...</p>
+          </div>
+        ) : filteredDescricoes.length === 0 ? (
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-12 text-center">
+            <Workflow className="h-12 w-12 text-zinc-400 mx-auto mb-4" />
+            <p className="text-zinc-600 dark:text-zinc-400 mb-4">
+              {searchQuery || filtroStatus !== "all"
+                ? "Nenhum processo encontrado com os filtros aplicados"
+                : "Nenhuma descrição cadastrada"}
+            </p>
+            {!searchQuery && filtroStatus === "all" && (
+              <Link href="/dashboard/processos/novo">
+                <Button variant="primary">Cadastrar primeira descrição</Button>
+              </Link>
+            )}
           </div>
         ) : (
-          <div className="space-y-4">
-            {descricoes.map((descricao) => (
-              <div
-                key={descricao.id}
-                className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h2 className="text-xl font-semibold mb-2 text-black dark:text-zinc-50">
-                      {descricao.titulo}
-                    </h2>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
-                      {descricao.descricao_completa}
-                    </p>
-                  </div>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                      descricao.status_processamento
-                    )}`}
-                  >
-                    {descricao.status_processamento}
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  <Link
-                    href={`/dashboard/processos/${descricao.id}`}
-                    className="px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg text-sm text-black dark:text-zinc-50 hover:bg-zinc-50 dark:hover:bg-zinc-800"
-                  >
-                    Ver Detalhes
-                  </Link>
-                  {descricao.status_processamento === "pendente" && (
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => handleProcessarClick(descricao.id)}
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
+            <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
+              <h2 className="text-lg font-semibold text-black dark:text-zinc-50">
+                Processos ({filteredDescricoes.length})
+              </h2>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                {filteredDescricoes.map((descricao) => {
+                  const status = getStatusColor(descricao.status_processamento);
+                  const StatusIcon = status.icon;
+                  return (
+                    <div
+                      key={descricao.id}
+                      className="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
                     >
-                      Processar com IA
-                    </Button>
-                  )}
-                  {descricao.status_processamento === "processado" && (
-                    <Link
-                      href={`/dashboard/processos/${descricao.id}/revisao`}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700"
-                    >
-                      Revisar
-                    </Link>
-                  )}
-                </div>
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-semibold mb-2 text-black dark:text-zinc-50">
+                            {descricao.titulo}
+                          </h3>
+                          <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
+                            {descricao.descricao_completa}
+                          </p>
+                        </div>
+                        <span
+                          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ml-4 ${status.className}`}
+                        >
+                          <StatusIcon className="h-3 w-3" />
+                          {descricao.status_processamento}
+                        </span>
+                      </div>
+                      <div className="flex gap-2">
+                        <Link href={`/dashboard/processos/${descricao.id}`}>
+                          <Button variant="outline" size="sm">
+                            Ver Detalhes
+                          </Button>
+                        </Link>
+                        {descricao.status_processamento === "pendente" && (
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => handleProcessarClick(descricao.id)}
+                          >
+                            Processar com IA
+                          </Button>
+                        )}
+                        {descricao.status_processamento === "processado" && (
+                          <Link href={`/dashboard/processos/${descricao.id}/revisao`}>
+                            <Button variant="primary" size="sm">
+                              <CheckCircle2 className="h-4 w-4 mr-2" />
+                              Revisar
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
+            </div>
           </div>
         )}
 

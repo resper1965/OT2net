@@ -6,7 +6,8 @@ import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
-import { Building2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Building2, Search, Filter, Plus, Download } from "lucide-react";
 
 interface Cliente {
   id: string;
@@ -20,6 +21,7 @@ export default function ClientesPage() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; id: string | null }>({
     open: false,
     id: null,
@@ -62,24 +64,43 @@ export default function ClientesPage() {
     }
   }
 
+  // Filtros
+  const filteredClientes = clientes.filter((cliente) => {
+    const matchesSearch =
+      cliente.razao_social.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      cliente.cnpj.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      cliente.classificacao?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesSearch;
+  });
+
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
               <h1 className="text-3xl font-bold text-black dark:text-zinc-50 mb-2">Clientes</h1>
               <p className="text-zinc-600 dark:text-zinc-400">
                 Gerencie seus clientes e organizações
               </p>
             </div>
-            <Link href="/dashboard/clientes/novo">
-              <Button variant="primary">Novo Cliente</Button>
-            </Link>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Exportar
+              </Button>
+              <Link href="/dashboard/clientes/novo">
+                <Button variant="primary">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Cliente
+                </Button>
+              </Link>
+            </div>
           </div>
 
-          {/* KPI Card */}
+          {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4">
               <div className="flex items-center justify-between">
@@ -119,6 +140,26 @@ export default function ClientesPage() {
               </div>
             </div>
           </div>
+
+          {/* Filtros e Busca */}
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                <Input
+                  type="text"
+                  placeholder="Buscar por razão social, CNPJ ou classificação..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4 mr-2" />
+                Filtros
+              </Button>
+            </div>
+          </div>
         </div>
 
         {error && (
@@ -133,19 +174,25 @@ export default function ClientesPage() {
             <div className="text-center py-12">
               <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
             </div>
-          ) : clientes.length === 0 ? (
+          ) : filteredClientes.length === 0 ? (
             <div className="text-center py-12 p-6">
               <Building2 className="h-12 w-12 text-zinc-400 mx-auto mb-4" />
-              <p className="text-zinc-600 dark:text-zinc-400 mb-4">Nenhum cliente cadastrado</p>
-              <Link href="/dashboard/clientes/novo">
-                <Button variant="primary">Cadastrar primeiro cliente</Button>
-              </Link>
+              <p className="text-zinc-600 dark:text-zinc-400 mb-4">
+                {searchQuery
+                  ? "Nenhum cliente encontrado com os filtros aplicados"
+                  : "Nenhum cliente cadastrado"}
+              </p>
+              {!searchQuery && (
+                <Link href="/dashboard/clientes/novo">
+                  <Button variant="primary">Cadastrar primeiro cliente</Button>
+                </Link>
+              )}
             </div>
           ) : (
             <>
               <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
                 <h2 className="text-lg font-semibold text-black dark:text-zinc-50">
-                  Lista de Clientes
+                  Lista de Clientes ({filteredClientes.length})
                 </h2>
               </div>
               <div className="overflow-x-auto">
@@ -167,7 +214,7 @@ export default function ClientesPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
-                    {clientes.map((cliente) => (
+                    {filteredClientes.map((cliente) => (
                       <tr key={cliente.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Link

@@ -6,7 +6,8 @@ import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
-import { Factory } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Factory, Search, Filter, Plus, Download } from "lucide-react";
 
 interface Empresa {
   id: string;
@@ -19,6 +20,7 @@ interface Empresa {
 export default function EmpresasPage() {
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; id: string | null }>({
     open: false,
     id: null,
@@ -58,21 +60,40 @@ export default function EmpresasPage() {
     }
   }
 
+  // Filtros
+  const filteredEmpresas = empresas.filter((empresa) => {
+    const matchesSearch =
+      empresa.identificacao.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      empresa.tipo?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      empresa.status?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesSearch;
+  });
+
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
               <h1 className="text-3xl font-bold text-black dark:text-zinc-50 mb-2">Empresas</h1>
               <p className="text-zinc-600 dark:text-zinc-400">
                 Gerencie empresas e organizações dos clientes
               </p>
             </div>
-            <Link href="/dashboard/empresas/novo">
-              <Button variant="primary">Nova Empresa</Button>
-            </Link>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Download className="h-4 w-4 mr-2" />
+                Exportar
+              </Button>
+              <Link href="/dashboard/empresas/novo">
+                <Button variant="primary">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nova Empresa
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* KPI Card */}
@@ -115,6 +136,26 @@ export default function EmpresasPage() {
               </div>
             </div>
           </div>
+
+          {/* Filtros e Busca */}
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                <Input
+                  type="text"
+                  placeholder="Buscar por identificação, tipo ou status..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4 mr-2" />
+                Filtros
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Content Card */}
@@ -123,19 +164,25 @@ export default function EmpresasPage() {
             <div className="text-center py-12">
               <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
             </div>
-          ) : empresas.length === 0 ? (
+          ) : filteredEmpresas.length === 0 ? (
             <div className="text-center py-12 p-6">
               <Factory className="h-12 w-12 text-zinc-400 mx-auto mb-4" />
-              <p className="text-zinc-600 dark:text-zinc-400 mb-4">Nenhuma empresa cadastrada</p>
-              <Link href="/dashboard/empresas/novo">
-                <Button variant="primary">Cadastrar primeira empresa</Button>
-              </Link>
+              <p className="text-zinc-600 dark:text-zinc-400 mb-4">
+                {searchQuery
+                  ? "Nenhuma empresa encontrada com os filtros aplicados"
+                  : "Nenhuma empresa cadastrada"}
+              </p>
+              {!searchQuery && (
+                <Link href="/dashboard/empresas/novo">
+                  <Button variant="primary">Cadastrar primeira empresa</Button>
+                </Link>
+              )}
             </div>
           ) : (
             <>
               <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
                 <h2 className="text-lg font-semibold text-black dark:text-zinc-50">
-                  Lista de Empresas
+                  Lista de Empresas ({filteredEmpresas.length})
                 </h2>
               </div>
               <div className="overflow-x-auto">
@@ -157,7 +204,7 @@ export default function EmpresasPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
-                    {empresas.map((empresa) => (
+                    {filteredEmpresas.map((empresa) => (
                       <tr key={empresa.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                         <td className="px-6 py-4 text-sm font-medium text-black dark:text-zinc-50">
                           {empresa.identificacao}

@@ -100,29 +100,45 @@ export default function CatalogoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-black dark:text-zinc-50">
-          Catálogo de Processos AS-IS
-        </h1>
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-black dark:text-zinc-50 mb-2">
+                Catálogo de Processos AS-IS
+              </h1>
+              <p className="text-zinc-600 dark:text-zinc-400">
+                Visualize e explore processos normalizados
+              </p>
+            </div>
+          </div>
 
-        <div className="mb-4">
-          <select
-            value={filtroStatus}
-            onChange={(e) => setFiltroStatus(e.target.value)}
-            className="px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50"
-          >
-            <option value="">Todos os status</option>
-            <option value="pendente">Pendente</option>
-            <option value="aprovado">Aprovado</option>
-            <option value="rejeitado">Rejeitado</option>
-          </select>
+          {/* Filtros e Busca */}
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex gap-2">
+                <select
+                  value={filtroStatus}
+                  onChange={(e) => setFiltroStatus(e.target.value)}
+                  className="px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Todos os status</option>
+                  <option value="pendente">Pendente</option>
+                  <option value="aprovado">Aprovado</option>
+                  <option value="rejeitado">Rejeitado</option>
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
 
+        {/* Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Lista de Processos */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
+            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
               <div className="p-4 border-b border-zinc-200 dark:border-zinc-700">
                 <h2 className="text-lg font-semibold text-black dark:text-zinc-50">
                   Processos ({processos.length})
