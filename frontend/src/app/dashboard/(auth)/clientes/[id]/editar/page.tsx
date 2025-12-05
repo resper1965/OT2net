@@ -147,7 +147,7 @@ export default function EditarClientePage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
-      <div className="max-w-full">
+      <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Link
             href={`/dashboard/clientes/${id}`}
