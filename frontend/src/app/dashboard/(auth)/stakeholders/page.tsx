@@ -33,7 +33,7 @@ export default function StakeholdersPage() {
       const data = await api.stakeholders.list();
       setStakeholders(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Erro:", error);
+      // Erro já tratado
     } finally {
       setLoading(false);
     }

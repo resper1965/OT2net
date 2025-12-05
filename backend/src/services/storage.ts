@@ -146,7 +146,7 @@ export class StorageService {
       const file = await this.downloadFile(bucket, fromPath)
 
       // Upload no novo local
-      await this.uploadFile(bucket, toPath, file, { upsert: true })
+      await this.uploadFile(bucket, toPath, file as any, { upsert: true })
 
       // Deletar original
       await this.deleteFile(bucket, fromPath)

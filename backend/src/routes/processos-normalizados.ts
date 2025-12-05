@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
-import { validateRequest } from '../middleware/validation';
+import { validate } from '../middleware/validation';
 import { authenticateToken } from '../middleware/auth';
 import { MermaidGeneratorService } from '../services/mermaid-generator';
 
@@ -30,7 +30,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
             site: true,
           },
         },
-        processo_etapas: {
+        etapas: {
           orderBy: { ordem: 'asc' },
         },
       },
@@ -55,11 +55,11 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
             site: true,
           },
         },
-        processo_etapas: {
+        etapas: {
           orderBy: { ordem: 'asc' },
         },
         ativos: true,
-        dificuldades_operacionais: true,
+        dificuldades: true,
         workarounds: true,
         riscos: true,
       },
@@ -84,7 +84,7 @@ router.get('/:id/diagrama', authenticateToken, async (req, res, next) => {
     const processo = await prisma.processoNormalizado.findUnique({
       where: { id },
       include: {
-        processo_etapas: {
+        etapas: {
           orderBy: { ordem: 'asc' },
         },
       },
@@ -144,7 +144,7 @@ router.put(
         where: { id },
         data,
         include: {
-          processo_etapas: {
+          etapas: {
             orderBy: { ordem: 'asc' },
           },
         },

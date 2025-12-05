@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { authenticateToken } from '../middleware/auth';
-import { validateRequest } from '../middleware/validation';
+import { validate } from '../middleware/validation';
 import { PDFService } from '../services/pdf';
 import { AppError } from '../middleware/errorHandler';
 
@@ -16,7 +16,7 @@ const generateReportSchema = z.object({
 router.post(
   '/onboarding',
   authenticateToken,
-  validateRequest(generateReportSchema),
+  validate({ body: generateReportSchema }),
   async (req, res, next) => {
     try {
       const { projeto_id } = req.body;

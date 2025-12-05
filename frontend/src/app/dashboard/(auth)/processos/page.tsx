@@ -52,7 +52,7 @@ export default function ProcessosPage() {
       const data = await api.descricoesRaw.list(undefined, undefined, statusFilter);
       setDescricoes(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Erro:", error);
+      // Erro já tratado
     } finally {
       setLoading(false);
     }

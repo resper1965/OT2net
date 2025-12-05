@@ -1,7 +1,7 @@
 import { AnthropicService } from './anthropic'
-import prisma from '@/lib/prisma'
-import { logger } from '@/utils/logger'
-import { AppError } from '@/middleware/errorHandler'
+import { prisma } from '../lib/prisma'
+import { logger } from '../utils/logger'
+import { AppError } from '../middleware/errorHandler'
 
 /**
  * Serviço de vetorização e busca semântica
@@ -127,7 +127,7 @@ export class VectorService {
 
       // Criar análises de conformidade
       const analises = await Promise.all(
-        requisitosSimilares.map(async (requisito) => {
+        requisitosSimilares.map(async (requisito: any) => {
           // Determinar status baseado na similaridade
           let status = 'nao_atendido'
           if (requisito.similaridade >= 0.9) {

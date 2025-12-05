@@ -28,10 +28,9 @@ export default function NovoUsuarioPage() {
       await api.usuarios.create(formData);
       toast.success("Usuário criado com sucesso!");
       router.push("/dashboard/usuarios");
-    } catch (error: unknown) {
-      const err = error as Error;
-      toast.error("Erro ao criar usuário: " + (err.message || "Erro desconhecido"));
-      console.error("Erro:", error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+      toast.error("Erro ao criar usuário: " + errorMessage);
     } finally {
       setLoading(false);
     }

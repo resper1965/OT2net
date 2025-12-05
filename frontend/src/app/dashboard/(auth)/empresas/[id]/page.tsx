@@ -44,9 +44,9 @@ export default function EmpresaDetalhesPage() {
       const data = await api.empresas.get(id);
       setEmpresa(data);
       setError(null);
-    } catch (err: any) {
-      setError(err.message || "Erro ao carregar empresa");
-      console.error("Erro:", err);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar empresa";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

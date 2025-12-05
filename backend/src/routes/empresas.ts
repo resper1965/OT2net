@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
-import { validateRequest } from '../middleware/validation';
+import { validate } from '../middleware/validation';
 import { authenticateToken } from '../middleware/auth';
 
 const router = Router();
@@ -64,7 +64,7 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
 router.post(
   '/',
   authenticateToken,
-  validateRequest(createEmpresaSchema),
+  validate({ body: createEmpresaSchema }),
   async (req, res, next) => {
     try {
       const empresa = await prisma.empresa.create({
@@ -81,7 +81,7 @@ router.post(
 router.put(
   '/:id',
   authenticateToken,
-  validateRequest(updateEmpresaSchema),
+  validate({ body: updateEmpresaSchema }),
   async (req, res, next) => {
     try {
       const { id } = req.params;

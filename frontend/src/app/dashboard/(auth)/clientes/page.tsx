@@ -43,9 +43,9 @@ export default function ClientesPage() {
       const data = await api.clientes.list();
       setClientes(Array.isArray(data) ? data : []);
       setError(null);
-    } catch (err: any) {
-      setError(err.message || "Erro ao carregar clientes");
-      console.error("Erro:", err);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar clientes";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

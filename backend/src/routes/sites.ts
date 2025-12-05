@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
-import { validateRequest } from '../middleware/validation';
+import { validate } from '../middleware/validation';
 import { authenticateToken } from '../middleware/auth';
 
 const router = Router();
@@ -18,10 +18,10 @@ const createSiteSchema = z.object({
     cidade: z.string().optional(),
     estado: z.string().optional(),
   }).optional(),
-  infraestrutura_comunicacao: z.record(z.any()).optional(),
+  infraestrutura_comunicacao: z.record(z.string(), z.any()).optional(),
   sistemas_principais: z.array(z.string()).optional(),
-  responsaveis: z.record(z.any()).optional(),
-  seguranca_fisica: z.record(z.any()).optional(),
+  responsaveis: z.record(z.string(), z.any()).optional(),
+  seguranca_fisica: z.record(z.string(), z.any()).optional(),
 });
 
 const updateSiteSchema = createSiteSchema.partial();
@@ -78,7 +78,7 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
 router.post(
   '/',
   authenticateToken,
-  validateRequest(createSiteSchema),
+  validate({ body: createSiteSchema }),
   async (req, res, next) => {
     try {
       const site = await prisma.site.create({
@@ -95,7 +95,7 @@ router.post(
 router.put(
   '/:id',
   authenticateToken,
-  validateRequest(updateSiteSchema),
+  validate({ body: updateSiteSchema }),
   async (req, res, next) => {
     try {
       const { id } = req.params;

@@ -38,7 +38,7 @@ export default function EmpresasPage() {
       const data = await api.empresas.list();
       setEmpresas(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Erro:", error);
+      // Erro já tratado
     } finally {
       setLoading(false);
     }

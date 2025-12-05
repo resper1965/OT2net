@@ -16,7 +16,7 @@ interface DescricaoRaw {
   impacto?: string;
   dificuldades?: string;
   status_processamento: string;
-  resultado_processamento?: any;
+  resultado_processamento?: Record<string, unknown>;
   created_at: string;
 }
 
@@ -78,9 +78,9 @@ export default function RevisaoProcessoPage() {
         setProcessoNormalizado(descricao.resultado_processamento);
       }
       setError(null);
-    } catch (err: any) {
-      setError(err.message || "Erro ao carregar dados");
-      console.error("Erro:", err);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar dados";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -316,8 +316,8 @@ export default function RevisaoProcessoPage() {
                     Dependências
                   </h3>
                   <ul className="list-disc list-inside text-black dark:text-zinc-50">
-                    {processoNormalizado.dependencias.map((dep, idx) => (
-                      <li key={idx}>{dep}</li>
+                    {processoNormalizado.dependencias.map((dep) => (
+                      <li key={dep}>{dep}</li>
                     ))}
                   </ul>
                 </div>

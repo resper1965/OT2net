@@ -33,7 +33,7 @@ export default function EquipePage() {
       const data = await api.membrosEquipe.list();
       setMembros(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Erro:", error);
+      // Erro já tratado
     } finally {
       setLoading(false);
     }

@@ -39,10 +39,9 @@ export default function EditarProjetoPage() {
         progresso_geral: data.progresso_geral || 0,
         cliente_id: data.cliente_id || "",
       });
-    } catch (error: unknown) {
-      const err = error as Error;
-      toast.error(err.message || "Erro ao carregar projeto");
-      console.error("Erro:", error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro ao carregar projeto";
+      toast.error(errorMessage);
     } finally {
       setLoadingData(false);
     }
@@ -56,10 +55,9 @@ export default function EditarProjetoPage() {
       await api.projetos.update(id, formData);
       toast.success("Projeto atualizado com sucesso");
       router.push(`/dashboard/projetos/${id}`);
-    } catch (error: unknown) {
-      const err = error as Error;
-      toast.error(err.message || "Erro ao atualizar projeto");
-      console.error("Erro:", error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro ao atualizar projeto";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

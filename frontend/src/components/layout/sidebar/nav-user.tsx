@@ -17,7 +17,7 @@ import {
   useSidebar
 } from "@/components/ui/sidebar";
 import { LogOutIcon, UserCircle2Icon, Settings } from "lucide-react";
-import { DotsVerticalIcon } from "@radix-ui/react-icons";
+import { MoreVertical } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -72,7 +72,7 @@ export function NavUser() {
                 <span className="truncate font-medium">{userName || "Usuário"}</span>
                 <span className="text-muted-foreground truncate text-xs">{userEmail || ""}</span>
               </div>
-              <DotsVerticalIcon className="ml-auto size-4" />
+              <MoreVertical className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

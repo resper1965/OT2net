@@ -42,8 +42,8 @@ export default function Mermaid({ chart }: MermaidProps) {
         nodes: [element],
       })
       .catch((err) => {
-        console.error("Erro ao renderizar Mermaid:", err);
-        setError(err.message || "Erro ao renderizar diagrama");
+        const errorMessage = err instanceof Error ? err.message : "Erro ao renderizar diagrama";
+        setError(errorMessage);
       });
   }, [chart]);
 

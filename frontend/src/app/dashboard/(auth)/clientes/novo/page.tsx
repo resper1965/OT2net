@@ -45,10 +45,9 @@ export default function NovoClientePage() {
       await api.clientes.create(formData);
       toast.success("Cliente criado com sucesso");
       router.push("/dashboard/clientes");
-    } catch (error: unknown) {
-      const err = error as Error;
-      toast.error(err.message || "Erro ao criar cliente");
-      console.error("Erro:", error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro ao criar cliente";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -232,9 +231,9 @@ export default function NovoClientePage() {
               </button>
             </div>
             <div className="flex flex-wrap gap-2">
-              {formData.agencias_reguladoras.map((agencia, index) => (
+              {formData.agencias_reguladoras.map((agencia) => (
                 <span
-                  key={index}
+                  key={agencia}
                   className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm text-black dark:text-zinc-50 flex items-center gap-2"
                 >
                   {agencia}

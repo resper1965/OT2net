@@ -44,10 +44,9 @@ export default function EditarEmpresaPage() {
         status: data.status || "",
         cliente_id: data.cliente_id || "",
       });
-    } catch (error: unknown) {
-      const err = error as Error;
-      toast.error(err.message || "Erro ao carregar empresa");
-      console.error("Erro:", error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro ao carregar empresa";
+      toast.error(errorMessage);
     } finally {
       setLoadingData(false);
     }
@@ -61,10 +60,9 @@ export default function EditarEmpresaPage() {
       await api.empresas.update(id, formData);
       toast.success("Empresa atualizada com sucesso");
       router.push(`/dashboard/empresas/${id}`);
-    } catch (error: unknown) {
-      const err = error as Error;
-      toast.error(err.message || "Erro ao atualizar empresa");
-      console.error("Erro:", error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro ao atualizar empresa";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

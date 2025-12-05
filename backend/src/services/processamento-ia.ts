@@ -184,7 +184,7 @@ ${descricaoRaw.dificuldades ? `Dificuldades mencionadas: ${descricaoRaw.dificuld
         where: { id: descricaoRawId },
         data: {
           status_processamento: 'processado',
-          resultado_processamento: resultado as Prisma.InputJsonValue,
+          resultado_processamento: resultado as any,
           processado_por_ia: true,
         },
       })

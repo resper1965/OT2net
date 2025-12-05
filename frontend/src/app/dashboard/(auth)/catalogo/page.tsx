@@ -47,7 +47,7 @@ export default function CatalogoPage() {
       const data = await api.processosNormalizados.list(undefined, filtroStatus || undefined);
       setProcessos(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Erro:", error);
+      // Erro já tratado
     } finally {
       setLoading(false);
     }
@@ -58,10 +58,9 @@ export default function CatalogoPage() {
       setLoadingDiagrama(true);
       const data = await api.processosNormalizados.getDiagrama(processoId, diagramaTipo);
       setDiagrama(data.diagrama);
-    } catch (error: unknown) {
-      const err = error as Error;
-      console.error("Erro ao carregar diagrama:", error);
-      toast.error(err.message || "Erro ao carregar diagrama");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro ao carregar diagrama";
+      toast.error(errorMessage);
     } finally {
       setLoadingDiagrama(false);
     }

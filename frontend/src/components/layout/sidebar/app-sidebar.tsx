@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useIsTablet } from "@/hooks/use-mobile";
 
@@ -22,16 +22,11 @@ import Logo from "@/components/layout/logo";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
-  const { setOpen, setOpenMobile, isMobile } = useSidebar();
-  const isTablet = useIsTablet();
+  const { setOpenMobile, isMobile } = useSidebar();
 
   useEffect(() => {
     if (isMobile) setOpenMobile(false);
   }, [pathname, isMobile, setOpenMobile]);
-
-  useEffect(() => {
-    setOpen(!isTablet);
-  }, [isTablet, setOpen]);
 
   return (
     <Sidebar collapsible="icon" {...props}>

@@ -41,9 +41,9 @@ export default function UsuariosPage() {
       setLoading(true);
       const data = await api.usuarios.list();
       setUsuarios(Array.isArray(data) ? data : []);
-    } catch (error: any) {
-      console.error("Erro:", error);
-      if (error.message?.includes("403") || error.message?.includes("Acesso negado")) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+      if (errorMessage.includes("403") || errorMessage.includes("Acesso negado")) {
         toast.error("Acesso negado. Apenas administradores podem gerenciar usuários.");
         window.location.href = "/dashboard";
       } else {

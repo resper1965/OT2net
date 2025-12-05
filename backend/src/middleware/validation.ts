@@ -17,15 +17,15 @@ export function validate(schema: {
         req.body = schema.body.parse(req.body)
       }
       if (schema.query) {
-        req.query = schema.query.parse(req.query)
+        req.query = schema.query.parse(req.query) as any
       }
       if (schema.params) {
-        req.params = schema.params.parse(req.params)
+        req.params = schema.params.parse(req.params) as any
       }
       next()
     } catch (error) {
       if (error instanceof ZodError) {
-        const errors = error.errors.map((err) => ({
+        const errors = (error as any).errors.map((err: any) => ({
           path: err.path.join('.'),
           message: err.message,
         }))

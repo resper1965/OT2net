@@ -73,10 +73,9 @@ export default function EditarClientePage() {
         agencias_reguladoras: data.agencias_reguladoras || [],
         certificacoes: data.certificacoes || [],
       });
-    } catch (error: unknown) {
-      const err = error as Error;
-      toast.error(err.message || "Erro ao carregar cliente");
-      console.error("Erro:", error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro ao carregar cliente";
+      toast.error(errorMessage);
     } finally {
       setLoadingData(false);
     }
@@ -90,10 +89,9 @@ export default function EditarClientePage() {
       await api.clientes.update(id, formData);
       toast.success("Cliente atualizado com sucesso");
       router.push(`/dashboard/clientes/${id}`);
-    } catch (error: unknown) {
-      const err = error as Error;
-      toast.error(err.message || "Erro ao atualizar cliente");
-      console.error("Erro:", error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro ao atualizar cliente";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

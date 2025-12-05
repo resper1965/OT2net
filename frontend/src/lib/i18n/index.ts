@@ -21,7 +21,7 @@ export function t(key: TranslationKey, locale: string = "pt-BR"): string {
     if (value && typeof value === "object" && k in value) {
       value = value[k as keyof typeof value];
     } else {
-      console.warn(`Translation key not found: ${key} (locale: ${locale})`);
+      // Translation key not found - retorna a chave
       return key; // Retorna a chave se não encontrar a tradução
     }
   }

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
-import { validateRequest } from '../middleware/validation';
+import { validate } from '../middleware/validation';
 import { authenticateToken } from '../middleware/auth';
 
 const router = Router();
@@ -25,7 +25,7 @@ const createClienteSchema = z.object({
     responsavel: z.string().optional(),
   }).optional(),
   classificacao: z.string().optional(),
-  estrutura: z.record(z.any()).optional(),
+  estrutura: z.record(z.string(), z.any()).optional(),
   agencias_reguladoras: z.array(z.string()).optional(),
   certificacoes: z.array(z.string()).optional(),
 });
@@ -78,7 +78,7 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
 router.post(
   '/',
   authenticateToken,
-  validateRequest(createClienteSchema),
+  validate({ body: createClienteSchema }),
   async (req, res, next) => {
     try {
       const cliente = await prisma.cliente.create({
@@ -98,7 +98,7 @@ router.post(
 router.put(
   '/:id',
   authenticateToken,
-  validateRequest(updateClienteSchema),
+  validate({ body: updateClienteSchema }),
   async (req, res, next) => {
     try {
       const { id } = req.params;

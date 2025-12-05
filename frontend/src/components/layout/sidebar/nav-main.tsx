@@ -38,6 +38,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { usePermissions, type Resource, type PermissionAction } from "@/hooks/usePermissions";
 
 type NavGroup = {
   title: string;
@@ -52,6 +53,8 @@ type NavItem = {
   isDataBadge?: string;
   isNew?: boolean;
   newTab?: boolean;
+  requiredPermission?: { resource: Resource | string; action: PermissionAction };
+  requiredRoles?: string[];
   items?: NavItem;
 }[];
 
@@ -72,22 +75,26 @@ export const navItems: NavGroup[] = [
       {
         title: "Clientes",
         href: "/dashboard/clientes",
-        icon: Building2
+        icon: Building2,
+        requiredPermission: { resource: 'clientes', action: 'read' }
       },
       {
         title: "Empresas",
         href: "/dashboard/empresas",
-        icon: Factory
+        icon: Factory,
+        requiredPermission: { resource: 'empresas', action: 'read' }
       },
       {
-        title: "Sites",
+        title: "Localidades",
         href: "/dashboard/sites",
-        icon: MapPin
+        icon: MapPin,
+        requiredPermission: { resource: 'localidades', action: 'read' }
       },
       {
         title: "Projetos",
         href: "/dashboard/projetos",
-        icon: FolderKanban
+        icon: FolderKanban,
+        requiredPermission: { resource: 'projetos', action: 'read' }
       }
     ]
   },
@@ -95,18 +102,20 @@ export const navItems: NavGroup[] = [
     title: "Processos",
     items: [
       {
-        title: "Descrições Raw",
+        title: "Coleta de Processos",
         href: "/dashboard/processos",
         icon: Workflow,
+        requiredPermission: { resource: 'coleta-processos', action: 'read' },
         items: [
-          { title: "Listar Descrições", href: "/dashboard/processos" },
-          { title: "Nova Descrição", href: "/dashboard/processos/novo" }
+          { title: "Listar Coletas", href: "/dashboard/processos" },
+          { title: "Nova Coleta", href: "/dashboard/processos/novo" }
         ]
       },
       {
         title: "Catálogo de Processos",
         href: "/dashboard/catalogo",
-        icon: BookOpen
+        icon: BookOpen,
+        requiredPermission: { resource: 'catalogo', action: 'read' }
       }
     ]
   },
@@ -116,12 +125,14 @@ export const navItems: NavGroup[] = [
       {
         title: "Membros da Equipe",
         href: "/dashboard/equipe",
-        icon: Users
+        icon: Users,
+        requiredPermission: { resource: 'equipe', action: 'read' }
       },
       {
-        title: "Stakeholders",
+        title: "Partes Interessadas",
         href: "/dashboard/stakeholders",
-        icon: UserCog
+        icon: UserCog,
+        requiredPermission: { resource: 'partes-interessadas', action: 'read' }
       }
     ]
   },
@@ -131,12 +142,14 @@ export const navItems: NavGroup[] = [
       {
         title: "Usuários",
         href: "/dashboard/usuarios",
-        icon: Users
+        icon: Users,
+        requiredRoles: ['ADMIN', 'AUDITOR']
       },
       {
         title: "Configurações",
         href: "/dashboard/conta",
-        icon: Settings
+        icon: Settings,
+        requiredPermission: { resource: 'configuracoes', action: 'read' }
       }
     ]
   }
@@ -145,10 +158,52 @@ export const navItems: NavGroup[] = [
 export function NavMain() {
   const pathname = usePathname();
   const { isMobile } = useSidebar();
+  const { can, role } = usePermissions();
+  
+  /**
+   * Filtra itens do menu baseado nas permissões do usuário
+   */
+  const filterItemsByPermission = (items: NavItem): NavItem => {
+    return items.filter(item => {
+      // Se tem requiredRoles, verifica se o role do usuário está na lista
+      if (item.requiredRoles && role) {
+        if (!item.requiredRoles.includes(role)) {
+          return false;
+        }
+      }
+      
+      // Se tem requiredPermission, verifica permissão
+      if (item.requiredPermission) {
+        const { resource, action } = item.requiredPermission;
+        if (!can(resource, action)) {
+          return false;
+        }
+      }
+      
+      // Filtra sub-itens recursivamente
+      if (item.items) {
+        item.items = filterItemsByPermission(item.items);
+        // Se não sobrou nenhum sub-item, remove o item pai
+        if (item.items.length === 0) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  };
+  
+  /**
+   * Filtra grupos do menu, removendo grupos vazios
+   */
+  const filteredNavItems = navItems.map(group => ({
+    ...group,
+    items: filterItemsByPermission(group.items)
+  })).filter(group => group.items.length > 0);
 
   return (
     <>
-      {navItems.map((nav) => (
+      {filteredNavItems.map((nav) => (
         <SidebarGroup key={nav.title}>
           <SidebarGroupLabel>{nav.title}</SidebarGroupLabel>
           <SidebarGroupContent className="flex flex-col gap-2">

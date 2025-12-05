@@ -66,9 +66,9 @@ export default function Search() {
           {navItems.map((route) => (
             <React.Fragment key={route.title}>
               <CommandGroup heading={route.title}>
-                {route.items.map((item, key) => (
+                {route.items.map((item) => (
                   <CommandItem
-                    key={key}
+                    key={item.href}
                     onSelect={() => {
                       setOpen(false);
                       router.push(item.href);

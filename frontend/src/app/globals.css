@@ -80,40 +80,48 @@
 }
 
 .dark {
-  /* Gray scale baseado no Shadcn - usando tons de gray-900 a gray-50 */
-  --background: oklch(0.15 0 0);           /* gray-950 - fundo principal */
-  --foreground: oklch(0.98 0 0);           /* gray-50 - texto principal */
-  --card: oklch(0.20 0 0);                 /* gray-900 - cards */
-  --card-foreground: oklch(0.98 0 0);      /* gray-50 - texto em cards */
-  --popover: oklch(0.20 0 0);              /* gray-900 - popovers */
-  --popover-foreground: oklch(0.98 0 0);   /* gray-50 - texto em popovers */
-  --primary: oklch(0.70 0 0);              /* gray-300 - primário */
-  --primary-foreground: oklch(0.15 0 0);   /* gray-950 - texto primário */
-  --secondary: oklch(0.25 0 0);            /* gray-800 - secundário */
-  --secondary-foreground: oklch(0.98 0 0); /* gray-50 - texto secundário */
-  --muted: oklch(0.25 0 0);                /* gray-800 - muted */
-  --muted-foreground: oklch(0.65 0 0);     /* gray-400 - texto muted */
-  --accent: oklch(0.25 0 0);               /* gray-800 - accent */
-  --accent-foreground: oklch(0.98 0 0);    /* gray-50 - texto accent */
-  --destructive: oklch(0.65 0.22 25);      /* red-500 - destrutivo */
-  --border: oklch(0.30 0 0);               /* gray-700 - bordas */
-  --input: oklch(0.25 0 0);                /* gray-800 - inputs */
-  --ring: oklch(0.70 0 0);                 /* gray-300 - ring */
-  --chart-1: oklch(0.65 0.20 250);         /* blue-500 */
-  --chart-2: oklch(0.65 0.20 150);         /* green-500 */
-  --chart-3: oklch(0.65 0.20 50);          /* yellow-500 */
-  --chart-4: oklch(0.65 0.20 350);         /* purple-500 */
-  --chart-5: oklch(0.65 0.20 20);          /* red-500 */
-  --sidebar: oklch(0.20 0 0);              /* gray-900 - sidebar */
-  --sidebar-foreground: oklch(0.98 0 0);   /* gray-50 - texto sidebar */
-  --sidebar-primary: oklch(0.70 0 0);      /* gray-300 - primário sidebar */
-  --sidebar-primary-foreground: oklch(0.15 0 0); /* gray-950 - texto primário sidebar */
-  --sidebar-accent: oklch(0.25 0 0);       /* gray-800 - accent sidebar */
-  --sidebar-accent-foreground: oklch(0.98 0 0);  /* gray-50 - texto accent sidebar */
-  --sidebar-border: oklch(0.30 0 0);       /* gray-700 - borda sidebar */
-  --sidebar-ring: oklch(0.70 0 0);         /* gray-300 - ring sidebar */
-}
+  /* Ness Design System - Baseado em Slate 900 + Cyan #00ade8 */
+  --background: 15 23 42; /* slate-900 #0f172a - fundo principal */
+  --foreground: 248 250 252; /* slate-50 - texto principal */
+  --card: 30 41 59; /* slate-800 #1e293b - cards */
+  --card-foreground: 248 250 252; /* slate-50 - texto em cards */
+  --popover: 30 41 59; /* slate-800 - popovers */
+  --popover-foreground: 248 250 252; /* slate-50 - texto em popovers */
 
+  /* Cyan #00ade8 como cor primária de destaque */
+  --primary: 0 173 232; /* #00ade8 - cyan ness */
+  --primary-foreground: 255 255 255; /* branco - texto em primário */
+
+  --secondary: 51 65 85; /* slate-700 - secundário */
+  --secondary-foreground: 248 250 252; /* slate-50 - texto secundário */
+  --muted: 51 65 85; /* slate-700 - muted */
+  --muted-foreground: 148 163 184; /* slate-400 - texto muted */
+  --accent: 51 65 85; /* slate-700 - accent */
+  --accent-foreground: 0 173 232; /* cyan - texto accent */
+
+  --destructive: 239 68 68; /* red-500 - destrutivo */
+  --destructive-foreground: 255 255 255; /* branco */
+
+  --border: 51 65 85; /* slate-700 - bordas */
+  --input: 30 41 59; /* slate-800 - inputs */
+  --ring: 0 173 232; /* cyan - focus ring */
+
+  --chart-1: 0 173 232; /* cyan */
+  --chart-2: 34 197 94; /* green-500 */
+  --chart-3: 251 191 36; /* yellow-500 */
+  --chart-4: 168 85 247; /* purple-500 */
+  --chart-5: 239 68 68; /* red-500 */
+
+  /* Sidebar usando mesma escala */
+  --sidebar: 15 23 42; /* slate-900 - sidebar */
+  --sidebar-foreground: 248 250 252; /* slate-50 - texto sidebar */
+  --sidebar-primary: 0 173 232; /* cyan - primário sidebar */
+  --sidebar-primary-foreground: 255 255 255; /* branco */
+  --sidebar-accent: 30 41 59; /* slate-800 - accent sidebar */
+  --sidebar-accent-foreground: 148 163 184; /* slate-400 */
+  --sidebar-border: 51 65 85; /* slate-700 - borda sidebar */
+  --sidebar-ring: 0 173 232; /* cyan - ring sidebar */
+}
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -124,24 +132,24 @@
 
   /* Design System - Espaçamento Padronizado */
   :root {
-    --spacing-xs: 0.5rem;   /* 8px */
-    --spacing-sm: 0.75rem;  /* 12px */
-    --spacing-md: 1rem;     /* 16px */
-    --spacing-lg: 1.5rem;   /* 24px */
-    --spacing-xl: 2rem;     /* 32px */
-    --spacing-2xl: 3rem;    /* 48px */
-    --spacing-3xl: 4rem;    /* 64px */
+    --spacing-xs: 0.5rem; /* 8px */
+    --spacing-sm: 0.75rem; /* 12px */
+    --spacing-md: 1rem; /* 16px */
+    --spacing-lg: 1.5rem; /* 24px */
+    --spacing-xl: 2rem; /* 32px */
+    --spacing-2xl: 3rem; /* 48px */
+    --spacing-3xl: 4rem; /* 64px */
   }
 
   /* Design System - Escala Tipográfica */
   :root {
-    --font-size-xs: 0.75rem;    /* 12px - line-height: 1.5 */
-    --font-size-sm: 0.875rem;   /* 14px - line-height: 1.5 */
-    --font-size-base: 1rem;     /* 16px - line-height: 1.5 */
-    --font-size-lg: 1.125rem;   /* 18px - line-height: 1.4 */
-    --font-size-xl: 1.5rem;     /* 24px - line-height: 1.3 */
-    --font-size-2xl: 2rem;      /* 32px - line-height: 1.2 */
-    --font-size-3xl: 2.5rem;    /* 40px - line-height: 1.2 */
+    --font-size-xs: 0.75rem; /* 12px - line-height: 1.5 */
+    --font-size-sm: 0.875rem; /* 14px - line-height: 1.5 */
+    --font-size-base: 1rem; /* 16px - line-height: 1.5 */
+    --font-size-lg: 1.125rem; /* 18px - line-height: 1.4 */
+    --font-size-xl: 1.5rem; /* 24px - line-height: 1.3 */
+    --font-size-2xl: 2rem; /* 32px - line-height: 1.2 */
+    --font-size-3xl: 2.5rem; /* 40px - line-height: 1.2 */
   }
 
   /* Shadows padronizados */

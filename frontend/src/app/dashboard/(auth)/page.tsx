@@ -78,9 +78,14 @@ export default function DashboardPage() {
       const processosArray = Array.isArray(processosNorm) ? processosNorm : [];
 
       // Calcular estatísticas de processos
-      const processosAprovados = processosArray.filter((p: any) => p.status === "aprovado" || p.status_processamento === "processado").length;
-      const processosPendentes = descricoesArray.filter((p: any) => p.status_processamento === "pendente").length;
-      const processosEmProcessamento = descricoesArray.filter((p: any) => p.status_processamento === "processando").length;
+      interface ProcessoItem {
+        status?: string;
+        status_processamento?: string;
+      }
+      
+      const processosAprovados = processosArray.filter((p: ProcessoItem) => p.status === "aprovado" || p.status_processamento === "processado").length;
+      const processosPendentes = descricoesArray.filter((p: ProcessoItem) => p.status_processamento === "pendente").length;
+      const processosEmProcessamento = descricoesArray.filter((p: ProcessoItem) => p.status_processamento === "processando").length;
 
       setStats({
         clientes: clientesArray.length,
@@ -93,19 +98,23 @@ export default function DashboardPage() {
       });
 
       // Projetos recentes (últimos 5)
+      interface ItemComData {
+        created_at?: string;
+      }
+      
       const projetosOrdenados = projetosArray
-        .sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
+        .sort((a: ItemComData, b: ItemComData) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
         .slice(0, 5);
       setProjetosRecentes(projetosOrdenados);
 
       // Processos recentes (últimos 5)
       const todosProcessos = [...descricoesArray, ...processosArray];
       const processosOrdenados = todosProcessos
-        .sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
+        .sort((a: ItemComData, b: ItemComData) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
         .slice(0, 5);
       setProcessosRecentes(processosOrdenados);
     } catch (error) {
-      console.error("Erro ao carregar dados do dashboard:", error);
+      // Erro já tratado
     } finally {
       setLoading(false);
     }

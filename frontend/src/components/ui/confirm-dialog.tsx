@@ -33,7 +33,7 @@ export function ConfirmDialog({
       await onConfirm();
       onOpenChange(false);
     } catch (error) {
-      console.error("Erro ao confirmar:", error);
+      // Erro já tratado pelo callback
     } finally {
       setIsLoading(false);
     }

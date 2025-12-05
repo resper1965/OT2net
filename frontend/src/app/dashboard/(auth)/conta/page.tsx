@@ -72,7 +72,6 @@ export default function ContaPage() {
         email,
       });
     } catch (error) {
-      console.error("Erro ao carregar perfil:", error);
       toast.error("Erro ao carregar informações da conta");
     } finally {
       setLoading(false);

@@ -1,10 +1,13 @@
 # OT2net - Sistema de Gestão de Governança e Segurança de TO
 
-Plataforma PMO Inteligente para projetos de consultoria em Governança e Segurança de Tecnologia Operacional.
+Plataforma PMO Inteligente SaaS para gestão de projetos de consultoria em Governança e Segurança de Tecnologia Operacional.
+
+Solução multi-tenant para empresas de consultoria e seus clientes.
 
 ## 🚀 Tech Stack
 
 ### Frontend
+
 - **Next.js 14** (App Router)
 - **React 18** + **TypeScript**
 - **TailwindCSS** + **shadcn/ui**
@@ -12,6 +15,7 @@ Plataforma PMO Inteligente para projetos de consultoria em Governança e Seguran
 - **Ness Design System**
 
 ### Backend
+
 - **Express.js** + **TypeScript**
 - **Prisma ORM** (PostgreSQL)
 - **Supabase** (Auth, Storage, Realtime, PostgreSQL)
@@ -19,6 +23,7 @@ Plataforma PMO Inteligente para projetos de consultoria em Governança e Seguran
 - **Redis** (cache e jobs)
 
 ### Database
+
 - **PostgreSQL** (via Supabase)
 - **pgvector** (busca semântica)
 - **Row Level Security (RLS)**
@@ -103,15 +108,18 @@ npm run dev
 ```
 
 Acesse:
+
 - Frontend: http://localhost:3000
 - Backend: http://localhost:3001
 
 ## 📚 Documentação
 
 ### Quick Start
+
 - [Quick Start Guide](./docs/quick-start.md) - Comece aqui!
 
 ### Setup e Configuração
+
 - [Setup Completo](./docs/setup-complete.md) - Checklist final
 - [Variáveis de Ambiente](./docs/env-setup.md)
 - [Supabase Setup](./docs/supabase-setup.md)
@@ -119,15 +127,18 @@ Acesse:
 - [Docker Setup](./docs/docker-setup.md)
 
 ### Desenvolvimento
+
 - [Autenticação](./docs/authentication.md)
 - [Supabase Auto REST APIs](./docs/supabase-auto-rest-apis.md)
 - [Ness Design System](./docs/ness-design-system.md)
 - [pgvector Setup](./docs/pgvector-setup.md)
 
 ### Deploy
+
 - [Deploy Vercel](./docs/vercel-deployment.md)
 
 ### Outros
+
 - [Status do Projeto](./PROJECT-STATUS.md)
 - [Guia de Contribuição](./CONTRIBUTING.md)
 
@@ -176,6 +187,7 @@ OT2net/
 ## 📝 Scripts Úteis
 
 ### Frontend
+
 ```bash
 npm run dev          # Desenvolvimento
 npm run build        # Build produção
@@ -184,6 +196,7 @@ npm run format       # Formatter
 ```
 
 ### Backend
+
 ```bash
 npm run dev          # Desenvolvimento
 npm run build        # Build TypeScript
@@ -198,6 +211,7 @@ npm run prisma:seed      # Popular banco
 Veja [CONTRIBUTING.md](./CONTRIBUTING.md) para o guia completo de contribuição.
 
 Quick start:
+
 1. Crie uma branch: `git checkout -b feature/nova-feature`
 2. Commit: `git commit -m 'feat: adiciona nova feature'`
 3. Push: `git push origin feature/nova-feature`

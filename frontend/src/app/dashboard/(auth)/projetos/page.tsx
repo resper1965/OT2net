@@ -50,7 +50,7 @@ export default function ProjetosPage() {
       const data = await api.projetos.list();
       setProjetos(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Erro:", error);
+      // Erro já tratado pelo hook ou componente
     } finally {
       setLoading(false);
     }

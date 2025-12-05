@@ -50,10 +50,9 @@ export default function EditarUsuarioPage() {
         organizacao: data.organizacao || "",
         status: data.status || "ativo",
       });
-    } catch (error: unknown) {
-      const err = error as Error;
-      toast.error("Erro ao carregar usuário: " + (err.message || "Erro desconhecido"));
-      console.error("Erro:", error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+      toast.error("Erro ao carregar usuário: " + errorMessage);
     } finally {
       setLoadingData(false);
     }
@@ -67,10 +66,9 @@ export default function EditarUsuarioPage() {
       await api.usuarios.update(id, formData);
       toast.success("Usuário atualizado com sucesso!");
       router.push(`/dashboard/usuarios/${id}`);
-    } catch (error: unknown) {
-      const err = error as Error;
-      toast.error("Erro ao atualizar usuário: " + (err.message || "Erro desconhecido"));
-      console.error("Erro:", error);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+      toast.error("Erro ao atualizar usuário: " + errorMessage);
     } finally {
       setLoading(false);
     }

@@ -41,9 +41,9 @@ export default function ProjetoDetalhesPage() {
       const data = await api.projetos.get(id);
       setProjeto(data);
       setError(null);
-    } catch (err: any) {
-      setError(err.message || "Erro ao carregar projeto");
-      console.error("Erro:", err);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar projeto";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

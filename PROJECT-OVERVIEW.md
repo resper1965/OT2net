@@ -8,10 +8,10 @@
 
 ## 📋 Resumo Executivo
 
-O **OT2net** é um projeto de plataforma web administrativa inteligente para suportar a execução completa de projetos de consultoria em **Governança e Segurança de Tecnologia Operacional (TO)**. A plataforma utiliza IA (Claude API) para automatizar processamento de dados, análise e geração de documentação.
+O **OT2net** é uma **plataforma web SaaS** administrativa inteligente para suportar a execução completa de projetos de consultoria em **Governança e Segurança de Tecnologia Operacional (TO)**. A plataforma utiliza IA (Claude API) para automatizar processamento de dados, análise e geração de documentação.
 
-**Cliente**: Alupar/TBE  
-**Consultoria**: ness.
+**Modelo**: SaaS multi-tenant  
+**Público**: Empresas de consultoria e seus clientes
 
 ---
 
@@ -55,6 +55,7 @@ OT2net/
 ## ✅ O Que Já Foi Feito
 
 ### 1. Setup do Spec Kit
+
 - ✅ Estrutura de diretórios do Spec Kit criada
 - ✅ Constitution do projeto definida
 - ✅ Templates para specs, plans, tasks criados
@@ -62,6 +63,7 @@ OT2net/
 - ✅ Comandos do Cursor IDE criados
 
 ### 2. Especificação da Feature Principal
+
 - ✅ Feature `001-governanca-to-pmo` criada
 - ✅ Especificação completa com:
   - 6 User Stories priorizadas (P1 a P3)
@@ -71,6 +73,7 @@ OT2net/
   - Edge Cases documentados
 
 ### 3. Análises Técnicas
+
 - ✅ **Análise de Sinergia com Template**: Avaliação completa do template shadcn-ui-kit-dashboard
 - ✅ **Análise de Dashboards**: Detalhamento de dashboards de gestão de projetos e controle de usuários
 - ✅ **Análise de Componentes**: Kanban, File Management, Profile, Authentication, Error Pages, Settings, AI Chat v2, Todo List, Tasks, Calendar
@@ -83,16 +86,14 @@ OT2net/
 ### User Stories (Priorizadas)
 
 **P1 - Críticas (MVP):**
+
 1. **Cadastramento e Onboarding do Cliente** - Fase -1
 2. **Coleta de Descrições Operacionais Raw e Processamento Inteligente** - Fase 0
 3. **Catálogo de Processos AS-IS e Visualização** - Fase 0
 
-**P2 - Importantes:**
-4. **Assessment de Maturidade e Análise de Conformidade** - Fase 1
-5. **Plano Diretor com Iniciativas Priorizadas e Roadmap** - Fase 2
+**P2 - Importantes:** 4. **Assessment de Maturidade e Análise de Conformidade** - Fase 1 5. **Plano Diretor com Iniciativas Priorizadas e Roadmap** - Fase 2
 
-**P3 - Desejáveis:**
-6. **PMO e Acompanhamento de Execução** - Fase 3
+**P3 - Desejáveis:** 6. **PMO e Acompanhamento de Execução** - Fase 3
 
 ### Fases do Projeto
 
@@ -105,6 +106,7 @@ OT2net/
 ### Stack Tecnológica Planejada
 
 **Frontend:**
+
 - React 18
 - TypeScript
 - TailwindCSS
@@ -118,6 +120,7 @@ OT2net/
 - Vite ou Next.js
 
 **Backend:**
+
 - Node.js (LTS)
 - Express.js
 - TypeScript
@@ -130,10 +133,12 @@ OT2net/
 - Winston/Pino (logging)
 
 **Database:**
+
 - PostgreSQL 14+
 - Extensões: uuid-ossp, pg_trgm, pg-pool
 
 **Infraestrutura:**
+
 - Docker, Docker Compose
 - CI/CD (GitHub Actions/GitLab CI)
 - Cloud: AWS/Azure/GCP/Digital Ocean
@@ -146,11 +151,13 @@ OT2net/
 **Template Escolhido**: shadcn-ui-kit-dashboard (bundui)
 
 **Sinergia**: ✅ **ALTA**
+
 - Stack 100% compatível (React, TypeScript, TailwindCSS, shadcn/ui)
 - Componentes prontos para dashboards, CRUD, formulários
 - Redução estimada de 40-50% no tempo de desenvolvimento
 
 **Componentes Identificados para Uso:**
+
 - ✅ Dashboard de Gestão de Projetos
 - ✅ Dashboard de Controle de Usuários
 - ✅ Kanban Board
@@ -164,6 +171,7 @@ OT2net/
 - ✅ Tasks
 
 **Componentes que Precisam Desenvolvimento Customizado:**
+
 - 🔧 Sistema de Questionários
 - 🔧 Interface de Revisão Lado-a-Lado (IA)
 - 🔧 Roadmap Gantt Interativo
@@ -176,7 +184,9 @@ OT2net/
 ## 📝 Documentação Criada
 
 ### 1. `specs/001-governanca-to-pmo/spec.md`
+
 Especificação completa da feature principal com:
+
 - User Stories detalhadas
 - Functional Requirements
 - Entidades do modelo de dados
@@ -184,14 +194,18 @@ Especificação completa da feature principal com:
 - Edge Cases
 
 ### 2. `specs/001-governanca-to-pmo/template-synergy-analysis.md`
+
 Análise de compatibilidade e sinergia com o template shadcn-ui-kit-dashboard:
+
 - Compatibilidade de stack
 - Componentes reutilizáveis
 - Componentes que precisam customização
 - Plano de adoção em 4 fases
 
 ### 3. `specs/001-governanca-to-pmo/dashboard-detailed-analysis.md`
+
 Análise detalhada de dashboards:
+
 - Dashboard de Gestão de Projetos (métricas, gráficos, lista de iniciativas)
 - Dashboard de Controle de Usuários (lista, estatísticas, perfil, permissões)
 - Dashboard de Conformidade
@@ -199,7 +213,9 @@ Análise detalhada de dashboards:
 - Estrutura de dados e endpoints de API
 
 ### 4. `specs/001-governanca-to-pmo/additional-components-analysis.md`
+
 Análise de componentes adicionais:
+
 - Kanban (iniciativas, revisão, exceções)
 - File Management (organização hierárquica)
 - Profile (perfil completo)
@@ -210,7 +226,9 @@ Análise de componentes adicionais:
 - Todo List, Tasks, Calendar
 
 ### 5. `specs/001-governanca-to-pmo/questionarios-detailed-plan.md`
+
 Planejamento completo do sistema de questionários:
+
 - Arquitetura (Frontend + Backend)
 - Página de criação/edição (4 abas)
 - 10 tipos de questões
@@ -224,12 +242,15 @@ Planejamento completo do sistema de questionários:
 ## 🚀 Próximos Passos
 
 ### Imediatos (Próxima Sessão)
+
 1. **Revisar e Validar Especificações**
+
    - Revisar `spec.md` com stakeholders
    - Validar user stories e requirements
    - Ajustar prioridades se necessário
 
 2. **Criar Plano Técnico**
+
    - Executar `/speckit.plan` para gerar `plan.md`
    - Definir arquitetura técnica detalhada
    - Escolher stack final (Vite vs Next.js)
@@ -241,7 +262,9 @@ Planejamento completo do sistema de questionários:
    - Estimar esforço
 
 ### Curto Prazo (1-2 semanas)
+
 4. **Setup do Projeto**
+
    - Inicializar repositório Git (se ainda não feito)
    - Setup do template shadcn-ui-kit-dashboard
    - Configurar ambiente de desenvolvimento
@@ -254,7 +277,9 @@ Planejamento completo do sistema de questionários:
    - Geração de Relatório de Onboarding (PDF)
 
 ### Médio Prazo (3-8 semanas)
+
 6. **Implementação da Fase 0 (Descoberta)**
+
    - Formulário de coleta de descrições raw
    - Integração com Claude API para processamento
    - Interface de revisão lado-a-lado
@@ -262,6 +287,7 @@ Planejamento completo do sistema de questionários:
    - Catálogo de processos AS-IS
 
 7. **Sistema de Questionários**
+
    - Criador de questionários
    - Interface de preenchimento
    - Dashboard de resultados
@@ -274,7 +300,9 @@ Planejamento completo do sistema de questionários:
    - Roadmap Gantt
 
 ### Longo Prazo (9+ semanas)
+
 9. **Fases 1, 2 e 3**
+
    - Assessment de maturidade
    - Plano Diretor
    - PMO e execução
@@ -288,16 +316,16 @@ Planejamento completo do sistema de questionários:
 
 ## 📈 Status por Área
 
-| Área | Status | Progresso | Observações |
-|------|--------|-----------|-------------|
-| **Especificação** | ✅ Completo | 100% | Spec completa, análises detalhadas |
-| **Planejamento Técnico** | ⏳ Pendente | 0% | Aguardando `/speckit.plan` |
-| **Breakdown de Tarefas** | ⏳ Pendente | 0% | Aguardando `/speckit.tasks` |
-| **Setup do Projeto** | ⏳ Pendente | 0% | Aguardando início da implementação |
-| **Frontend** | ⏳ Pendente | 0% | Template escolhido, aguardando setup |
-| **Backend** | ⏳ Pendente | 0% | Stack definida, aguardando implementação |
-| **Database** | ⏳ Pendente | 0% | Modelo de dados definido, aguardando schema |
-| **Integração IA** | ⏳ Pendente | 0% | Claude API definida, aguardando implementação |
+| Área                     | Status      | Progresso | Observações                                   |
+| ------------------------ | ----------- | --------- | --------------------------------------------- |
+| **Especificação**        | ✅ Completo | 100%      | Spec completa, análises detalhadas            |
+| **Planejamento Técnico** | ⏳ Pendente | 0%        | Aguardando `/speckit.plan`                    |
+| **Breakdown de Tarefas** | ⏳ Pendente | 0%        | Aguardando `/speckit.tasks`                   |
+| **Setup do Projeto**     | ⏳ Pendente | 0%        | Aguardando início da implementação            |
+| **Frontend**             | ⏳ Pendente | 0%        | Template escolhido, aguardando setup          |
+| **Backend**              | ⏳ Pendente | 0%        | Stack definida, aguardando implementação      |
+| **Database**             | ⏳ Pendente | 0%        | Modelo de dados definido, aguardando schema   |
+| **Integração IA**        | ⏳ Pendente | 0%        | Claude API definida, aguardando implementação |
 
 ---
 
@@ -306,16 +334,19 @@ Planejamento completo do sistema de questionários:
 ✅ **Decisões Tomadas:**
 
 1. **Framework Frontend**: ✅ **Next.js**
+
    - Aproveita melhor o template shadcn-ui-kit-dashboard
    - SSR e otimizações nativas
    - API Routes integradas
 
 2. **ORM**: ✅ **Prisma**
+
    - Type-safe, migrations automáticas
    - Melhor DX (Developer Experience)
    - Geração automática de tipos TypeScript
 
 3. **Estado Global**: ✅ **React Context**
+
    - Nativo do React
    - Simples e suficiente para o escopo inicial
    - Pode migrar para Zustand se necessário no futuro
@@ -330,6 +361,7 @@ Planejamento completo do sistema de questionários:
 ## 📚 Documentação de Referência
 
 ### Frameworks e Compliance
+
 - **ANEEL 964/21**: Resolução Normativa sobre segurança cibernética
 - **ONS RO-CB.BR.01**: Requisitos operacionais
 - **CIS Controls v8.1**: Controles de segurança
@@ -337,6 +369,7 @@ Planejamento completo do sistema de questionários:
 - **NIST SP 800-82**: Guia de segurança para sistemas de controle industrial
 
 ### Templates e Bibliotecas
+
 - **shadcn-ui-kit-dashboard**: Template base escolhido
 - **shadcn/ui**: Biblioteca de componentes
 - **Mermaid.js**: Geração de diagramas
@@ -362,16 +395,19 @@ O projeto utiliza **Spec-Driven Development** com o Spec Kit do GitHub:
 ## 🎨 Design System
 
 **Cores:**
+
 - Tema escuro primário (slate-950 a slate-900)
 - Accent color: cyan da ness (#00ade8)
 - Paleta Slate da TailwindCSS
 
 **Tipografia:**
+
 - **Montserrat** (títulos) - Medium
 - **Inter** (corpo)
 - Logo "ness" com ponto "." em cyan (#00ade8)
 
 **Componentes:**
+
 - Base: shadcn/ui
 - Customizações: Tema escuro, paleta específica
 
@@ -391,12 +427,14 @@ O projeto utiliza **Spec-Driven Development** com o Spec Kit do GitHub:
 ## 🚨 Riscos e Dependências
 
 ### Riscos Identificados
+
 1. **Complexidade de Relacionamentos**: Muitas entidades com relacionamentos complexos
 2. **Performance com Grandes Volumes**: Muitos processos, ativos, iniciativas
 3. **Processamento Assíncrono de IA**: Pode demorar, precisa feedback em tempo real
 4. **Custos de IA**: Pode exceder orçamento se não controlado
 
 ### Dependências Externas
+
 - **Claude API**: Essencial para processamento inteligente
 - **Template shadcn-ui-kit-dashboard**: Base do frontend
 - **PostgreSQL**: Banco de dados principal
@@ -433,4 +471,3 @@ O projeto utiliza **Spec-Driven Development** com o Spec Kit do GitHub:
 
 **Última Atualização**: 2025-01-27  
 **Próxima Revisão**: Após geração do `plan.md` e `tasks.md`
-

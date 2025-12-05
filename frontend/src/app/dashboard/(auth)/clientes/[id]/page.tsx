@@ -13,10 +13,22 @@ interface Cliente {
   id: string;
   razao_social: string;
   cnpj: string;
-  endereco?: any;
-  contatos?: any;
+  endereco?: {
+    logradouro?: string;
+    numero?: string;
+    complemento?: string;
+    bairro?: string;
+    cidade?: string;
+    estado?: string;
+    cep?: string;
+  };
+  contatos?: {
+    telefone?: string;
+    email?: string;
+    responsavel?: string;
+  };
   classificacao?: string;
-  estrutura?: any;
+  estrutura?: Record<string, unknown>;
   agencias_reguladoras?: string[];
   certificacoes?: string[];
   created_at: string;
@@ -48,9 +60,9 @@ export default function ClienteDetalhesPage() {
       setCliente(data);
       setTitle(data.razao_social || "Cliente");
       setError(null);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Erro ao carregar cliente");
-      console.error("Erro:", err);
+      // Erro já tratado
     } finally {
       setLoading(false);
     }
@@ -225,9 +237,9 @@ export default function ClienteDetalhesPage() {
                 Agências Reguladoras
               </h2>
               <div className="flex flex-wrap gap-2">
-                {cliente.agencias_reguladoras.map((agencia, index) => (
+                {cliente.agencias_reguladoras.map((agencia) => (
                   <span
-                    key={index}
+                    key={agencia}
                     className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm text-black dark:text-zinc-50"
                   >
                     {agencia}
@@ -243,9 +255,9 @@ export default function ClienteDetalhesPage() {
                 Certificações
               </h2>
               <div className="flex flex-wrap gap-2">
-                {cliente.certificacoes.map((cert, index) => (
+                {cliente.certificacoes.map((cert) => (
                   <span
-                    key={index}
+                    key={cert}
                     className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm text-black dark:text-zinc-50"
                   >
                     {cert}

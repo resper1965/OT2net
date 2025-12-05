@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
-import { validateRequest } from '../middleware/validation';
+import { validate } from '../middleware/validation';
 import { authenticateToken } from '../middleware/auth';
 
 const router = Router();
@@ -75,7 +75,7 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
 router.post(
   '/',
   authenticateToken,
-  validateRequest(createStakeholderSchema),
+  validate({ body: createStakeholderSchema }),
   async (req, res, next) => {
     try {
       const stakeholder = await prisma.stakeholder.create({
@@ -92,7 +92,7 @@ router.post(
 router.put(
   '/:id',
   authenticateToken,
-  validateRequest(updateStakeholderSchema),
+  validate({ body: updateStakeholderSchema }),
   async (req, res, next) => {
     try {
       const { id } = req.params;

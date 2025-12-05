@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
-import { validateRequest } from '../middleware/validation';
+import { validate } from '../middleware/validation';
 import { authenticateToken } from '../middleware/auth';
 import { ProcessamentoIAService } from '../services/processamento-ia';
 
@@ -74,7 +74,7 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
 router.post(
   '/',
   authenticateToken,
-  validateRequest(createDescricaoRawSchema),
+  validate({ body: createDescricaoRawSchema }),
   async (req, res, next) => {
     try {
       const descricao = await prisma.descricaoOperacionalRaw.create({
@@ -91,7 +91,7 @@ router.post(
 router.put(
   '/:id',
   authenticateToken,
-  validateRequest(updateDescricaoRawSchema),
+  validate({ body: updateDescricaoRawSchema }),
   async (req, res, next) => {
     try {
       const { id } = req.params;

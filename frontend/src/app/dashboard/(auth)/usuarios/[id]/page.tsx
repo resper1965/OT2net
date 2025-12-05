@@ -46,9 +46,9 @@ export default function UsuarioDetalhesPage() {
       const data = await api.usuarios.get(id);
       setUsuario(data);
       setError(null);
-    } catch (err: any) {
-      setError(err.message || "Erro ao carregar usuário");
-      console.error("Erro:", err);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar usuário";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

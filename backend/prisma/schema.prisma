@@ -34,6 +34,7 @@ model Cliente {
 
   empresas            Empresa[]
   projetos            Projeto[]
+  usuarios            Usuario[]
 
   @@index([cnpj])
   @@index([created_at])
@@ -428,23 +429,35 @@ model Iniciativa {
 // Usuários e Autenticação
 // ============================================
 
+// Enum de Roles de Usuário
+enum UserRole {
+  ADMIN
+  GERENTE_PROJETO
+  CONSULTOR
+  CLIENTE
+  AUDITOR
+}
+
 model Usuario {
   id              String    @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
   supabase_user_id String?  @unique @db.Uuid
   nome            String    @db.Text
   email           String    @unique @db.Text
-  perfil          String?   @default("Consultor") @db.Text
+  role            UserRole  @default(CONSULTOR)
   organizacao     String?   @db.Text
+  cliente_id      String?   @db.Uuid
   status          String?   @default("ativo") @db.Text
   ultimo_acesso   DateTime? @db.Timestamptz(6)
   created_at      DateTime? @default(now()) @db.Timestamptz(6)
   updated_at      DateTime? @default(now()) @db.Timestamptz(6)
 
+  cliente         Cliente?  @relation(fields: [cliente_id], references: [id], onDelete: SetNull)
   permissoes      Permissao[]
 
   @@index([email])
   @@index([supabase_user_id])
-  @@index([perfil])
+  @@index([role])
+  @@index([cliente_id])
   @@index([status])
   @@map("usuarios")
 }
