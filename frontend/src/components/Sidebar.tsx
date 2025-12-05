@@ -33,9 +33,23 @@ interface MenuItem {
   badge?: number;
 }
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean;
+  onToggle?: () => void;
+}
+
+export function Sidebar({ isOpen: controlledIsOpen, onToggle }: SidebarProps = {}) {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenMobile, setIsOpenMobile] = useState(false);
+  
+  // Usar controlled se fornecido, senão usar state interno para mobile
+  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : isOpenMobile;
+  
+  const handleCloseMobile = () => {
+    if (!controlledIsOpen) {
+      setIsOpenMobile(false);
+    }
+  };
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
@@ -159,40 +173,35 @@ export function Sidebar() {
     window.location.href = "/login";
   }
 
+  const handleToggle = () => {
+    if (onToggle) {
+      onToggle();
+    } else {
+      setIsOpenMobile(!isOpenMobile);
+    }
+  };
+
   return (
     <>
-      {/* Mobile menu button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm"
-        aria-label="Toggle menu"
-      >
-        {isOpen ? (
-          <X className="h-6 w-6 text-zinc-900 dark:text-zinc-50" />
-        ) : (
-          <Menu className="h-6 w-6 text-zinc-900 dark:text-zinc-50" />
-        )}
-      </button>
-
       {/* Overlay for mobile */}
       {isOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black/50 z-40"
-          onClick={() => setIsOpen(false)}
+          onClick={handleToggle}
         />
       )}
 
       {/* Sidebar */}
       <aside
         className={clsx(
-          "fixed top-0 left-0 h-full w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed lg:static top-0 left-0 h-full lg:h-screen w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 z-40 transform transition-transform duration-300 ease-in-out",
+          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
-            <Link href="/dashboard" onClick={() => setIsOpen(false)}>
+            <Link href="/dashboard" onClick={handleCloseMobile}>
               <NessLogo variant="default" />
             </Link>
           </div>
@@ -207,7 +216,7 @@ export function Sidebar() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      onClick={() => setIsOpen(false)}
+                      onClick={handleCloseMobile}
                       className={clsx(
                         "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                         isActive
@@ -265,7 +274,7 @@ export function Sidebar() {
                 <div className="grid grid-cols-2 gap-2">
                   <Link
                     href="/dashboard/conta"
-                    onClick={() => setIsOpen(false)}
+                    onClick={handleCloseMobile}
                     className="flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                   >
                     <Settings className="h-4 w-4" />
