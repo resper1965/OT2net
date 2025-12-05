@@ -139,7 +139,6 @@ export default function ClientesPage() {
               </Link>
             </div>
           </div>
-        </div>
 
         {/* Filtros e Busca */}
           <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4 mb-6">
