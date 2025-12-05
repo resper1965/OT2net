@@ -120,7 +120,7 @@ export default function ProcessosPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">

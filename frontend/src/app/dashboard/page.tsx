@@ -187,7 +187,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen">
+      <div>
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-12">
             <p className="text-zinc-600 dark:text-zinc-400">Carregando dashboard...</p>
@@ -198,7 +198,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">

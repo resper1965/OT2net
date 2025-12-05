@@ -102,7 +102,7 @@ export default function ContaPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen">
+      <div>
         <div className="max-w-4xl mx-auto">
           <div className="text-center py-12">
             <p className="text-zinc-600 dark:text-zinc-400">Carregando informações da conta...</p>
@@ -114,7 +114,7 @@ export default function ContaPage() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen">
+      <div>
         <div className="max-w-4xl mx-auto">
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
             <p className="text-red-800 dark:text-red-200">
@@ -127,7 +127,7 @@ export default function ContaPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">

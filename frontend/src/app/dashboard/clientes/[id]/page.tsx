@@ -66,7 +66,7 @@ export default function ClienteDetalhesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
+      <div>
         <div className="max-w-4xl mx-auto">
           <div className="text-center py-12">
             <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
@@ -78,7 +78,7 @@ export default function ClienteDetalhesPage() {
 
   if (error || !cliente) {
     return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
+      <div>
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
             <Link

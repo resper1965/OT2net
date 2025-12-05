@@ -194,7 +194,7 @@ export function Sidebar({ isOpen: controlledIsOpen, onToggle }: SidebarProps = {
       {/* Sidebar */}
       <aside
         className={clsx(
-          "fixed lg:static top-0 left-0 h-full lg:h-screen w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 z-40 transform transition-transform duration-300 ease-in-out",
+          "fixed lg:static top-0 left-0 h-full lg:h-full w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 z-40 transform transition-transform duration-300 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >

@@ -82,7 +82,7 @@ export default function UsuarioDetalhesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen">
+      <div>
         <div className="max-w-4xl mx-auto">
           <div className="text-center py-12">
             <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
@@ -94,7 +94,7 @@ export default function UsuarioDetalhesPage() {
 
   if (error || !usuario) {
     return (
-      <div className="min-h-screen">
+      <div>
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
             <Link
@@ -113,7 +113,7 @@ export default function UsuarioDetalhesPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Link

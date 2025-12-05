@@ -38,7 +38,7 @@ export default function NovoUsuarioPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Link
