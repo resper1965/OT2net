@@ -7,6 +7,9 @@ import { useToast } from "@/lib/hooks/useToast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SkeletonTable } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
+import { cn } from "@/lib/utils";
 import { Building2, Search, Filter, Plus, Download } from "lucide-react";
 
 interface Cliente {
@@ -102,7 +105,7 @@ export default function ClientesPage() {
 
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4">
+            <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-md transition-shadow p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Total de Clientes</p>
@@ -171,23 +174,32 @@ export default function ClientesPage() {
         {/* Content Card */}
         <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
+            <div className="p-6">
+              <SkeletonTable rows={5} cols={4} />
             </div>
           ) : filteredClientes.length === 0 ? (
-            <div className="text-center py-12 p-6">
-              <Building2 className="h-12 w-12 text-zinc-400 mx-auto mb-4" />
-              <p className="text-zinc-600 dark:text-zinc-400 mb-4">
-                {searchQuery
-                  ? "Nenhum cliente encontrado com os filtros aplicados"
-                  : "Nenhum cliente cadastrado"}
-              </p>
-              {!searchQuery && (
-                <Link href="/dashboard/clientes/novo">
-                  <Button variant="primary">Cadastrar primeiro cliente</Button>
-                </Link>
-              )}
-            </div>
+            <EmptyState
+              icon={Building2}
+              title={
+                searchQuery
+                  ? "Nenhum cliente encontrado"
+                  : "Nenhum cliente cadastrado"
+              }
+              description={
+                searchQuery
+                  ? "Tente ajustar os filtros de busca"
+                  : "Comece criando seu primeiro cliente"
+              }
+              action={
+                !searchQuery
+                  ? {
+                      label: "Criar Primeiro Cliente",
+                      onClick: () => (window.location.href = "/dashboard/clientes/novo"),
+                      variant: "primary",
+                    }
+                  : undefined
+              }
+            />
           ) : (
             <>
               <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
@@ -214,8 +226,14 @@ export default function ClientesPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
-                    {filteredClientes.map((cliente) => (
-                      <tr key={cliente.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                    {filteredClientes.map((cliente, index) => (
+                      <tr
+                        key={cliente.id}
+                        className={cn(
+                          "hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors",
+                          index % 2 === 0 && "bg-zinc-50/30 dark:bg-zinc-900/30"
+                        )}
+                      >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Link
                             href={`/dashboard/clientes/${cliente.id}`}

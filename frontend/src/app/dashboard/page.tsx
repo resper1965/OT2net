@@ -5,6 +5,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { Building2, Users, FolderKanban, FileText, TrendingUp, AlertCircle, CheckCircle2, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton, SkeletonCard } from "@/components/ui/skeleton";
 
 interface DashboardStats {
   clientes: number;
@@ -189,8 +190,14 @@ export default function DashboardPage() {
     return (
       <div>
         <div className="max-w-7xl mx-auto">
-          <div className="text-center py-12">
-            <p className="text-zinc-600 dark:text-zinc-400">Carregando dashboard...</p>
+          <div className="mb-8">
+            <Skeleton className="h-10 w-64 mb-2" />
+            <Skeleton className="h-5 w-96" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[1, 2, 3, 4].map((i) => (
+              <SkeletonCard key={i} />
+            ))}
           </div>
         </div>
       </div>
@@ -216,7 +223,7 @@ export default function DashboardPage() {
               <Link
                 key={kpi.href}
                 href={kpi.href}
-                className="block p-6 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all hover:shadow-md"
+                className="block p-6 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-md transition-all"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className={`p-3 rounded-lg ${kpi.bgColor}`}>
@@ -241,7 +248,7 @@ export default function DashboardPage() {
               return (
                 <div
                   key={status.title}
-                  className="p-6 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800"
+                  className="p-6 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm"
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <Icon className={`h-5 w-5 ${status.color}`} />
@@ -259,7 +266,7 @@ export default function DashboardPage() {
         {/* Grid de Conteúdo Principal */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Projetos Recentes */}
-          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-black dark:text-zinc-50">
                 Projetos Recentes
@@ -323,7 +330,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Processos Recentes */}
-          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-black dark:text-zinc-50">
                 Processos Recentes
