@@ -253,4 +253,24 @@ export const api = {
         r.json()
       ),
   },
+
+  // Usuários (apenas admin)
+  usuarios: {
+    list: () => fetchWithAuth("/api/usuarios").then((r) => r.json()),
+    get: (id: string) => fetchWithAuth(`/api/usuarios/${id}`).then((r) => r.json()),
+    create: (data: Record<string, unknown>) =>
+      fetchWithAuth("/api/usuarios", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }).then((r) => r.json()),
+    update: (id: string, data: Record<string, unknown>) =>
+      fetchWithAuth(`/api/usuarios/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }).then((r) => r.json()),
+    delete: (id: string) =>
+      fetchWithAuth(`/api/usuarios/${id}`, {
+        method: "DELETE",
+      }).then((r) => r.json()),
+  },
 };

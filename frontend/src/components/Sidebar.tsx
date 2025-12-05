@@ -17,6 +17,9 @@ import {
   X,
   LogOut,
   ChevronRight,
+  User,
+  Settings,
+  Shield,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import NessLogo from "./NessLogo";
@@ -34,6 +37,9 @@ export function Sidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     async function getUser() {
@@ -42,9 +48,39 @@ export function Sidebar() {
       } = await supabase.auth.getSession();
       if (session) {
         setUserEmail(session.user.email || null);
+        setUserName(session.user.user_metadata?.full_name || session.user.user_metadata?.name || null);
+        setUserAvatar(session.user.user_metadata?.avatar_url || null);
+        
+        // Verificar se é admin
+        const perfil = session.user.user_metadata?.perfil;
+        setIsAdmin(perfil === "admin");
       }
     }
     getUser();
+
+    // Escutar mudanças na sessão
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setUserEmail(session.user.email || null);
+        setUserName(session.user.user_metadata?.full_name || session.user.user_metadata?.name || null);
+        setUserAvatar(session.user.user_metadata?.avatar_url || null);
+        
+        // Verificar se é admin
+        const perfil = session.user.user_metadata?.perfil;
+        setIsAdmin(perfil === "admin");
+      } else {
+        setUserEmail(null);
+        setUserName(null);
+        setUserAvatar(null);
+        setIsAdmin(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const menuItems: MenuItem[] = [
@@ -94,6 +130,29 @@ export function Sidebar() {
       icon: BookOpen,
     },
   ];
+
+  // Adicionar menu de usuários apenas para admins
+  if (isAdmin) {
+    menuItems.push({
+      title: "Usuários",
+      href: "/dashboard/usuarios",
+      icon: Shield,
+    });
+  }
+
+  function getInitials(name: string | null, email: string | null): string {
+    if (name) {
+      const parts = name.trim().split(/\s+/);
+      if (parts.length === 1) {
+        return parts[0].substring(0, 2).toUpperCase();
+      }
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    if (email) {
+      return email.substring(0, 2).toUpperCase();
+    }
+    return "U";
+  }
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -175,22 +234,58 @@ export function Sidebar() {
 
           {/* User info, theme toggle and logout */}
           <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 space-y-3">
+            {/* User Grid */}
             {userEmail && (
-              <div className="px-3 py-2 text-xs text-zinc-600 dark:text-zinc-400 truncate">
-                {userEmail}
+              <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-3 space-y-2">
+                <div className="flex items-center gap-3">
+                  {userAvatar ? (
+                    <img
+                      src={userAvatar}
+                      alt={userName || userEmail}
+                      className="h-10 w-10 rounded-full object-cover border-2 border-zinc-200 dark:border-zinc-700"
+                    />
+                  ) : (
+                    <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center border-2 border-zinc-200 dark:border-zinc-700">
+                      <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                        {getInitials(userName, userEmail)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    {userName && (
+                      <p className="text-sm font-medium text-black dark:text-zinc-50 truncate">
+                        {userName}
+                      </p>
+                    )}
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 truncate">
+                      {userEmail}
+                    </p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    href="/dashboard/conta"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                  >
+                    <Settings className="h-4 w-4" />
+                    <span>Conta</span>
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs font-medium text-red-600 dark:text-red-400 bg-white dark:bg-zinc-900 border border-red-200 dark:border-red-900/30 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Sair</span>
+                  </button>
+                </div>
               </div>
             )}
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs text-zinc-600 dark:text-zinc-400 px-3">Tema</span>
+            {/* Theme Toggle */}
+            <div className="flex items-center justify-between gap-2 px-1">
+              <span className="text-xs text-zinc-600 dark:text-zinc-400">Tema</span>
               <ThemeToggle />
             </div>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
-            >
-              <LogOut className="h-5 w-5" />
-              <span>Sair</span>
-            </button>
           </div>
         </div>
       </aside>
