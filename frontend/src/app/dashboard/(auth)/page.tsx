@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { Building2, Users, FolderKanban, FileText, TrendingUp, AlertCircle, CheckCircle2, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton, SkeletonCard } from "@/components/ui/skeleton";
+import { usePageTitle } from "@/contexts/PageTitleContext";
 
 interface DashboardStats {
   clientes: number;
@@ -35,6 +36,7 @@ interface Processo {
 }
 
 export default function DashboardPage() {
+  const { setTitle } = usePageTitle();
   const [stats, setStats] = useState<DashboardStats>({
     clientes: 0,
     empresas: 0,
@@ -47,6 +49,10 @@ export default function DashboardPage() {
   const [projetosRecentes, setProjetosRecentes] = useState<Projeto[]>([]);
   const [processosRecentes, setProcessosRecentes] = useState<Processo[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTitle("Dashboard");
+  }, [setTitle]);
 
   useEffect(() => {
     loadDashboardData();
@@ -207,9 +213,8 @@ export default function DashboardPage() {
   return (
     <div>
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* Descrição */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-black dark:text-zinc-50 mb-2">Dashboard</h1>
           <p className="text-zinc-600 dark:text-zinc-400">
             Visão geral do sistema e métricas principais
           </p>

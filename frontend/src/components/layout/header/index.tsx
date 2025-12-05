@@ -8,9 +8,11 @@ import UserMenu from "@/components/layout/header/user-menu";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { usePageTitle } from "@/contexts/PageTitleContext";
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar();
+  const { title } = usePageTitle();
 
   return (
     <header className="bg-background/40 sticky top-0 z-50 flex h-(--header-height) shrink-0 items-center gap-2 border-b backdrop-blur-md transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height) md:rounded-tl-xl md:rounded-tr-xl">
@@ -19,9 +21,15 @@ export function SiteHeader() {
           <PanelLeftIcon className="h-4 w-4" />
         </Button>
         <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
-        <Search />
+        
+        {/* Título da página */}
+        <h1 className="text-lg font-semibold text-foreground flex-1">
+          {title}
+        </h1>
 
+        {/* Busca e ações à direita */}
         <div className="ml-auto flex items-center gap-2">
+          <Search />
           <ThemeToggle />
           <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
           <UserMenu />

@@ -11,6 +11,8 @@ import { SkeletonTable } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
 import { Building2, Search, Filter, Plus, Download } from "lucide-react";
+import { usePageTitleEffect } from "@/hooks/use-page-title";
+import { usePageTitleEffect } from "@/hooks/use-page-title";
 
 interface Cliente {
   id: string;
@@ -21,6 +23,7 @@ interface Cliente {
 }
 
 export default function ClientesPage() {
+  usePageTitleEffect("Clientes");
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -80,11 +83,10 @@ export default function ClientesPage() {
   return (
     <div>
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* Descrição */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-black dark:text-zinc-50 mb-2">Clientes</h1>
               <p className="text-zinc-600 dark:text-zinc-400">
                 Gerencie seus clientes e organizações
               </p>

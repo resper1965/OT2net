@@ -18,6 +18,7 @@ import {
   AlertCircle,
   FileText,
 } from "lucide-react";
+import { usePageTitleEffect } from "@/hooks/use-page-title";
 
 interface DescricaoRaw {
   id: string;
@@ -28,6 +29,7 @@ interface DescricaoRaw {
 }
 
 export default function ProcessosPage() {
+  usePageTitleEffect("Descrições Raw");
   const [descricoes, setDescricoes] = useState<DescricaoRaw[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -126,9 +128,6 @@ export default function ProcessosPage() {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-black dark:text-zinc-50 mb-2">
-                Processos - Coleta de Descrições
-              </h1>
               <p className="text-zinc-600 dark:text-zinc-400">
                 Gerencie e processe descrições operacionais com IA
               </p>

@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserCog, Search, Filter, Plus, Download } from "lucide-react";
+import { usePageTitleEffect } from "@/hooks/use-page-title";
 
 interface MembroEquipe {
   id: string;
@@ -17,6 +18,7 @@ interface MembroEquipe {
 }
 
 export default function EquipePage() {
+  usePageTitleEffect("Equipe");
   const [membros, setMembros] = useState<MembroEquipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,7 +56,6 @@ export default function EquipePage() {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-black dark:text-zinc-50 mb-2">Equipe</h1>
               <p className="text-zinc-600 dark:text-zinc-400">
                 Gerencie membros da equipe dos projetos
               </p>

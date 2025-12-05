@@ -21,6 +21,7 @@ import {
   Plus,
   Download,
 } from "lucide-react";
+import { usePageTitleEffect } from "@/hooks/use-page-title";
 
 interface Projeto {
   id: string;
@@ -33,6 +34,7 @@ interface Projeto {
 }
 
 export default function ProjetosPage() {
+  usePageTitleEffect("Projetos");
   const [projetos, setProjetos] = useState<Projeto[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -139,9 +141,6 @@ export default function ProjetosPage() {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-black dark:text-zinc-50 mb-2">
-                Gerenciamento de Projetos
-              </h1>
               <p className="text-zinc-600 dark:text-zinc-400">
                 Acompanhe e gerencie todos os seus projetos em um só lugar
               </p>

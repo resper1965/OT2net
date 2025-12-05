@@ -3,6 +3,7 @@ import { Inter, Montserrat } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { PageTitleProvider } from "@/contexts/PageTitleContext";
 import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({
@@ -39,8 +40,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            {children}
-            <Toaster />
+            <PageTitleProvider>
+              {children}
+              <Toaster />
+            </PageTitleProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

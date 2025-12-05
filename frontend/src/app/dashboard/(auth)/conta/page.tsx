@@ -8,6 +8,7 @@ import { useToast } from "@/lib/hooks/useToast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { User, Mail, Calendar, ArrowLeft } from "lucide-react";
+import { usePageTitleEffect } from "@/hooks/use-page-title";
 
 interface UserProfile {
   id: string;
@@ -18,6 +19,7 @@ interface UserProfile {
 }
 
 export default function ContaPage() {
+  usePageTitleEffect("Minha Conta");
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -138,7 +140,6 @@ export default function ContaPage() {
             <ArrowLeft className="h-4 w-4" />
             Voltar ao Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-black dark:text-zinc-50 mb-2">Minha Conta</h1>
           <p className="text-zinc-600 dark:text-zinc-400">
             Gerencie suas informações pessoais e preferências
           </p>

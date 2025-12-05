@@ -8,6 +8,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Factory, Search, Filter, Plus, Download } from "lucide-react";
+import { usePageTitleEffect } from "@/hooks/use-page-title";
 
 interface Empresa {
   id: string;
@@ -18,6 +19,7 @@ interface Empresa {
 }
 
 export default function EmpresasPage() {
+  usePageTitleEffect("Empresas");
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -73,11 +75,10 @@ export default function EmpresasPage() {
   return (
     <div>
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* Descrição */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-black dark:text-zinc-50 mb-2">Empresas</h1>
               <p className="text-zinc-600 dark:text-zinc-400">
                 Gerencie empresas e organizações dos clientes
               </p>
