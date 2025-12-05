@@ -4,10 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useToast } from "@/lib/hooks/useToast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function NovoClientePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
   const [formData, setFormData] = useState({
     razao_social: "",
     cnpj: "",
@@ -38,9 +42,11 @@ export default function NovoClientePage() {
 
     try {
       await api.clientes.create(formData);
+      toast.success("Cliente criado com sucesso");
       router.push("/dashboard/clientes");
-    } catch (error: any) {
-      alert("Erro ao criar cliente: " + (error.message || "Erro desconhecido"));
+    } catch (error: unknown) {
+      const err = error as Error;
+      toast.error(err.message || "Erro ao criar cliente");
       console.error("Erro:", error);
     } finally {
       setLoading(false);
@@ -102,12 +108,11 @@ export default function NovoClientePage() {
             <label className="block text-sm font-medium mb-2 text-black dark:text-zinc-50">
               Razão Social *
             </label>
-            <input
+            <Input
               type="text"
               required
               value={formData.razao_social}
               onChange={(e) => setFormData({ ...formData, razao_social: e.target.value })}
-              className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50"
             />
           </div>
 
@@ -115,12 +120,11 @@ export default function NovoClientePage() {
             <label className="block text-sm font-medium mb-2 text-black dark:text-zinc-50">
               CNPJ *
             </label>
-            <input
+            <Input
               type="text"
               required
               value={formData.cnpj}
               onChange={(e) => setFormData({ ...formData, cnpj: e.target.value })}
-              className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50"
               placeholder="00.000.000/0000-00"
             />
           </div>
@@ -248,18 +252,13 @@ export default function NovoClientePage() {
           </div>
 
           <div className="flex gap-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-50"
-            >
-              {loading ? "Salvando..." : "Salvar"}
-            </button>
-            <Link
-              href="/dashboard/clientes"
-              className="px-6 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg text-black dark:text-zinc-50 hover:bg-zinc-50 dark:hover:bg-zinc-800"
-            >
-              Cancelar
+            <Button type="submit" disabled={loading} isLoading={loading} variant="primary">
+              Salvar
+            </Button>
+            <Link href="/dashboard/clientes">
+              <Button type="button" variant="outline">
+                Cancelar
+              </Button>
             </Link>
           </div>
         </form>

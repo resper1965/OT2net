@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useToast } from "@/lib/hooks/useToast";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
 
 interface Cliente {
   id: string;
@@ -16,6 +19,11 @@ export default function ClientesPage() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; id: string | null }>({
+    open: false,
+    id: null,
+  });
+  const toast = useToast();
 
   useEffect(() => {
     loadClientes();
@@ -35,14 +43,21 @@ export default function ClientesPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Tem certeza que deseja excluir este cliente?")) return;
+  function handleDeleteClick(id: string) {
+    setDeleteDialog({ open: true, id });
+  }
+
+  async function handleDeleteConfirm() {
+    if (!deleteDialog.id) return;
 
     try {
-      await api.clientes.delete(id);
+      await api.clientes.delete(deleteDialog.id);
       await loadClientes();
-    } catch (err: any) {
-      alert("Erro ao excluir cliente: " + (err.message || "Erro desconhecido"));
+      toast.success("Cliente excluído com sucesso");
+      setDeleteDialog({ open: false, id: null });
+    } catch (err: unknown) {
+      const error = err as Error;
+      toast.error(error.message || "Erro ao excluir cliente");
     }
   }
 
@@ -51,11 +66,8 @@ export default function ClientesPage() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-black dark:text-zinc-50">Clientes</h1>
-          <Link
-            href="/dashboard/clientes/novo"
-            className="px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-          >
-            Novo Cliente
+          <Link href="/dashboard/clientes/novo">
+            <Button variant="primary">Novo Cliente</Button>
           </Link>
         </div>
 
@@ -120,7 +132,7 @@ export default function ClientesPage() {
                         Editar
                       </Link>
                       <button
-                        onClick={() => handleDelete(cliente.id)}
+                        onClick={() => handleDeleteClick(cliente.id)}
                         className="text-red-600 dark:text-red-400 hover:underline"
                       >
                         Excluir
@@ -132,6 +144,17 @@ export default function ClientesPage() {
             </table>
           </div>
         )}
+
+        <ConfirmDialog
+          open={deleteDialog.open}
+          onOpenChange={(open) => setDeleteDialog({ open, id: deleteDialog.id })}
+          title="Excluir Cliente"
+          description="Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita."
+          confirmText="Excluir"
+          cancelText="Cancelar"
+          variant="destructive"
+          onConfirm={handleDeleteConfirm}
+        />
       </div>
     </div>
   );

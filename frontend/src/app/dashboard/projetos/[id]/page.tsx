@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useToast } from "@/lib/hooks/useToast";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
 
 interface Projeto {
   id: string;
@@ -23,6 +26,8 @@ export default function ProjetoDetalhesPage() {
   const [projeto, setProjeto] = useState<Projeto | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     if (id) {
@@ -44,14 +49,14 @@ export default function ProjetoDetalhesPage() {
     }
   }
 
-  async function handleDelete() {
-    if (!confirm("Tem certeza que deseja excluir este projeto?")) return;
-
+  async function handleDeleteConfirm() {
     try {
       await api.projetos.delete(id);
+      toast.success("Projeto excluído com sucesso");
       router.push("/dashboard/projetos");
-    } catch (err: any) {
-      alert("Erro ao excluir projeto: " + (err.message || "Erro desconhecido"));
+    } catch (err: unknown) {
+      const error = err as Error;
+      toast.error(error.message || "Erro ao excluir projeto");
     }
   }
 
@@ -60,9 +65,11 @@ export default function ProjetoDetalhesPage() {
       const result = await api.relatorios.generateOnboarding(id);
       if (result.url) {
         window.open(result.url, "_blank");
+        toast.success("Relatório gerado com sucesso");
       }
-    } catch (error: any) {
-      alert("Erro ao gerar relatório: " + (error.message || "Erro desconhecido"));
+    } catch (error: unknown) {
+      const err = error as Error;
+      toast.error(err.message || "Erro ao gerar relatório");
     }
   }
 
@@ -111,24 +118,15 @@ export default function ProjetoDetalhesPage() {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-black dark:text-zinc-50">{projeto.nome}</h1>
             <div className="flex gap-2">
-              <Link
-                href={`/dashboard/projetos/${id}/editar`}
-                className="px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-              >
-                Editar
+              <Link href={`/dashboard/projetos/${id}/editar`}>
+                <Button variant="primary">Editar</Button>
               </Link>
-              <button
-                onClick={generateReport}
-                className="px-4 py-2 bg-zinc-200 dark:bg-zinc-700 text-black dark:text-zinc-50 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors"
-              >
+              <Button variant="secondary" onClick={generateReport}>
                 Gerar PDF
-              </button>
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-              >
+              </Button>
+              <Button variant="destructive" onClick={() => setDeleteDialog(true)}>
                 Excluir
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -203,6 +201,17 @@ export default function ProjetoDetalhesPage() {
             </dl>
           </div>
         </div>
+
+        <ConfirmDialog
+          open={deleteDialog}
+          onOpenChange={setDeleteDialog}
+          title="Excluir Projeto"
+          description="Tem certeza que deseja excluir este projeto? Esta ação não pode ser desfeita."
+          confirmText="Excluir"
+          cancelText="Cancelar"
+          variant="destructive"
+          onConfirm={handleDeleteConfirm}
+        />
       </div>
     </div>
   );

@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useToast } from "@/lib/hooks/useToast";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
 
 interface Cliente {
   id: string;
@@ -26,6 +29,8 @@ export default function ClienteDetalhesPage() {
   const [cliente, setCliente] = useState<Cliente | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     if (id) {
@@ -48,14 +53,14 @@ export default function ClienteDetalhesPage() {
     }
   }
 
-  async function handleDelete() {
-    if (!confirm("Tem certeza que deseja excluir este cliente?")) return;
-
+  async function handleDeleteConfirm() {
     try {
       await api.clientes.delete(id);
+      toast.success("Cliente excluído com sucesso");
       router.push("/dashboard/clientes");
-    } catch (err: any) {
-      alert("Erro ao excluir cliente: " + (err.message || "Erro desconhecido"));
+    } catch (err: unknown) {
+      const error = err as Error;
+      toast.error(error.message || "Erro ao excluir cliente");
     }
   }
 
@@ -106,18 +111,12 @@ export default function ClienteDetalhesPage() {
               {cliente.razao_social}
             </h1>
             <div className="flex gap-2">
-              <Link
-                href={`/dashboard/clientes/${id}/editar`}
-                className="px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-              >
-                Editar
+              <Link href={`/dashboard/clientes/${id}/editar`}>
+                <Button variant="primary">Editar</Button>
               </Link>
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-              >
+              <Button variant="destructive" onClick={() => setDeleteDialog(true)}>
                 Excluir
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -289,6 +288,17 @@ export default function ClienteDetalhesPage() {
             </dl>
           </div>
         </div>
+
+        <ConfirmDialog
+          open={deleteDialog}
+          onOpenChange={setDeleteDialog}
+          title="Excluir Cliente"
+          description="Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita."
+          confirmText="Excluir"
+          cancelText="Cancelar"
+          variant="destructive"
+          onConfirm={handleDeleteConfirm}
+        />
       </div>
     </div>
   );

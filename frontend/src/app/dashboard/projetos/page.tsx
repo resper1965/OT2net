@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useToast } from "@/lib/hooks/useToast";
+import { Button } from "@/components/ui/button";
 
 interface Projeto {
   id: string;
@@ -15,6 +17,7 @@ interface Projeto {
 export default function ProjetosPage() {
   const [projetos, setProjetos] = useState<Projeto[]>([]);
   const [loading, setLoading] = useState(true);
+  const toast = useToast();
 
   useEffect(() => {
     loadProjetos();
@@ -36,9 +39,11 @@ export default function ProjetosPage() {
       const result = await api.relatorios.generateOnboarding(projetoId);
       if (result.url) {
         window.open(result.url, "_blank");
+        toast.success("Relatório gerado com sucesso");
       }
-    } catch (error: any) {
-      alert("Erro ao gerar relatório: " + (error.message || "Erro desconhecido"));
+    } catch (error: unknown) {
+      const err = error as Error;
+      toast.error(err.message || "Erro ao gerar relatório");
     }
   }
 
@@ -47,11 +52,8 @@ export default function ProjetosPage() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-black dark:text-zinc-50">Projetos</h1>
-          <Link
-            href="/dashboard/projetos/novo"
-            className="px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-          >
-            Novo Projeto
+          <Link href="/dashboard/projetos/novo">
+            <Button variant="primary">Novo Projeto</Button>
           </Link>
         </div>
 
