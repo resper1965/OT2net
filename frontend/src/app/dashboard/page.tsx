@@ -111,21 +111,13 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="mb-8">
           <h1 className="text-3xl font-bold text-black dark:text-zinc-50">Dashboard</h1>
-          {isAuthenticated && userEmail && (
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-md">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm text-green-400 font-medium">Autenticado</span>
-              </div>
-              <div className="text-sm text-zinc-600 dark:text-zinc-400">
-                {userEmail}
-              </div>
-            </div>
-          )}
+          <p className="text-zinc-600 dark:text-zinc-400 mt-2">
+            Visão geral do sistema
+          </p>
         </div>
 
         {loading ? (

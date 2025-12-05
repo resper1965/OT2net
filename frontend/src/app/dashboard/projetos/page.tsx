@@ -43,7 +43,7 @@ export default function ProjetosPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-black dark:text-zinc-50">Projetos</h1>
