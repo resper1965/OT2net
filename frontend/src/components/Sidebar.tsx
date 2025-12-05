@@ -13,17 +13,15 @@ import {
   UserCog,
   Workflow,
   BookOpen,
-  Menu,
-  X,
   LogOut,
   ChevronRight,
-  User,
   Settings,
   Shield,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import NessLogo from "./NessLogo";
 import { ThemeToggle } from "./ThemeToggle";
+import { useSidebar } from "./layout/SidebarProvider";
 import clsx from "clsx";
 
 interface MenuItem {
@@ -34,20 +32,16 @@ interface MenuItem {
 }
 
 interface SidebarProps {
-  isOpen?: boolean;
-  onToggle?: () => void;
+  className?: string;
 }
 
-export function Sidebar({ isOpen: controlledIsOpen, onToggle }: SidebarProps = {}) {
+export function Sidebar({ className }: SidebarProps = {}) {
   const pathname = usePathname();
-  const [isOpenMobile, setIsOpenMobile] = useState(false);
-  
-  // Usar controlled se fornecido, senão usar state interno para mobile
-  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : isOpenMobile;
+  const { isOpen, isMobile, toggle } = useSidebar();
   
   const handleCloseMobile = () => {
-    if (!controlledIsOpen) {
-      setIsOpenMobile(false);
+    if (isMobile) {
+      toggle();
     }
   };
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -173,31 +167,43 @@ export function Sidebar({ isOpen: controlledIsOpen, onToggle }: SidebarProps = {
     window.location.href = "/login";
   }
 
-  const handleToggle = () => {
-    if (onToggle) {
-      onToggle();
-    } else {
-      setIsOpenMobile(!isOpenMobile);
-    }
-  };
-
-  return (
-    <>
-      {/* Overlay for mobile */}
-      {isOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-40"
-          onClick={handleToggle}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={clsx(
-          "fixed lg:static top-0 left-0 h-full lg:h-full w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 z-40 transform transition-transform duration-300 ease-in-out",
-          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+  // Mobile: overlay e sidebar fixa
+  if (isMobile) {
+    return (
+      <>
+        {isOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={toggle}
+          />
         )}
-      >
+        <aside
+          className={clsx(
+            "fixed top-0 left-0 h-full w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 z-50 transform transition-transform duration-300 ease-in-out",
+            isOpen ? "translate-x-0" : "-translate-x-full",
+            className
+          )}
+        >
+          {renderSidebarContent()}
+        </aside>
+      </>
+    );
+  }
+
+  // Desktop: sidebar sticky
+  return (
+    <aside
+      className={clsx(
+        "sticky top-0 h-screen w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col transition-all duration-300 ease-in-out",
+        className
+      )}
+    >
+      {renderSidebarContent()}
+    </aside>
+  );
+
+  function renderSidebarContent() {
+    return (
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
@@ -297,8 +303,7 @@ export function Sidebar({ isOpen: controlledIsOpen, onToggle }: SidebarProps = {
             </div>
           </div>
         </div>
-      </aside>
-    </>
-  );
+    );
+  }
 }
 

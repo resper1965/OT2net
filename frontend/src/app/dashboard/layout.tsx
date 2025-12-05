@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { SidebarProvider } from "@/components/layout/SidebarProvider";
+import { SidebarLayout, MainContent } from "@/components/layout/SidebarLayout";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 
@@ -9,21 +10,18 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-
   return (
-    <div className="h-screen bg-zinc-50 dark:bg-black flex overflow-hidden">
-      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <Header
-          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-          sidebarOpen={sidebarOpen}
-        />
-        <main className="flex-1 overflow-y-auto">
-          <div className="p-4 lg:p-8">{children}</div>
-        </main>
-      </div>
-    </div>
+    <SidebarProvider defaultOpen={true}>
+      <SidebarLayout>
+        <Sidebar />
+        <MainContent>
+          <Header />
+          <main className="flex-1 overflow-auto p-6">
+            {children}
+          </main>
+        </MainContent>
+      </SidebarLayout>
+    </SidebarProvider>
   );
 }
 

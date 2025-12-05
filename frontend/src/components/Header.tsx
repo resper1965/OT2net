@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
-  Menu,
   Search,
   Bell,
   ChevronRight,
@@ -15,15 +14,10 @@ import {
   LogOut,
   Home,
 } from "lucide-react";
-import NessLogo from "./NessLogo";
+import { SidebarTrigger } from "./layout/SidebarTrigger";
 import clsx from "clsx";
 
-interface HeaderProps {
-  onMenuClick?: () => void;
-  sidebarOpen?: boolean;
-}
-
-export function Header({ onMenuClick, sidebarOpen = true }: HeaderProps) {
+export function Header() {
   const pathname = usePathname();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
@@ -91,13 +85,7 @@ export function Header({ onMenuClick, sidebarOpen = true }: HeaderProps) {
       <div className="flex h-full items-center justify-between px-4 lg:px-6">
         {/* Left: Menu Toggle + Breadcrumbs */}
         <div className="flex items-center gap-4 flex-1 min-w-0">
-          <button
-            onClick={onMenuClick}
-            className="lg:hidden p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-            aria-label="Toggle menu"
-          >
-            <Menu className="h-5 w-5 text-zinc-900 dark:text-zinc-50" />
-          </button>
+          <SidebarTrigger />
 
           {/* Breadcrumbs */}
           <nav className="hidden md:flex items-center gap-2 text-sm" aria-label="Breadcrumb">
