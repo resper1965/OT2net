@@ -399,38 +399,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Ações Rápidas */}
-        <div className="mt-8 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
-          <h2 className="text-xl font-semibold text-black dark:text-zinc-50 mb-4">
-            Ações Rápidas
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link href="/dashboard/clientes/novo">
-              <Button variant="outline" className="w-full justify-start">
-                <Building2 className="h-4 w-4 mr-2" />
-                Novo Cliente
-              </Button>
-            </Link>
-            <Link href="/dashboard/empresas/novo">
-              <Button variant="outline" className="w-full justify-start">
-                <Users className="h-4 w-4 mr-2" />
-                Nova Empresa
-              </Button>
-            </Link>
-            <Link href="/dashboard/projetos/novo">
-              <Button variant="outline" className="w-full justify-start">
-                <FolderKanban className="h-4 w-4 mr-2" />
-                Novo Projeto
-              </Button>
-            </Link>
-            <Link href="/dashboard/processos/novo">
-              <Button variant="outline" className="w-full justify-start">
-                <FileText className="h-4 w-4 mr-2" />
-                Novo Processo
-              </Button>
-            </Link>
-          </div>
-        </div>
+
       </div>
     </div>
   );

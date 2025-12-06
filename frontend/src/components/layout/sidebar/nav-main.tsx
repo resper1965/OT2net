@@ -195,10 +195,11 @@ export function NavMain() {
   /**
    * Filtra grupos do menu, removendo grupos vazios
    */
-  const filteredNavItems = navItems.map(group => ({
-    ...group,
-    items: filterItemsByPermission(group.items)
-  })).filter(group => group.items.length > 0);
+  /**
+   * Filtra grupos do menu, removendo grupos vazios
+   * TODO: Reativar filtro de permissões quando o sistema de roles estiver 100%
+   */
+  const filteredNavItems = navItems; // .map(group => ({ ...group, items: filterItemsByPermission(group.items) })).filter(group => group.items.length > 0);
 
   return (
     <>
