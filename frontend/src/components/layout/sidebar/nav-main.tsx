@@ -162,6 +162,7 @@ export function NavMain() {
   /**
    * Filtra itens do menu baseado nas permissões do usuário
    */
+  /*
   const _filterItemsByPermission = (items: NavItem): NavItem => {
     return items.filter(item => {
       // Se tem requiredRoles, verifica se o role do usuário está na lista
@@ -191,10 +192,8 @@ export function NavMain() {
       return true;
     });
   };
+  */
   
-  /**
-   * Filtra grupos do menu, removendo grupos vazios
-   */
   /**
    * Filtra grupos do menu, removendo grupos vazios
    * TODO: Reativar filtro de permissões quando o sistema de roles estiver 100%
@@ -228,7 +227,7 @@ export function NavMain() {
                             <DropdownMenuLabel>{item.title}</DropdownMenuLabel>
                             {item.items?.map((subItem) => (
                               <DropdownMenuItem
-                                className="hover:text-foreground active:text-foreground hover:bg-[var(--primary)]/10! active:bg-[var(--primary)]/10!"
+                                className="hover:text-foreground active:text-foreground hover:bg-primary/10! active:bg-primary/10!"
                                 asChild
                                 key={subItem.title}>
                                 <Link href={subItem.href}>{subItem.title}</Link>
@@ -242,7 +241,7 @@ export function NavMain() {
                         defaultOpen={!!item.items.find((s) => s.href === pathname)}>
                         <CollapsibleTrigger asChild>
                           <SidebarMenuButton
-                            className="hover:text-foreground active:text-foreground hover:bg-[var(--primary)]/10 active:bg-[var(--primary)]/10"
+                            className="hover:text-foreground active:text-foreground hover:bg-primary/10 active:bg-primary/10"
                             tooltip={item.title}>
                             {item.icon && <item.icon />}
                             <span>{item.title}</span>
@@ -254,7 +253,7 @@ export function NavMain() {
                             {item?.items?.map((subItem, key) => (
                               <SidebarMenuSubItem key={key}>
                                 <SidebarMenuSubButton
-                                  className="hover:text-foreground active:text-foreground hover:bg-[var(--primary)]/10 active:bg-[var(--primary)]/10"
+                                  className="hover:text-foreground active:text-foreground hover:bg-primary/10 active:bg-primary/10"
                                   isActive={pathname === subItem.href}
                                   asChild>
                                   <Link href={subItem.href} target={subItem.newTab ? "_blank" : ""}>
@@ -269,7 +268,7 @@ export function NavMain() {
                     </>
                   ) : (
                     <SidebarMenuButton
-                      className="hover:text-foreground active:text-foreground hover:bg-[var(--primary)]/10 active:bg-[var(--primary)]/10"
+                      className="hover:text-foreground active:text-foreground hover:bg-primary/10 active:bg-primary/10"
                       isActive={pathname === item.href}
                       tooltip={item.title}
                       asChild>
