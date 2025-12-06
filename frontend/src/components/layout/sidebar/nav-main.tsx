@@ -37,7 +37,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { usePermissions, type Resource, type PermissionAction } from "@/hooks/usePermissions";
+// import { usePermissions, type Resource, type PermissionAction } from "@/hooks/usePermissions";
 
 type NavGroup = {
   title: string;
