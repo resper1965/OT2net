@@ -51,20 +51,11 @@ function LoginForm() {
       if (signInError) {throw signInError;}
 
       if (data.user && data.session) {
-        const {
-          data: { session: verifiedSession },
-        } = await supabase.auth.getSession();
-
-        if (verifiedSession) {
-          toast.success("Login realizado com sucesso!", { id: toastId });
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          
-          const redirectTo = searchParams?.get("redirect") || "/dashboard";
-          router.push(redirectTo);
-          router.refresh();
-        } else {
-          throw new Error("Sessão não foi criada corretamente. Tente novamente.");
-        }
+        toast.success("Login realizado com sucesso!", { id: toastId });
+        
+        const redirectTo = searchParams?.get("redirect") || "/dashboard";
+        router.refresh();
+        router.push(redirectTo);
       } else {
         throw new Error("Falha ao criar sessão de autenticação");
       }
