@@ -65,7 +65,7 @@ export default function RevisaoProcessoPage() {
               // Assumindo que existe uma API para buscar processo normalizado
               // Por enquanto, vamos usar o resultado do processamento
               return d.resultado_processamento;
-            } catch (err) {
+            } catch {
               return null;
             }
           }

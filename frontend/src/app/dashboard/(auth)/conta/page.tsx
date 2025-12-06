@@ -68,7 +68,7 @@ export default function ContaPage() {
         name,
         email,
       });
-    } catch (err) {
+    } catch {
       toast.error("Erro ao carregar informações da conta");
     } finally {
       setLoading(false);

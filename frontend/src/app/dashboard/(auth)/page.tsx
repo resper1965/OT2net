@@ -113,7 +113,7 @@ export default function DashboardPage() {
         .sort((a: ItemComData, b: ItemComData) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
         .slice(0, 5);
       setProcessosRecentes(processosOrdenados);
-    } catch (err) {
+    } catch {
       // Erro já tratado
     } finally {
       setLoading(false);

@@ -32,7 +32,7 @@ export default function EquipePage() {
       setLoading(true);
       const data = await api.membrosEquipe.list();
       setMembros(Array.isArray(data) ? data : []);
-    } catch (err) {
+    } catch {
       // Erro já tratado
     } finally {
       setLoading(false);

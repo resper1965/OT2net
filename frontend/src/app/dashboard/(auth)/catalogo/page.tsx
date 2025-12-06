@@ -41,7 +41,7 @@ export default function CatalogoPage() {
       setLoading(true);
       const data = await api.processosNormalizados.list(undefined, filtroStatus || undefined);
       setProcessos(Array.isArray(data) ? data : []);
-    } catch (err) {
+    } catch {
       // Erro já tratado
     } finally {
       setLoading(false);

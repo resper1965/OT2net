@@ -48,7 +48,7 @@ export default function ProcessosPage() {
       const statusFilter = filtroStatus === "all" ? undefined : filtroStatus;
       const data = await api.descricoesRaw.list(undefined, undefined, statusFilter);
       setDescricoes(Array.isArray(data) ? data : []);
-    } catch (err) {
+    } catch {
       // Erro já tratado
     } finally {
       setLoading(false);
