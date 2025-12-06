@@ -157,7 +157,7 @@ export const navItems: NavGroup[] = [
 export function NavMain() {
   const pathname = usePathname();
   const { isMobile } = useSidebar();
-  const { can, role } = usePermissions();
+  // const { can, role } = usePermissions();
   
   /**
    * Filtra itens do menu baseado nas permissões do usuário
