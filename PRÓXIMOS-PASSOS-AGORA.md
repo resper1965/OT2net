@@ -105,3 +105,4 @@ Acesse: http://localhost:3000
 
 **Próxima ação**: Configurar as connection strings no `backend/.env.local`
 
+

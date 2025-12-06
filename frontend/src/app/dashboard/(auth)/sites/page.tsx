@@ -31,7 +31,7 @@ export default function SitesPage() {
       setLoading(true);
       const data = await api.sites.list();
       setSites(Array.isArray(data) ? data : []);
-    } catch (err) {
+    } catch {
       // Erro já tratado
     } finally {
       setLoading(false);
