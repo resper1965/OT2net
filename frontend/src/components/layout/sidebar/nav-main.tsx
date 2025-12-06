@@ -162,7 +162,7 @@ export function NavMain() {
   /**
    * Filtra itens do menu baseado nas permissões do usuário
    */
-  const filterItemsByPermission = (items: NavItem): NavItem => {
+  const _filterItemsByPermission = (items: NavItem): NavItem => {
     return items.filter(item => {
       // Se tem requiredRoles, verifica se o role do usuário está na lista
       if (item.requiredRoles && role) {
