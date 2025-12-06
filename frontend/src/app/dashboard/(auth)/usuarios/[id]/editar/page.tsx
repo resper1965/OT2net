@@ -21,7 +21,7 @@ export default function EditarUsuarioPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [formData, setFormData] = useState({
     nome: "",
@@ -50,8 +50,8 @@ export default function EditarUsuarioPage() {
         organizacao: data.organizacao || "",
         status: data.status || "ativo",
       });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
       toast.error("Erro ao carregar usuário: " + errorMessage);
     } finally {
       setLoadingData(false);
@@ -66,8 +66,8 @@ export default function EditarUsuarioPage() {
       await api.usuarios.update(id, formData);
       toast.success("Usuário atualizado com sucesso!");
       router.push(`/dashboard/usuarios/${id}`);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
       toast.error("Erro ao atualizar usuário: " + errorMessage);
     } finally {
       setLoading(false);
@@ -184,7 +184,7 @@ export default function EditarUsuarioPage() {
           </div>
 
           <div className="flex gap-4">
-            <Button type="submit" isLoading={loading} variant="primary">
+            <Button type="submit" variant="default">
               Salvar Alterações
             </Button>
             <Link href={`/dashboard/usuarios/${id}`}>

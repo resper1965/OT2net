@@ -44,8 +44,8 @@ export default function EditarEmpresaPage() {
         status: data.status || "",
         cliente_id: data.cliente_id || "",
       });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro ao carregar empresa";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar empresa";
       toast.error(errorMessage);
     } finally {
       setLoadingData(false);
@@ -60,8 +60,8 @@ export default function EditarEmpresaPage() {
       await api.empresas.update(id, formData);
       toast.success("Empresa atualizada com sucesso");
       router.push(`/dashboard/empresas/${id}`);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro ao atualizar empresa";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao atualizar empresa";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -171,7 +171,7 @@ export default function EditarEmpresaPage() {
           </div>
 
           <div className="flex gap-4">
-            <Button type="submit" disabled={loading} isLoading={loading} variant="primary">
+            <Button type="submit" disabled={loading} variant="default">
               Salvar
             </Button>
             <Link href={`/dashboard/empresas/${id}`}>

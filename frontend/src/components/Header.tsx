@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
 import {
   Search,
   Bell,
@@ -12,10 +11,8 @@ import {
   User,
   Settings,
   LogOut,
-  Home,
 } from "lucide-react";
 import { SidebarTrigger } from "./layout/SidebarTrigger";
-import clsx from "clsx";
 
 export function Header() {
   const pathname = usePathname();

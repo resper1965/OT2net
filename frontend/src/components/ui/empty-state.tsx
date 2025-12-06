@@ -12,7 +12,7 @@ interface EmptyStateProps {
   action?: {
     label: string;
     onClick: () => void;
-    variant?: "primary" | "secondary" | "outline";
+    variant?: "default" | "secondary" | "outline";
   };
   className?: string;
 }
@@ -46,7 +46,7 @@ export function EmptyState({
       )}
       {action && (
         <Button
-          variant={action.variant || "primary"}
+          variant={action.variant || "default"}
           onClick={action.onClick}
         >
           {action.label}
@@ -55,6 +55,7 @@ export function EmptyState({
     </div>
   );
 }
+
 
 
 

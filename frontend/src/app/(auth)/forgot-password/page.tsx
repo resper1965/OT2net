@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
         redirectTo: `${window.location.origin}/reset-password`,
       });
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       setSuccess(true);
     } catch (err: unknown) {

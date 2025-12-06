@@ -32,7 +32,7 @@ export default function StakeholdersPage() {
       setLoading(true);
       const data = await api.stakeholders.list();
       setStakeholders(Array.isArray(data) ? data : []);
-    } catch (error) {
+    } catch (err) {
       // Erro já tratado
     } finally {
       setLoading(false);
@@ -99,7 +99,7 @@ export default function StakeholdersPage() {
                 <Download className="h-4 w-4 mr-2" />
                 Exportar
               </Button>
-              <Button variant="primary" disabled>
+              <Button variant="default" disabled>
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Stakeholder
               </Button>

@@ -46,3 +46,4 @@ export interface ProcessoNormalizado extends ProcessoBase {
   dependencias?: string[];
 }
 
+

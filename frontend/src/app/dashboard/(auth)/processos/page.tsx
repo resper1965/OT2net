@@ -11,12 +11,9 @@ import {
   Workflow,
   Search,
   Filter,
-  Plus,
-  Download,
   CheckCircle2,
   Clock,
   AlertCircle,
-  FileText,
 } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
 
@@ -51,7 +48,7 @@ export default function ProcessosPage() {
       const statusFilter = filtroStatus === "all" ? undefined : filtroStatus;
       const data = await api.descricoesRaw.list(undefined, undefined, statusFilter);
       setDescricoes(Array.isArray(data) ? data : []);
-    } catch (error) {
+    } catch (err) {
       // Erro já tratado
     } finally {
       setLoading(false);
@@ -63,7 +60,7 @@ export default function ProcessosPage() {
   }
 
   async function handleProcessarConfirm() {
-    if (!processDialog.id) return;
+    if (!processDialog.id) {return;}
 
     try {
       await api.descricoesRaw.processar(processDialog.id, true);
@@ -82,7 +79,7 @@ export default function ProcessosPage() {
     .length;
   const processosProcessados = descricoes.filter((p) => p.status_processamento === "processado")
     .length;
-  const processosComErro = descricoes.filter((p) => p.status_processamento === "erro").length;
+  // const processosComErro = descricoes.filter((p) => p.status_processamento === "erro").length;
 
   // Filtros
   const filteredDescricoes = descricoes.filter((descricao) => {
@@ -90,9 +87,9 @@ export default function ProcessosPage() {
       descricao.titulo.toLowerCase().includes(searchQuery.toLowerCase()) ||
       descricao.descricao_completa.toLowerCase().includes(searchQuery.toLowerCase());
 
-    if (!matchesSearch) return false;
+    if (!matchesSearch) {return false;}
 
-    if (filtroStatus === "all") return true;
+    if (filtroStatus === "all") {return true;}
     return descricao.status_processamento === filtroStatus;
   });
 
@@ -227,7 +224,7 @@ export default function ProcessosPage() {
             </p>
             {!searchQuery && filtroStatus === "all" && (
               <Link href="/dashboard/processos/novo">
-                <Button variant="primary">Cadastrar primeira descrição</Button>
+                <Button variant="default">Cadastrar primeira descrição</Button>
               </Link>
             )}
           </div>
@@ -272,7 +269,7 @@ export default function ProcessosPage() {
                         </Link>
                         {descricao.status_processamento === "pendente" && (
                           <Button
-                            variant="primary"
+                            variant="default"
                             size="sm"
                             onClick={() => handleProcessarClick(descricao.id)}
                           >
@@ -281,7 +278,7 @@ export default function ProcessosPage() {
                         )}
                         {descricao.status_processamento === "processado" && (
                           <Link href={`/dashboard/processos/${descricao.id}/revisao`}>
-                            <Button variant="primary" size="sm">
+                            <Button variant="default" size="sm">
                               <CheckCircle2 className="h-4 w-4 mr-2" />
                               Revisar
                             </Button>

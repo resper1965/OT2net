@@ -56,7 +56,7 @@ export default function ClientesPage() {
   }
 
   async function handleDeleteConfirm() {
-    if (!deleteDialog.id) return;
+    if (!deleteDialog.id) {return;}
 
     try {
       await api.clientes.delete(deleteDialog.id);
@@ -132,7 +132,7 @@ export default function ClientesPage() {
                 Exportar
               </Button>
               <Link href="/dashboard/clientes/novo">
-                <Button variant="primary">
+                <Button variant="default">
                   <Plus className="h-4 w-4 mr-2" />
                   Novo Cliente
                 </Button>
@@ -191,7 +191,7 @@ export default function ClientesPage() {
                   ? {
                       label: "Criar Primeiro Cliente",
                       onClick: () => (window.location.href = "/dashboard/clientes/novo"),
-                      variant: "primary",
+                      variant: "default",
                     }
                   : undefined
               }

@@ -117,7 +117,7 @@ export default function ProjetoDetalhesPage() {
             <h1 className="text-3xl font-bold text-black dark:text-zinc-50">{projeto.nome}</h1>
             <div className="flex gap-2">
               <Link href={`/dashboard/projetos/${id}/editar`}>
-                <Button variant="primary">Editar</Button>
+                <Button variant="default">Editar</Button>
               </Link>
               <Button variant="secondary" onClick={generateReport}>
                 Gerar PDF

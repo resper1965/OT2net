@@ -10,7 +10,7 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 async function getAuthToken(): Promise<string | null> {
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined") {return null;}
 
   const { supabase } = await import("./supabase/client");
   const {
@@ -204,9 +204,9 @@ export const api = {
   descricoesRaw: {
     list: (projetoId?: string, siteId?: string, status?: string) => {
       const params = new URLSearchParams();
-      if (projetoId) params.append("projeto_id", projetoId);
-      if (siteId) params.append("site_id", siteId);
-      if (status) params.append("status", status);
+      if (projetoId) {params.append("projeto_id", projetoId);}
+      if (siteId) {params.append("site_id", siteId);}
+      if (status) {params.append("status", status);}
       const url = params.toString() ? `/api/descricoes-raw?${params}` : "/api/descricoes-raw";
       return fetchWithAuth(url).then((r) => r.json());
     },
@@ -235,8 +235,8 @@ export const api = {
   processosNormalizados: {
     list: (projetoId?: string, status?: string) => {
       const params = new URLSearchParams();
-      if (projetoId) params.append("projeto_id", projetoId);
-      if (status) params.append("status", status);
+      if (projetoId) {params.append("projeto_id", projetoId);}
+      if (status) {params.append("status", status);}
       const url = params.toString()
         ? `/api/processos-normalizados?${params}`
         : "/api/processos-normalizados";

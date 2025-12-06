@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
-import { useToast } from "@/lib/hooks/useToast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MapPin, Search, Filter, Plus, Download } from "lucide-react";
@@ -22,7 +21,6 @@ export default function SitesPage() {
   const [sites, setSites] = useState<Site[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const toast = useToast();
 
   useEffect(() => {
     loadSites();
@@ -33,7 +31,7 @@ export default function SitesPage() {
       setLoading(true);
       const data = await api.sites.list();
       setSites(Array.isArray(data) ? data : []);
-    } catch (error) {
+    } catch (err) {
       // Erro já tratado
     } finally {
       setLoading(false);
@@ -99,7 +97,7 @@ export default function SitesPage() {
                 <Download className="h-4 w-4 mr-2" />
                 Exportar
               </Button>
-              <Button variant="primary" disabled>
+              <Button variant="default" disabled>
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Site
               </Button>

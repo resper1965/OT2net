@@ -1,4 +1,4 @@
-import { BadgeCheck, Bell, CreditCard, LogOut, Settings } from "lucide-react";
+import { BadgeCheck, LogOut, Settings } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -95,4 +95,5 @@ export default function UserMenu() {
     </DropdownMenu>
   );
 }
+
 

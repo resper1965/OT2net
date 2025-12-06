@@ -34,7 +34,6 @@ export default function NovoClientePage() {
     certificacoes: [] as string[],
   });
   const [agenciaInput, setAgenciaInput] = useState("");
-  const [certificacaoInput, setCertificacaoInput] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,8 +43,8 @@ export default function NovoClientePage() {
       await api.clientes.create(formData);
       toast.success("Cliente criado com sucesso");
       router.push("/dashboard/clientes");
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro ao criar cliente";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao criar cliente";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -233,7 +232,7 @@ export default function NovoClientePage() {
           </div>
 
           <div className="flex gap-4">
-            <Button type="submit" disabled={loading} isLoading={loading} variant="primary">
+            <Button type="submit" disabled={loading} variant="default">
               Salvar
             </Button>
             <Link href="/dashboard/clientes">

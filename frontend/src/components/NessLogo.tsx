@@ -29,8 +29,8 @@ export default function NessLogo({
 
   // Determina a cor do texto "ness" baseado no variant e tema atual
   const getTextColor = () => {
-    if (variant === "light") return "text-black";
-    if (variant === "dark") return "text-white";
+    if (variant === "light") {return "text-black";}
+    if (variant === "dark") {return "text-white";}
     
     // variant === "default": adapta ao tema
     if (!mounted) {

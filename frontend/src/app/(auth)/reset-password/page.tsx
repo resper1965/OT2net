@@ -50,7 +50,7 @@ export default function ResetPasswordPage() {
         password: password,
       });
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       toast.success("Senha redefinida com sucesso!", { id: toastId });
       setSuccess(true);

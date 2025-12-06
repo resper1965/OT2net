@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 
 export default function NovoUsuarioPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
@@ -28,8 +28,8 @@ export default function NovoUsuarioPage() {
       await api.usuarios.create(formData);
       toast.success("Usuário criado com sucesso!");
       router.push("/dashboard/usuarios");
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
       toast.error("Erro ao criar usuário: " + errorMessage);
     } finally {
       setLoading(false);
@@ -123,7 +123,7 @@ export default function NovoUsuarioPage() {
           </div>
 
           <div className="flex gap-4">
-            <Button type="submit" isLoading={loading} variant="primary">
+            <Button type="submit" variant="default">
               Criar Usuário
             </Button>
             <Link href="/dashboard/usuarios">

@@ -25,12 +25,8 @@ const formSchema = z.object({
   nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   email: z.string().email("Email inválido"),
   descricao: z.string().min(10, "Descrição deve ter pelo menos 10 caracteres"),
-  tipo: z.string({
-    required_error: "Selecione um tipo",
-  }),
-  prioridade: z.enum(["baixa", "media", "alta"], {
-    required_error: "Selecione uma prioridade",
-  }),
+  tipo: z.string().min(1, "Selecione um tipo"),
+  prioridade: z.enum(["baixa", "media", "alta"]),
   termos: z.boolean().refine((val) => val === true, {
     message: "Você deve aceitar os termos",
   }),
@@ -48,6 +44,7 @@ export function ExampleForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    // eslint-disable-next-line no-console
     console.log(values);
     toast.success("Formulário enviado com sucesso!");
   }

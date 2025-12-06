@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
-import { Building2, Users, FolderKanban, FileText, TrendingUp, AlertCircle, CheckCircle2, Clock, ArrowRight } from "lucide-react";
+import { Building2, Users, FolderKanban, FileText, TrendingUp, CheckCircle2, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton, SkeletonCard } from "@/components/ui/skeleton";
 import { usePageTitle } from "@/contexts/PageTitleContext";
@@ -113,7 +113,7 @@ export default function DashboardPage() {
         .sort((a: ItemComData, b: ItemComData) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
         .slice(0, 5);
       setProcessosRecentes(processosOrdenados);
-    } catch (error) {
+    } catch (err) {
       // Erro já tratado
     } finally {
       setLoading(false);
@@ -177,10 +177,10 @@ export default function DashboardPage() {
   ];
 
   function getProgressColor(progresso?: number) {
-    if (!progresso) return "bg-zinc-200 dark:bg-zinc-700";
-    if (progresso >= 75) return "bg-green-500";
-    if (progresso >= 50) return "bg-blue-500";
-    if (progresso >= 25) return "bg-yellow-500";
+    if (!progresso) {return "bg-zinc-200 dark:bg-zinc-700";}
+    if (progresso >= 75) {return "bg-green-500";}
+    if (progresso >= 50) {return "bg-blue-500";}
+    if (progresso >= 25) {return "bg-yellow-500";}
     return "bg-red-500";
   }
 
@@ -292,7 +292,7 @@ export default function DashboardPage() {
                   Nenhum projeto cadastrado
                 </p>
                 <Link href="/dashboard/projetos/novo">
-                  <Button variant="primary" size="sm">
+                  <Button variant="default" size="sm">
                     Criar Projeto
                   </Button>
                 </Link>
@@ -356,7 +356,7 @@ export default function DashboardPage() {
                   Nenhum processo cadastrado
                 </p>
                 <Link href="/dashboard/processos/novo">
-                  <Button variant="primary" size="sm">
+                  <Button variant="default" size="sm">
                     Criar Processo
                   </Button>
                 </Link>

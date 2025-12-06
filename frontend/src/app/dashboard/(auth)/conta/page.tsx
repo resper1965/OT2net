@@ -32,7 +32,7 @@ export default function ContaPage() {
   const toast = useToast();
 
   function getInitials(name: string): string {
-    if (!name) return "U";
+    if (!name) {return "U";}
     const parts = name.trim().split(/\s+/);
     if (parts.length === 1) {
       return parts[0].substring(0, 2).toUpperCase();
@@ -68,7 +68,7 @@ export default function ContaPage() {
         name,
         email,
       });
-    } catch {
+    } catch (err) {
       toast.error("Erro ao carregar informações da conta");
     } finally {
       setLoading(false);
@@ -90,7 +90,7 @@ export default function ContaPage() {
         },
       });
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       toast.success("Perfil atualizado com sucesso!");
       await loadProfile();
@@ -230,9 +230,9 @@ export default function ContaPage() {
             {/* Actions */}
             <div className="flex gap-4 pt-4 border-t border-zinc-200 dark:border-zinc-700">
               <Button
-                variant="primary"
+                variant="default"
                 onClick={handleSave}
-                isLoading={saving}
+               
                 disabled={saving}
               >
                 Salvar Alterações

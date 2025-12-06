@@ -41,6 +41,7 @@ export function useProjetos(clienteId?: string): UseProjetosReturn {
 
   useEffect(() => {
     loadProjetos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clienteId]);
 
   return {
@@ -50,4 +51,5 @@ export function useProjetos(clienteId?: string): UseProjetosReturn {
     refetch: loadProjetos,
   };
 }
+
 

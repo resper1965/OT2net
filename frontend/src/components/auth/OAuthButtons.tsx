@@ -34,7 +34,7 @@ interface OAuthButtonsProps {
   redirectTo?: string;
 }
 
-export function OAuthButtons({ mode = "login", redirectTo = "/dashboard" }: OAuthButtonsProps) {
+export function OAuthButtons({ redirectTo = "/dashboard" }: OAuthButtonsProps) {
   const handleOAuth = async (provider: "google" | "github") => {
     const toastId = toast.loading(`Conectando com ${provider === "google" ? "Google" : "GitHub"}...`);
 
@@ -50,7 +50,7 @@ export function OAuthButtons({ mode = "login", redirectTo = "/dashboard" }: OAut
         },
       });
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       // Se chegou aqui sem erro, está redirecionando (não precisa fazer nada)
       toast.dismiss(toastId);

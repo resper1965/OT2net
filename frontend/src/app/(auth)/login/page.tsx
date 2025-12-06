@@ -48,7 +48,7 @@ function LoginForm() {
         password,
       });
 
-      if (signInError) throw signInError;
+      if (signInError) {throw signInError;}
 
       if (data.user && data.session) {
         const {

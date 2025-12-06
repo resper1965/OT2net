@@ -39,8 +39,8 @@ export default function EditarProjetoPage() {
         progresso_geral: data.progresso_geral || 0,
         cliente_id: data.cliente_id || "",
       });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro ao carregar projeto";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar projeto";
       toast.error(errorMessage);
     } finally {
       setLoadingData(false);
@@ -55,8 +55,8 @@ export default function EditarProjetoPage() {
       await api.projetos.update(id, formData);
       toast.success("Projeto atualizado com sucesso");
       router.push(`/dashboard/projetos/${id}`);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro ao atualizar projeto";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao atualizar projeto";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -151,7 +151,7 @@ export default function EditarProjetoPage() {
           </div>
 
           <div className="flex gap-4">
-            <Button type="submit" disabled={loading} isLoading={loading} variant="primary">
+            <Button type="submit" disabled={loading} variant="default">
               Salvar
             </Button>
             <Link href={`/dashboard/projetos/${id}`}>

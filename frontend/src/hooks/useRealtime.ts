@@ -76,7 +76,7 @@ export function useRealtime(options: UseRealtimeOptions) {
         supabase.removeChannel(newChannel);
       }
     };
-  }, [options.table, options.filter]);
+  }, [options.table, options.filter, options]);
 
   return {
     channel,

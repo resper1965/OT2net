@@ -72,8 +72,8 @@ export default function EditarClientePage() {
         agencias_reguladoras: data.agencias_reguladoras || [],
         certificacoes: data.certificacoes || [],
       });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro ao carregar cliente";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar cliente";
       toast.error(errorMessage);
     } finally {
       setLoadingData(false);
@@ -88,8 +88,8 @@ export default function EditarClientePage() {
       await api.clientes.update(id, formData);
       toast.success("Cliente atualizado com sucesso");
       router.push(`/dashboard/clientes/${id}`);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro ao atualizar cliente";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao atualizar cliente";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -401,7 +401,7 @@ export default function EditarClientePage() {
           </div>
 
           <div className="flex gap-4">
-            <Button type="submit" disabled={loading} isLoading={loading} variant="primary">
+            <Button type="submit" disabled={loading} variant="default">
               Salvar
             </Button>
             <Link href={`/dashboard/clientes/${id}`}>

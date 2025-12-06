@@ -63,7 +63,7 @@ export default function InvitePage() {
         },
       });
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       if (data.user) {
         toast.success("Conta criada com sucesso!", { id: toastId });

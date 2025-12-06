@@ -109,7 +109,7 @@ export default function EmpresaDetalhesPage() {
             </h1>
             <div className="flex gap-2">
               <Link href={`/dashboard/empresas/${id}/editar`}>
-                <Button variant="primary">Editar</Button>
+                <Button variant="default">Editar</Button>
               </Link>
               <Button variant="destructive" onClick={() => setDeleteDialog(true)}>
                 Excluir

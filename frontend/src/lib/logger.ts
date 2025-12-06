@@ -7,7 +7,9 @@ const isDevelopment = process.env.NODE_ENV === "development";
 
 export const logger = {
   log: (...args: unknown[]) => {
+    // Log removido em produção - usar logger.info para desenvolvimento
     if (isDevelopment) {
+      // eslint-disable-next-line no-console
       console.log(...args);
     }
   },
@@ -29,10 +31,12 @@ export const logger = {
       console.warn(...args);
     }
   },
-  debug: (...args: unknown[]) => {
+  info: (...args: unknown[]) => {
     if (isDevelopment) {
-      console.debug(...args);
+      // eslint-disable-next-line no-console
+      console.warn(...args);
     }
   },
 };
+
 

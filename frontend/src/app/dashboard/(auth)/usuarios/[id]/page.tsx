@@ -59,7 +59,7 @@ export default function UsuarioDetalhesPage() {
   }
 
   async function handleDeleteConfirm() {
-    if (!deleteDialog.id) return;
+    if (!deleteDialog.id) {return;}
 
     try {
       await api.usuarios.delete(deleteDialog.id);
@@ -72,7 +72,7 @@ export default function UsuarioDetalhesPage() {
   }
 
   function getInitials(name: string): string {
-    if (!name) return "U";
+    if (!name) {return "U";}
     const parts = name.trim().split(/\s+/);
     if (parts.length === 1) {
       return parts[0].substring(0, 2).toUpperCase();

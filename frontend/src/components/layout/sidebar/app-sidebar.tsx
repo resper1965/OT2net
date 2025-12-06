@@ -1,9 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { useIsTablet } from "@/hooks/use-mobile";
 
 import {
   Sidebar,
@@ -25,7 +24,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { setOpenMobile, isMobile } = useSidebar();
 
   useEffect(() => {
-    if (isMobile) setOpenMobile(false);
+    if (isMobile) {setOpenMobile(false);}
   }, [pathname, isMobile, setOpenMobile]);
 
   return (

@@ -32,8 +32,8 @@ export default function NovaDescricaoPage() {
       await api.descricoesRaw.create(formData);
       toast.success("Descrição criada com sucesso");
       router.push("/dashboard/processos");
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro ao criar descrição";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao criar descrição";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -143,7 +143,7 @@ export default function NovaDescricaoPage() {
           </div>
 
           <div className="flex gap-4">
-            <Button type="submit" disabled={loading} isLoading={loading} variant="primary">
+            <Button type="submit" disabled={loading} variant="default">
               Salvar
             </Button>
             <Link href="/dashboard/processos">

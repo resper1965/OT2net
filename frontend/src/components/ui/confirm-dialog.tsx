@@ -32,7 +32,7 @@ export function ConfirmDialog({
     try {
       await onConfirm();
       onOpenChange(false);
-    } catch (error) {
+    } catch {
       // Erro já tratado pelo callback
     } finally {
       setIsLoading(false);
@@ -55,9 +55,9 @@ export function ConfirmDialog({
             {cancelText}
           </Button>
           <Button
-            variant={variant === "destructive" ? "destructive" : "primary"}
+            variant={variant === "destructive" ? "destructive" : "default"}
             onClick={handleConfirm}
-            isLoading={isLoading}
+            disabled={isLoading}
           >
             {confirmText}
           </Button>

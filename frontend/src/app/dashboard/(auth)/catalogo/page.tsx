@@ -41,7 +41,7 @@ export default function CatalogoPage() {
       setLoading(true);
       const data = await api.processosNormalizados.list(undefined, filtroStatus || undefined);
       setProcessos(Array.isArray(data) ? data : []);
-    } catch {
+    } catch (err) {
       // Erro já tratado
     } finally {
       setLoading(false);
@@ -57,8 +57,8 @@ export default function CatalogoPage() {
       setLoadingDiagrama(true);
       const data = await api.processosNormalizados.getDiagrama(processoId, diagramaTipo);
       setDiagrama(data.diagrama);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro ao carregar diagrama";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar diagrama";
       toast.error(errorMessage);
     } finally {
       setLoadingDiagrama(false);
@@ -260,7 +260,7 @@ export default function CatalogoPage() {
                       <button
                         onClick={() => {
                           setDiagramaTipo("flowchart");
-                          if (selectedProcesso.id) loadDiagrama(selectedProcesso.id);
+                          if (selectedProcesso.id) {loadDiagrama(selectedProcesso.id);}
                         }}
                         className={`px-3 py-1 rounded text-sm ${
                           diagramaTipo === "flowchart"
@@ -273,7 +273,7 @@ export default function CatalogoPage() {
                       <button
                         onClick={() => {
                           setDiagramaTipo("sequence");
-                          if (selectedProcesso.id) loadDiagrama(selectedProcesso.id);
+                          if (selectedProcesso.id) {loadDiagrama(selectedProcesso.id);}
                         }}
                         className={`px-3 py-1 rounded text-sm ${
                           diagramaTipo === "sequence"
@@ -286,7 +286,7 @@ export default function CatalogoPage() {
                       <button
                         onClick={() => {
                           setDiagramaTipo("state");
-                          if (selectedProcesso.id) loadDiagrama(selectedProcesso.id);
+                          if (selectedProcesso.id) {loadDiagrama(selectedProcesso.id);}
                         }}
                         className={`px-3 py-1 rounded text-sm ${
                           diagramaTipo === "state"

@@ -12,7 +12,7 @@ export default function Mermaid({ chart }: MermaidProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!ref.current || !chart) return;
+    if (!ref.current || !chart) {return;}
 
     mermaid.initialize({
       startOnLoad: false,

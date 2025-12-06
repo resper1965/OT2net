@@ -111,7 +111,7 @@ export default function ClienteDetalhesPage() {
           <div className="flex justify-end items-center">
             <div className="flex gap-2">
               <Link href={`/dashboard/clientes/${id}/editar`}>
-                <Button variant="primary">Editar</Button>
+                <Button variant="default">Editar</Button>
               </Link>
               <Button variant="destructive" onClick={() => setDeleteDialog(true)}>
                 Excluir

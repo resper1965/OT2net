@@ -7,7 +7,7 @@ import { useToast } from "@/lib/hooks/useToast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Factory, Search, Filter, Plus, Download } from "lucide-react";
+import { Factory, Search, Filter } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
 
 interface Empresa {
@@ -37,7 +37,7 @@ export default function EmpresasPage() {
     try {
       const data = await api.empresas.list();
       setEmpresas(Array.isArray(data) ? data : []);
-    } catch (error) {
+    } catch (err) {
       // Erro já tratado
     } finally {
       setLoading(false);
@@ -49,7 +49,7 @@ export default function EmpresasPage() {
   }
 
   async function handleDeleteConfirm() {
-    if (!deleteDialog.id) return;
+    if (!deleteDialog.id) {return;}
 
     try {
       await api.empresas.delete(deleteDialog.id);
@@ -154,7 +154,7 @@ export default function EmpresasPage() {
               </p>
               {!searchQuery && (
                 <Link href="/dashboard/empresas/novo">
-                  <Button variant="primary">Cadastrar primeira empresa</Button>
+                  <Button variant="default">Cadastrar primeira empresa</Button>
                 </Link>
               )}
             </div>

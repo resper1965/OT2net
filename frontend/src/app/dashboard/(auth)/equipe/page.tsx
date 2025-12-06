@@ -5,7 +5,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { UserCog, Search, Filter, Plus, Download } from "lucide-react";
+import { UserCog, Search, Filter } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
 
 interface MembroEquipe {
@@ -32,7 +32,7 @@ export default function EquipePage() {
       setLoading(true);
       const data = await api.membrosEquipe.list();
       setMembros(Array.isArray(data) ? data : []);
-    } catch (error) {
+    } catch (err) {
       // Erro já tratado
     } finally {
       setLoading(false);

@@ -133,12 +133,12 @@ export function usePermissions() {
    * @returns true se tem permissão, false caso contrário
    */
   const can = (resource: Resource | string, action: PermissionAction): boolean => {
-    if (!user?.role) return false;
+    if (!user?.role) {return false;}
     
     const userRole = user.role as UserRole;
     const permissions = ROLE_PERMISSIONS[userRole];
     
-    if (!permissions) return false;
+    if (!permissions) {return false;}
     
     return permissions.some(
       (p) => 

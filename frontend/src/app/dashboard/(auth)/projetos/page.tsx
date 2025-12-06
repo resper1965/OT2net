@@ -11,9 +11,6 @@ import {
   FileText,
   Search,
   Filter,
-  MoreVertical,
-  Calendar,
-  Users,
   TrendingUp,
   CheckCircle2,
   Clock,
@@ -49,7 +46,7 @@ export default function ProjetosPage() {
     try {
       const data = await api.projetos.list();
       setProjetos(Array.isArray(data) ? data : []);
-    } catch (error) {
+    } catch (err) {
       // Erro já tratado pelo hook ou componente
     } finally {
       setLoading(false);
@@ -83,8 +80,8 @@ export default function ProjetosPage() {
   const projetosEmAndamento = projetos.filter(
     (p) => p.progresso_geral && p.progresso_geral > 0 && p.progresso_geral < 100
   ).length;
-  const projetosNaoIniciados = projetos.filter((p) => !p.progresso_geral || p.progresso_geral === 0)
-    .length;
+  // const projetosNaoIniciados = projetos.filter((p) => !p.progresso_geral || p.progresso_geral === 0)
+  //   .length;
 
   // Filtros
   const filteredProjetos = projetos.filter((projeto) => {
@@ -92,23 +89,23 @@ export default function ProjetosPage() {
       projeto.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
       projeto.descricao?.toLowerCase().includes(searchQuery.toLowerCase());
 
-    if (!matchesSearch) return false;
+    if (!matchesSearch) {return false;}
 
-    if (filterStatus === "all") return true;
-    if (filterStatus === "completed") return projeto.progresso_geral === 100;
+    if (filterStatus === "all") {return true;}
+    if (filterStatus === "completed") {return projeto.progresso_geral === 100;}
     if (filterStatus === "in-progress")
-      return projeto.progresso_geral && projeto.progresso_geral > 0 && projeto.progresso_geral < 100;
+      {return projeto.progresso_geral && projeto.progresso_geral > 0 && projeto.progresso_geral < 100;}
     if (filterStatus === "not-started")
-      return !projeto.progresso_geral || projeto.progresso_geral === 0;
+      {return !projeto.progresso_geral || projeto.progresso_geral === 0;}
 
     return true;
   });
 
   function getProgressColor(progresso?: number) {
-    if (!progresso) return "bg-zinc-200 dark:bg-zinc-700";
-    if (progresso >= 75) return "bg-green-500";
-    if (progresso >= 50) return "bg-blue-500";
-    if (progresso >= 25) return "bg-yellow-500";
+    if (!progresso) {return "bg-zinc-200 dark:bg-zinc-700";}
+    if (progresso >= 75) {return "bg-green-500";}
+    if (progresso >= 50) {return "bg-blue-500";}
+    if (progresso >= 25) {return "bg-yellow-500";}
     return "bg-red-500";
   }
 
@@ -197,7 +194,7 @@ export default function ProjetosPage() {
                 Exportar
               </Button>
               <Link href="/dashboard/projetos/novo">
-                <Button variant="primary">
+                <Button variant="default">
                   <Plus className="h-4 w-4 mr-2" />
                   Novo Projeto
                 </Button>
@@ -253,7 +250,7 @@ export default function ProjetosPage() {
             </p>
             {!searchQuery && filterStatus === "all" && (
               <Link href="/dashboard/projetos/novo">
-                <Button variant="primary">Criar primeiro projeto</Button>
+                <Button variant="default">Criar primeiro projeto</Button>
               </Link>
             )}
           </div>

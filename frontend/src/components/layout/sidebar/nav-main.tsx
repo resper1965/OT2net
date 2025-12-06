@@ -25,7 +25,6 @@ import {
   BookOpen,
   ChevronRight,
   Settings,
-  Shield,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -303,4 +302,5 @@ export function NavMain() {
     </>
   );
 }
+
 

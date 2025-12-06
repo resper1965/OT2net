@@ -7,7 +7,7 @@ import { useToast } from "@/lib/hooks/useToast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Users, Search, Filter, Plus, Download, Shield, UserCheck, UserX } from "lucide-react";
+import { Users, Search, Filter, Shield, UserCheck } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
 
 interface Usuario {
@@ -41,8 +41,8 @@ export default function UsuariosPage() {
       setLoading(true);
       const data = await api.usuarios.list();
       setUsuarios(Array.isArray(data) ? data : []);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
       if (errorMessage.includes("403") || errorMessage.includes("Acesso negado")) {
         toast.error("Acesso negado. Apenas administradores podem gerenciar usuários.");
         window.location.href = "/dashboard";
@@ -59,7 +59,7 @@ export default function UsuariosPage() {
   }
 
   async function handleDeleteConfirm() {
-    if (!deleteDialog.id) return;
+    if (!deleteDialog.id) {return;}
 
     try {
       await api.usuarios.delete(deleteDialog.id);
@@ -85,9 +85,9 @@ export default function UsuariosPage() {
       usuario.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       usuario.organizacao?.toLowerCase().includes(searchQuery.toLowerCase());
 
-    if (!matchesSearch) return false;
+    if (!matchesSearch) {return false;}
 
-    if (filterPerfil === "all") return true;
+    if (filterPerfil === "all") {return true;}
     return usuario.perfil === filterPerfil;
   });
 
@@ -120,7 +120,7 @@ export default function UsuariosPage() {
   }
 
   function getInitials(name: string): string {
-    if (!name) return "U";
+    if (!name) {return "U";}
     const parts = name.trim().split(/\s+/);
     if (parts.length === 1) {
       return parts[0].substring(0, 2).toUpperCase();
@@ -232,7 +232,7 @@ export default function UsuariosPage() {
             </p>
             {!searchQuery && filterPerfil === "all" && (
               <Link href="/dashboard/usuarios/novo">
-                <Button variant="primary">Criar primeiro usuário</Button>
+                <Button variant="default">Criar primeiro usuário</Button>
               </Link>
             )}
           </div>

@@ -36,7 +36,7 @@ export function ProtectedRoute({
   }, [hasPermission, fallback, redirectTo, router]);
   
   if (!hasPermission) {
-    if (fallback) return <>{fallback}</>;
+    if (fallback) {return <>{fallback}</>;}
     return null;
   }
   
