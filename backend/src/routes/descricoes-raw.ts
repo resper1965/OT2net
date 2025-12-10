@@ -133,7 +133,11 @@ router.post('/:id/processar', authenticateToken, async (req, res, next) => {
     
     if (criar_processo === 'true') {
       // Processar e criar processo normalizado
-      const processo = await ProcessamentoIAService.processarECriar(id);
+      // TODO: Garantir que req.user tenha tenant_id via middleware atualizado
+      const tenantId = (req as any).user?.tenant_id; 
+      if (!tenantId) throw new Error('Tenant ID não encontrado no usuário');
+
+      const processo = await ProcessamentoIAService.processarECriar(id, tenantId);
       res.json({
         success: true,
         processo,
@@ -141,7 +145,10 @@ router.post('/:id/processar', authenticateToken, async (req, res, next) => {
       });
     } else {
       // Apenas processar
-      const resultado = await ProcessamentoIAService.processarDescricaoRaw(id);
+      const tenantId = (req as any).user?.tenant_id;
+      if (!tenantId) throw new Error('Tenant ID não encontrado no usuário');
+
+      const resultado = await ProcessamentoIAService.processarDescricaoRaw(id, tenantId);
       res.json({
         success: true,
         resultado,
@@ -154,6 +161,7 @@ router.post('/:id/processar', authenticateToken, async (req, res, next) => {
 });
 
 export default router;
+
 
 
 

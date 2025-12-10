@@ -48,43 +48,43 @@ export default function RevisaoProcessoPage() {
   const toast = useToast();
 
   useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        const [descricao] = await Promise.all([
+          api.descricoesRaw.get(id),
+          api.descricoesRaw.get(id).then(async (d) => {
+            // Buscar processo normalizado relacionado
+            if (d.resultado_processamento?.processo_id) {
+              try {
+                // Assumindo que existe uma API para buscar processo normalizado
+                // Por enquanto, vamos usar o resultado do processamento
+                return d.resultado_processamento;
+              } catch {
+                return null;
+              }
+            }
+            return null;
+          }),
+        ]);
+
+        setDescricaoRaw(descricao);
+        if (descricao.resultado_processamento) {
+          setProcessoNormalizado(descricao.resultado_processamento);
+        }
+        setError(null);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Erro ao carregar dados";
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     if (id) {
       loadData();
     }
   }, [id]);
-
-  async function loadData() {
-    try {
-      setLoading(true);
-      const [descricao] = await Promise.all([
-        api.descricoesRaw.get(id),
-        api.descricoesRaw.get(id).then(async (d) => {
-          // Buscar processo normalizado relacionado
-          if (d.resultado_processamento?.processo_id) {
-            try {
-              // Assumindo que existe uma API para buscar processo normalizado
-              // Por enquanto, vamos usar o resultado do processamento
-              return d.resultado_processamento;
-            } catch {
-              return null;
-            }
-          }
-          return null;
-        }),
-      ]);
-
-      setDescricaoRaw(descricao);
-      if (descricao.resultado_processamento) {
-        setProcessoNormalizado(descricao.resultado_processamento);
-      }
-      setError(null);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar dados";
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function handleAprovarConfirm() {
     try {

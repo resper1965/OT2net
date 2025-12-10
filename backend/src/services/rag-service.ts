@@ -150,18 +150,17 @@ Pergunta do usuário: ${pergunta}
 Forneça uma resposta clara e precisa, citando as regras relevantes quando apropriado.`
 
       // Chamar Gemini para gerar resposta contextualizada
+      // Chamar Gemini para gerar resposta contextualizada
       const resposta = await GeminiService.sendMessage(
-        'rag_consulta_regras',
         prompt,
         {
           systemInstruction,
           temperature: 0.3, // Menor temperatura para respostas mais precisas
-          maxOutputTokens: 2048,
         }
       )
 
       return {
-        resposta: resposta.text,
+        resposta: resposta.content,
         regrasEncontradas: regrasSimilares.map((r) => ({
           id: r.id,
           framework: r.framework,
@@ -209,6 +208,7 @@ Forneça uma resposta clara e precisa, citando as regras relevantes quando aprop
       const embedding = await GeminiService.generateEmbedding(textoCompleto)
 
       // Criar requisito usando Prisma
+      // @ts-ignore
       const requisito = await prisma.requisitoFramework.create({
         data: {
           framework,

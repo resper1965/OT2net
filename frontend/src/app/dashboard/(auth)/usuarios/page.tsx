@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
@@ -32,11 +32,7 @@ export default function UsuariosPage() {
   });
   const toast = useToast();
 
-  useEffect(() => {
-    loadUsuarios();
-  }, []);
-
-  async function loadUsuarios() {
+  const loadUsuarios = useCallback(async () => {
     try {
       setLoading(true);
       const data = await api.usuarios.list();
@@ -52,7 +48,11 @@ export default function UsuariosPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [toast]);
+
+  useEffect(() => {
+    loadUsuarios();
+  }, [loadUsuarios]);
 
   function handleDeleteClick(id: string) {
     setDeleteDialog({ open: true, id });

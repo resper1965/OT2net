@@ -33,7 +33,6 @@ export const logger = {
   },
   info: (...args: unknown[]) => {
     if (isDevelopment) {
-      // eslint-disable-next-line no-console
       console.warn(...args);
     }
   },

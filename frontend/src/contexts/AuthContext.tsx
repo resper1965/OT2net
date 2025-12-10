@@ -2,12 +2,11 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase/client";
+import { User, onAuthStateChanged, signOut as firebaseSignOut } from "firebase/auth";
+import { auth } from "@/lib/firebase/client";
 
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
   loading: boolean;
   signOut: () => Promise<void>;
 }
@@ -16,45 +15,33 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    // Verificar sessão inicial
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
       setLoading(false);
+      
+      // Opcional: Redirecionamento baseado em estado
+      // if (!user && !loading) { router.push("/login"); }
     });
 
-    // Escutar mudanças de autenticação
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-
-      // Redirecionar após login/logout
-      if (_event === "SIGNED_OUT") {
-        router.push("/login");
-        router.refresh();
-      } else if (_event === "SIGNED_IN") {
-        router.refresh();
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    return () => unsubscribe();
   }, [router]);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await firebaseSignOut(auth);
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      console.error("Erro ao sair:", error);
+    }
   };
 
   const value = {
     user,
-    session,
     loading,
     signOut,
   };

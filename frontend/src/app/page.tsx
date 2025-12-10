@@ -1,15 +1,23 @@
-import { redirect } from "next/navigation";
-import { createServerClient } from "@/lib/supabase/server";
+"use client";
 
-export default async function Home() {
-  const supabase = await createServerClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { auth } from "@/lib/firebase/client";
 
-  if (session) {
-    redirect("/dashboard");
-  } else {
-    redirect("/login");
-  }
+export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        router.push("/dashboard");
+      } else {
+        router.push("/login");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [router]);
+
+  return <div className="flex items-center justify-center h-screen">Redirecting...</div>;
 }

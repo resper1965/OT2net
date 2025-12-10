@@ -1,4 +1,4 @@
-import { AnthropicService } from './anthropic'
+import { GeminiService } from './gemini'
 import { prisma } from '../lib/prisma'
 import { logger } from '../utils/logger'
 import { AppError } from '../middleware/errorHandler'
@@ -120,7 +120,7 @@ export class ProcessamentoIAService {
   /**
    * Processa uma descrição operacional raw e retorna processo normalizado
    */
-  static async processarDescricaoRaw(descricaoRawId: string): Promise<ProcessamentoResult> {
+  static async processarDescricaoRaw(descricaoRawId: string, tenantId: string): Promise<ProcessamentoResult> {
     // Buscar descrição raw
     const descricaoRaw = await prisma.descricaoOperacionalRaw.findUnique({
       where: { id: descricaoRawId },
@@ -149,30 +149,21 @@ ${descricaoRaw.frequencia ? `Frequência: ${descricaoRaw.frequencia}` : ''}
 ${descricaoRaw.impacto ? `Impacto: ${descricaoRaw.impacto}` : ''}
 ${descricaoRaw.dificuldades ? `Dificuldades mencionadas: ${descricaoRaw.dificuldades}` : ''}`
 
-      // Chamar Claude API
-      const response = await AnthropicService.sendMessage(
-        'processamento_descricao_raw',
-        [
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
+      // Chamar Gemini API
+      // Usando Pro para melhor raciocínio na extração de JSON complexo
+      const response = await GeminiService.sendMessage(
+        prompt,
         {
-          system: SYSTEM_PROMPT,
-          temperature: 0.3, // Menor temperatura para mais consistência
-          maxTokens: 4096,
+          systemInstruction: SYSTEM_PROMPT,
+          useFlash: false, // Usa Pro
+          jsonMode: true,  // Força JSON
+          temperature: 0.3,
         }
       )
 
-      // Extrair JSON da resposta
-      const content = response.content[0]
-      if (content.type !== 'text') {
-        throw new AppError('Resposta da IA não é texto', 500)
-      }
-
-      // Parse JSON (pode estar dentro de markdown code blocks)
-      let jsonText = content.text.trim()
+      const text = response.content
+      // Parse JSON (Gemini com jsonMode geralmente retorna raw json, mas prevenir markdown blocks)
+      let jsonText = text.trim()
       if (jsonText.startsWith('```')) {
         jsonText = jsonText.replace(/^```json\n?/, '').replace(/```$/, '').trim()
       }
@@ -213,7 +204,8 @@ ${descricaoRaw.dificuldades ? `Dificuldades mencionadas: ${descricaoRaw.dificuld
    */
   static async criarProcessoNormalizado(
     descricaoRawId: string,
-    resultado: ProcessamentoResult
+    resultado: ProcessamentoResult,
+    tenantId: string
   ) {
     const descricaoRaw = await prisma.descricaoOperacionalRaw.findUnique({
       where: { id: descricaoRawId },
@@ -227,6 +219,7 @@ ${descricaoRaw.dificuldades ? `Dificuldades mencionadas: ${descricaoRaw.dificuld
     const processo = await prisma.processoNormalizado.create({
       data: {
         descricao_raw_id: descricaoRawId,
+        tenant_id: tenantId,
         nome: resultado.processo.nome,
         objetivo: resultado.processo.objetivo,
         gatilho: resultado.processo.gatilho,
@@ -263,6 +256,7 @@ ${descricaoRaw.dificuldades ? `Dificuldades mencionadas: ${descricaoRaw.dificuld
       await prisma.ativo.createMany({
         data: resultado.ativos.map((ativo) => ({
           processo_normalizado_id: processo.id,
+          tenant_id: tenantId,
           site_id: descricaoRaw.site_id,
           tipo: ativo.tipo,
           nome: ativo.nome,
@@ -311,9 +305,9 @@ ${descricaoRaw.dificuldades ? `Dificuldades mencionadas: ${descricaoRaw.dificuld
   /**
    * Processa e cria processo normalizado em uma única operação
    */
-  static async processarECriar(descricaoRawId: string) {
-    const resultado = await this.processarDescricaoRaw(descricaoRawId)
-    const processo = await this.criarProcessoNormalizado(descricaoRawId, resultado)
+  static async processarECriar(descricaoRawId: string, tenantId: string) {
+    const resultado = await this.processarDescricaoRaw(descricaoRawId, tenantId)
+    const processo = await this.criarProcessoNormalizado(descricaoRawId, resultado, tenantId)
     return processo
   }
 }

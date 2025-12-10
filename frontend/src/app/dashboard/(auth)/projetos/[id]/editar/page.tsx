@@ -23,29 +23,29 @@ export default function EditarProjetoPage() {
   });
 
   useEffect(() => {
+    async function loadProjeto() {
+      try {
+        setLoadingData(true);
+        const data = await api.projetos.get(id);
+        setFormData({
+          nome: data.nome || "",
+          descricao: data.descricao || "",
+          fase_atual: data.fase_atual || "fase-1",
+          progresso_geral: data.progresso_geral || 0,
+          cliente_id: data.cliente_id || "",
+        });
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Erro ao carregar projeto";
+        toast.error(errorMessage);
+      } finally {
+        setLoadingData(false);
+      }
+    }
+
     if (id) {
       loadProjeto();
     }
-  }, [id]);
-
-  async function loadProjeto() {
-    try {
-      setLoadingData(true);
-      const data = await api.projetos.get(id);
-      setFormData({
-        nome: data.nome || "",
-        descricao: data.descricao || "",
-        fase_atual: data.fase_atual || "fase-1",
-        progresso_geral: data.progresso_geral || 0,
-        cliente_id: data.cliente_id || "",
-      });
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar projeto";
-      toast.error(errorMessage);
-    } finally {
-      setLoadingData(false);
-    }
-  }
+  }, [id, toast]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

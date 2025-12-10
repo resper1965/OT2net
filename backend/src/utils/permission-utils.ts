@@ -12,6 +12,12 @@ export interface Permission {
  * Mapeamento completo de permissões por role
  */
 export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
+  [UserRole.PLATFORM_ADMIN]: [
+    { resource: '*', action: 'create' },
+    { resource: '*', action: 'read' },
+    { resource: '*', action: 'update' },
+    { resource: '*', action: 'delete' },
+  ],
   [UserRole.ADMIN]: [
     { resource: '*', action: 'create' },
     { resource: '*', action: 'read' },

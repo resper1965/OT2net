@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { verifySupabaseToken } from '@/lib/supabase'
+import { firebaseAuth } from '@/lib/firebase'
 
 /**
  * Middleware de autenticação para rotas do Express
@@ -23,10 +23,10 @@ export async function authenticate(
 
     const token = authHeader.replace('Bearer ', '')
 
-    // Verificar token com Supabase
-    const user = await verifySupabaseToken(token)
+    // Verificar token com Firebase Auth
+    const decodedToken = await firebaseAuth.verifyIdToken(token)
 
-    if (!user) {
+    if (!decodedToken) {
       return res.status(401).json({
         error: 'Token inválido ou expirado',
         message: 'Faça login novamente',
@@ -34,15 +34,21 @@ export async function authenticate(
     }
 
     // Adicionar dados do usuário ao request
-    ;(req as any).user = user
-    ;(req as any).userId = user.id
+    // Estrutura customizada com tenant_id e role
+    ;(req as any).user = {
+        id: decodedToken.uid,
+        email: decodedToken.email,
+        tenant_id: decodedToken.tenant_id, // Custom claim
+        role: decodedToken.role // Custom claim
+    }
+    ;(req as any).userId = decodedToken.uid
 
     next()
   } catch (error) {
     console.error('Erro na autenticação:', error)
-    return res.status(500).json({
-      error: 'Erro interno na autenticação',
-      message: 'Tente novamente mais tarde',
+    return res.status(401).json({
+      error: 'Falha na autenticação',
+      message: 'Token inválido',
     })
   }
 }
@@ -61,11 +67,20 @@ export async function optionalAuthenticate(
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.replace('Bearer ', '')
-      const user = await verifySupabaseToken(token)
+      try {
+        const decodedToken = await firebaseAuth.verifyIdToken(token)
 
-      if (user) {
-        ;(req as any).user = user
-        ;(req as any).userId = user.id
+        if (decodedToken) {
+          ;(req as any).user = {
+            id: decodedToken.uid,
+            email: decodedToken.email,
+            tenant_id: decodedToken.tenant_id,
+            role: decodedToken.role
+          }
+          ;(req as any).userId = decodedToken.uid
+        }
+      } catch (e) {
+        // Ignora erro se token inválido no opcional
       }
     }
 

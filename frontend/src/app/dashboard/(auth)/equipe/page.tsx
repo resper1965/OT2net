@@ -24,20 +24,19 @@ export default function EquipePage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    async function loadMembros() {
+      try {
+        setLoading(true);
+        const data = await api.membrosEquipe.list();
+        setMembros(Array.isArray(data) ? data : []);
+      } catch {
+        // Erro já tratado
+      } finally {
+        setLoading(false);
+      }
+    }
     loadMembros();
   }, []);
-
-  async function loadMembros() {
-    try {
-      setLoading(true);
-      const data = await api.membrosEquipe.list();
-      setMembros(Array.isArray(data) ? data : []);
-    } catch {
-      // Erro já tratado
-    } finally {
-      setLoading(false);
-    }
-  }
 
   // Filtros
   const filteredMembros = membros.filter((membro) => {

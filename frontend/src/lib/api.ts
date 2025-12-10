@@ -12,11 +12,17 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 async function getAuthToken(): Promise<string | null> {
   if (typeof window === "undefined") {return null;}
 
-  const { supabase } = await import("./supabase/client");
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  return session?.access_token || null;
+  const { auth } = await import("./firebase/client");
+  const user = auth.currentUser;
+  
+  if (!user) return null;
+  
+  try {
+    return await user.getIdToken();
+  } catch (error) {
+    console.error("Erro ao obter token:", error);
+    return null;
+  }
 }
 
 async function fetchWithAuth(endpoint: string, options: RequestInit = {}): Promise<Response> {

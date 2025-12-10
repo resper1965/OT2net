@@ -11,6 +11,10 @@
 
 ## Passo 1: Configurar Variáveis de Ambiente
 
+⚠️ **CRÍTICO**: As variáveis de ambiente são obrigatórias para que as serverless functions funcionem. Sem elas, você receberá erro 500 em rotas como `/api/clientes`.
+
+📖 **Para instruções detalhadas, consulte**: [`CONFIGURAR-VARIAVEIS-VERCEL.md`](./CONFIGURAR-VARIAVEIS-VERCEL.md)
+
 ### Via Dashboard Vercel (Recomendado)
 
 1. Acesse: https://vercel.com/dashboard
@@ -18,29 +22,27 @@
 3. Vá em **Settings** > **Environment Variables**
 4. Adicione as seguintes variáveis:
 
-#### Variáveis Públicas (NEXT_PUBLIC_*)
-```
-NEXT_PUBLIC_SUPABASE_URL=https://qaekhnagfzpwprvaxqwt.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_hbperspgh1KUnMYUn_RmOA_VNrEspo7
-```
+#### Variáveis Obrigatórias (Serverless Functions)
 
-#### Variáveis Privadas (Serverless Functions)
-```
-SUPABASE_URL=https://qaekhnagfzpwprvaxqwt.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=sb_secret_Q8M0UN_iohXf16iB4j4H9A_-hY1vuEQ
+| Variável | Valor | Tipo | Como Obter |
+|----------|-------|------|------------|
+| `DATABASE_URL` | `postgresql://postgres.qaekhnagfzpwprvaxqwt:[SENHA]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true` | Secret | Supabase Dashboard > Settings > Database > Connection string (Transaction mode, porta 6543) |
+| `SUPABASE_URL` | `https://qaekhnagfzpwprvaxqwt.supabase.co` | Secret | URL do projeto Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | `[sua service_role_key]` | Secret | Supabase Dashboard > Settings > API > service_role key |
 
-# Database (obter senha no Supabase Dashboard)
-DATABASE_URL=postgresql://postgres.qaekhnagfzpwprvaxqwt:[SENHA]@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true
-DIRECT_URL=postgresql://postgres.qaekhnagfzpwprvaxqwt:[SENHA]@aws-0-us-east-1.pooler.supabase.com:5432/postgres
+#### Variáveis Recomendadas (Frontend)
 
-# Claude API (opcional)
-ANTHROPIC_API_KEY=sua_chave_aqui
-```
+| Variável | Valor | Tipo |
+|----------|-------|------|
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://qaekhnagfzpwprvaxqwt.supabase.co` | Plain Text |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `sb_publishable_hbperspgh1KUnMYUn_RmOA_VNrEspo7` | Plain Text |
 
 **Importante:**
-- Marque `NEXT_PUBLIC_*` como **públicas** (visíveis no browser)
-- Marque as outras como **privadas**
-- Selecione ambientes: Production, Preview, Development
+- ✅ Marque `NEXT_PUBLIC_*` como **Plain Text** (visíveis no browser)
+- ✅ Marque as outras como **Secret** (privadas)
+- ✅ Selecione todos os ambientes: **Production**, **Preview**, **Development**
+- ⚠️ **Use a porta 6543** (Transaction Pooler) para `DATABASE_URL` em serverless functions
+- ⚠️ **Após adicionar**, faça um **Redeploy** para aplicar as mudanças
 
 ### Via CLI
 
@@ -116,8 +118,11 @@ Após o deploy, verifique:
 ### Erro: "Module not found: @prisma/client"
 **Solução**: O build precisa gerar o Prisma Client. O script `postinstall` já faz isso.
 
-### Erro: "Environment variable not found"
-**Solução**: Verifique se todas as variáveis estão configuradas no Vercel Dashboard.
+### Erro: "Environment variable not found" ou Erro 500 em `/api/clientes`
+**Solução**: 
+- Verifique se todas as variáveis obrigatórias estão configuradas no Vercel Dashboard
+- Certifique-se de fazer um **Redeploy** após adicionar as variáveis
+- Consulte [`CONFIGURAR-VARIAVEIS-VERCEL.md`](./CONFIGURAR-VARIAVEIS-VERCEL.md) para instruções detalhadas
 
 ### Erro: "Database connection failed"
 **Solução**: 

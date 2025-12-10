@@ -1,4 +1,5 @@
-import { AnthropicService } from './anthropic'
+import { GeminiService } from './gemini'
+import { VertexSearchService } from './vertex-search'
 import { prisma } from '../lib/prisma'
 import { logger } from '../utils/logger'
 import { AppError } from '../middleware/errorHandler'
@@ -14,16 +15,7 @@ export class VectorService {
    * Esta função usa uma abordagem alternativa ou delega para serviço de embeddings
    */
   static async generateEmbedding(text: string): Promise<number[]> {
-    // TODO: Implementar geração de embeddings
-    // Opções:
-    // 1. Usar OpenAI embeddings (text-embedding-3-large)
-    // 2. Usar Cohere embeddings
-    // 3. Usar serviço dedicado de embeddings
-    
-    throw new AppError(
-      'Geração de embeddings ainda não implementada. Use serviço dedicado (OpenAI, Cohere, etc.)',
-      501
-    )
+    return await GeminiService.generateEmbedding(text)
   }
 
   /**
@@ -31,13 +23,15 @@ export class VectorService {
    */
   static async vectorizeRequisito(
     requisitoId: string,
-    texto: string
+    texto: string,
+    tenantId: string | null = null // Default null para compatibilidade, ideal ser obrigatório
   ): Promise<void> {
     try {
-      // Gerar embedding (quando implementado)
-      const embedding = await this.generateEmbedding(texto)
+      // Gerar embedding usando Gemini
+      const embedding = await GeminiService.generateEmbedding(texto)
 
-      // Atualizar requisito com embedding
+      // 1. Atualizar Postgres (Persistence + Fallback)
+      // Mesmo usando Vertex, guardamos o vetor no banco se coluna existir, ou apenas metadados
       await prisma.$executeRaw`
         UPDATE requisitos_framework
         SET embedding = ${embedding}::vector,
@@ -45,7 +39,14 @@ export class VectorService {
         WHERE id = ${requisitoId}::uuid
       `
 
-      logger.info({ requisitoId }, 'Requisito vetorizado com sucesso')
+      // 2. Indexar no Vertex AI (Busca Performática Multitenant)
+      await VertexSearchService.upsertVector(
+          requisitoId, 
+          embedding,
+          tenantId
+      )
+
+      logger.info({ requisitoId, tenantId }, 'Requisito vetorizado e indexado com sucesso')
     } catch (error: any) {
       logger.error({ requisitoId, error: error.message }, 'Erro ao vetorizar requisito')
       throw new AppError(`Erro ao vetorizar requisito: ${error.message}`, 500)
@@ -63,40 +64,52 @@ export class VectorService {
     limit: number = 10,
     threshold: number = 0.7,
     framework?: string,
-    tenantId?: string
+    tenantId?: string | null // null para global
   ) {
     try {
-      // Usar função SQL do Supabase para busca semântica
-      const resultados = await prisma.$queryRaw<Array<{
-        id: string
-        framework: string
-        codigo: string
-        titulo: string
-        descricao: string
-        similaridade: number
-      }>>`
-        SELECT 
-          id,
-          framework,
-          codigo,
-          titulo,
-          descricao,
-          1 - (embedding <=> ${queryEmbedding}::vector) as similaridade
-        FROM requisitos_framework
-        WHERE 
-          embedding IS NOT NULL
-          AND (1 - (embedding <=> ${queryEmbedding}::vector)) >= ${threshold}
-          ${framework ? prisma.$queryRaw`AND framework = ${framework}` : prisma.$queryRaw``}
-        ORDER BY embedding <=> ${queryEmbedding}::vector
-        LIMIT ${limit}
-      `
-
-      logger.info(
-        { count: resultados.length, threshold },
-        'Busca semântica de requisitos realizada'
+      // Busca Vetorial no Vertex AI (Opção B)
+      const vertexResults = await VertexSearchService.search(
+        queryEmbedding,
+        tenantId || null,
+        limit
       )
 
+      if (vertexResults.length === 0) {
+        return []
+      }
+
+      // Hidratar resultados com dados do banco (Postgres)
+      // Vertex retorna IDs, buscamos o conteúdo completo no DB
+      const ids = vertexResults.map(r => r.id)
+      
+      const requisitos = await prisma.requisitoFramework.findMany({
+        where: {
+          id: { in: ids }
+        },
+        select: {
+          id: true,
+          framework: true,
+          codigo: true,
+          titulo: true,
+          descricao: true,
+          // embedding: false // carrega muito peso desnecessario
+        }
+      })
+
+      // Mapear scores de similaridade do Vertex (se disponivel) ou reordenar
+      const resultados = ids.map(id => {
+          const req = requisitos.find(r => r.id === id)
+          const vertexRes = vertexResults.find(r => r.id === id)
+          if (!req) return null
+          
+          return {
+              ...req,
+              similaridade: vertexRes ? (1 - vertexRes.distancia) : 0 // Vertex geralmente retorna distância
+          }
+      }).filter(Boolean)
+
       return resultados
+
     } catch (error: any) {
       logger.error({ error: error.message }, 'Erro na busca semântica')
       throw new AppError(`Erro na busca semântica: ${error.message}`, 500)
@@ -112,17 +125,20 @@ export class VectorService {
   static async analisarConformidade(
     entidadeTipo: string,
     entidadeId: string,
-    texto: string
+    texto: string,
+    tenantId: string
   ) {
     try {
       // Gerar embedding do texto da entidade
-      const embedding = await this.generateEmbedding(texto)
+      const embedding = await GeminiService.generateEmbedding(texto)
 
-      // Buscar requisitos similares
+      // Buscar requisitos similares (Global ou do Tenant)
       const requisitosSimilares = await this.buscarRequisitosSimilares(
         embedding,
         20,
-        0.6 // Threshold mais baixo para capturar mais requisitos
+        0.6, // Threshold
+        undefined,
+        tenantId // Passando o tenantId
       )
 
       // Criar análises de conformidade
@@ -139,6 +155,7 @@ export class VectorService {
           // Criar análise
           return await prisma.analiseConformidade.create({
             data: {
+              tenant_id: tenantId,
               requisito_id: requisito.id,
               entidade_tipo: entidadeTipo,
               entidade_id: entidadeId,

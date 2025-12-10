@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -18,7 +19,7 @@ import {
   Settings,
   Shield,
 } from "lucide-react";
-import { supabase } from "@/lib/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import NessLogo from "./NessLogo";
 import { ThemeToggle } from "./ThemeToggle";
 import { useSidebar } from "./layout/SidebarProvider";
@@ -44,52 +45,29 @@ export function Sidebar({ className }: SidebarProps = {}) {
       toggle();
     }
   };
+  const { user, signOut } = useAuth();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    async function getUser() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session) {
-        setUserEmail(session.user.email || null);
-        setUserName(session.user.user_metadata?.full_name || session.user.user_metadata?.name || null);
-        setUserAvatar(session.user.user_metadata?.avatar_url || null);
-        
-        // Verificar se é admin
-        const perfil = session.user.user_metadata?.perfil;
-        setIsAdmin(perfil === "admin");
-      }
-    }
-    getUser();
-
-    // Escutar mudanças na sessão
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setUserEmail(session.user.email || null);
-        setUserName(session.user.user_metadata?.full_name || session.user.user_metadata?.name || null);
-        setUserAvatar(session.user.user_metadata?.avatar_url || null);
-        
-        // Verificar se é admin
-        const perfil = session.user.user_metadata?.perfil;
-        setIsAdmin(perfil === "admin");
-      } else {
+    if (user) {
+      setUserEmail(user.email || null);
+      setUserName(user.displayName || null);
+      setUserAvatar(user.photoURL || null);
+      
+      user.getIdTokenResult().then((idTokenResult) => {
+        const role = idTokenResult.claims.role;
+        setIsAdmin(role === 'admin' || role === 'PLATFORM_ADMIN');
+      });
+    } else {
         setUserEmail(null);
         setUserName(null);
         setUserAvatar(null);
         setIsAdmin(false);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+    }
+  }, [user]);
 
   const menuItems: MenuItem[] = [
     {
@@ -163,8 +141,8 @@ export function Sidebar({ className }: SidebarProps = {}) {
   }
 
   async function handleLogout() {
-    await supabase.auth.signOut();
-    window.location.href = "/login";
+    await signOut();
+    // Redirect is handled by AuthContext or Router refresh
   }
 
   // Mobile: overlay e sidebar fixa
@@ -254,10 +232,13 @@ export function Sidebar({ className }: SidebarProps = {}) {
               <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-3 space-y-2">
                 <div className="flex items-center gap-3">
                   {userAvatar ? (
-                    <img
+                    <Image
                       src={userAvatar}
                       alt={userName || userEmail}
-                      className="h-10 w-10 rounded-full object-cover border-2 border-zinc-200 dark:border-zinc-700"
+                      width={40}
+                      height={40}
+                      className="rounded-full object-cover border-2 border-zinc-200 dark:border-zinc-700"
+                      unoptimized
                     />
                   ) : (
                     <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center border-2 border-zinc-200 dark:border-zinc-700">

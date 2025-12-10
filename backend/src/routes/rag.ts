@@ -56,7 +56,7 @@ router.post(
         return res.status(400).json({
           sucesso: false,
           erro: 'Dados inválidos',
-          detalhes: error.errors,
+          detalhes: (error as any).errors,
         })
       }
       next(error)
@@ -94,7 +94,7 @@ router.post(
         return res.status(400).json({
           sucesso: false,
           erro: 'Dados inválidos',
-          detalhes: error.errors,
+          detalhes: (error as any).errors,
         })
       }
       if (error instanceof AppError && error.statusCode === 409) {
@@ -189,7 +189,7 @@ router.post(
         return res.status(400).json({
           sucesso: false,
           erro: 'Dados inválidos',
-          detalhes: error.errors,
+          detalhes: (error as any).errors,
         })
       }
       next(error)

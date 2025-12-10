@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase/client";
 import NessLogo from "@/components/NessLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,20 +19,13 @@ function LoginForm() {
 
   // Verificar se já está autenticado ao carregar a página
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        if (session) {
-          const redirectTo = searchParams?.get("redirect") || "/dashboard";
-          router.push(redirectTo);
-        }
-      } catch {
-        // Erro ao verificar autenticação - ignora silenciosamente
-      }
-    };
-    checkAuth();
+    // Check auth state async
+    import("@/lib/firebase/client").then(({ auth }) => {
+       if (auth.currentUser) {
+        const redirectTo = searchParams?.get("redirect") || "/dashboard";
+        router.push(redirectTo);
+       }
+    });
   }, [router, searchParams]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -43,25 +35,21 @@ function LoginForm() {
     const toastId = toast.loading("Entrando...");
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { signInWithEmailAndPassword } = await import("firebase/auth");
+      const { auth } = await import("@/lib/firebase/client");
+      
+      await signInWithEmailAndPassword(auth, email, password);
+      
+      toast.success("Login realizado com sucesso!", { id: toastId });
+      
+      const redirectTo = searchParams?.get("redirect") || "/dashboard";
+      router.refresh();
+      router.push(redirectTo);
 
-      if (signInError) {throw signInError;}
-
-      if (data.user && data.session) {
-        toast.success("Login realizado com sucesso!", { id: toastId });
-        
-        const redirectTo = searchParams?.get("redirect") || "/dashboard";
-        router.refresh();
-        router.push(redirectTo);
-      } else {
-        throw new Error("Falha ao criar sessão de autenticação");
-      }
-    } catch (err: unknown) {
+    } catch (err: any) {
       const error = err as Error;
-      toast.error(error.message || "Erro ao fazer login", { id: toastId });
+      console.error(error);
+      toast.error("Erro ao fazer login. Verifique suas credenciais.", { id: toastId });
       setLoading(false);
     }
   };
