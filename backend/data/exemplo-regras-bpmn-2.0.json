@@ -1,0 +1,139 @@
+[
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Seção 10.2",
+    "titulo": "Atividades (Activities)",
+    "descricao": "Atividades representam trabalho que é executado em um processo. Existem três tipos principais: Task (tarefa), Sub-Process (subprocesso) e Call Activity (atividade de chamada). Tasks são unidades atômicas de trabalho, Sub-Processes podem ser expandidos para mostrar detalhes, e Call Activities referenciam processos reutilizáveis. Atividades podem ser marcadas como loops, múltiplas instâncias ou compensação.",
+    "categoria": "Elementos de Processo",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Seção 10.3",
+    "titulo": "Eventos (Events)",
+    "descricao": "Eventos representam algo que acontece durante o curso de um processo. Existem três tipos principais: Start Events (eventos de início), Intermediate Events (eventos intermediários) e End Events (eventos de fim). Eventos podem ser de tipo Catching (aguardam algo acontecer) ou Throwing (disparam algo). Tipos comuns incluem: Message, Timer, Error, Escalation, Conditional, Signal, e Multiple.",
+    "categoria": "Elementos de Processo",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Seção 10.4",
+    "titulo": "Gateways (Portais de Decisão)",
+    "descricao": "Gateways controlam o fluxo de sequência em um processo, determinando divergências e convergências de caminhos. Tipos principais: Exclusive Gateway (XOR) - escolhe exatamente um caminho, Inclusive Gateway (OR) - escolhe um ou mais caminhos, Parallel Gateway (AND) - todos os caminhos são executados, Event-Based Gateway - escolhe baseado em eventos, e Complex Gateway - lógica customizada. Gateways devem ter condições claras definidas.",
+    "categoria": "Elementos de Processo",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Seção 10.5",
+    "titulo": "Sequence Flows (Fluxos de Sequência)",
+    "descricao": "Sequence Flows conectam elementos de processo e mostram a ordem de execução. Devem conectar elementos de fluxo (atividades, eventos, gateways) e não podem conectar elementos de dados diretamente. Podem ter condições (Conditional Sequence Flow) que determinam se o fluxo é tomado. Um fluxo sem condição é sempre tomado. Fluxos não podem criar loops sem passar por uma atividade.",
+    "categoria": "Elementos de Processo",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Seção 11.1",
+    "titulo": "Message Flows (Fluxos de Mensagem)",
+    "descricao": "Message Flows representam comunicação entre participantes (pools) em um processo. Diferem de Sequence Flows pois conectam elementos entre diferentes pools/lanes, não dentro do mesmo processo. Mostram troca de mensagens entre processos ou organizações. Devem conectar elementos de mensagem (Message Start/Intermediate/End Events ou Send/Receive Tasks).",
+    "categoria": "Colaboração",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Seção 11.2",
+    "titulo": "Pools e Lanes",
+    "descricao": "Pools representam participantes em um processo (organizações, sistemas, departamentos). Um pool pode conter um processo completo ou ser um 'black box' (sem detalhes internos). Lanes são subdivisões dentro de um pool, tipicamente representando roles, sistemas ou responsabilidades. Lanes ajudam a organizar e atribuir responsabilidades dentro de um processo.",
+    "categoria": "Colaboração",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Seção 12.1",
+    "titulo": "Data Objects e Data Stores",
+    "descricao": "Data Objects representam dados que fluem através do processo. Podem ser inputs, outputs ou intermediários. Data Stores representam repositórios persistentes de dados que podem ser acessados por múltiplas instâncias de processo. Data Objects são transientes (existem durante a execução), enquanto Data Stores são persistentes. Ambos podem ser associados a atividades através de Data Associations.",
+    "categoria": "Dados",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Seção 13.1",
+    "titulo": "Artifacts - Annotations",
+    "descricao": "Annotations (anotações) são artefatos que fornecem informações adicionais sobre elementos do processo. São conectadas aos elementos através de Association (linha tracejada). Annotations não afetam a execução do processo, mas são essenciais para documentação e compreensão. Devem ser usadas para explicar lógica complexa, regras de negócio ou contexto adicional.",
+    "categoria": "Artefatos",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Seção 14.1",
+    "titulo": "Sub-Processes - Embedded",
+    "descricao": "Embedded Sub-Processes são subprocessos que estão contidos dentro do processo pai. Podem ser expandidos (mostrando detalhes) ou colapsados (mostrando apenas o contorno). Tipos incluem: Normal, Loop (repete até condição), Multi-Instance (múltiplas instâncias paralelas ou sequenciais), e Ad-Hoc (ordem não pré-definida). Subprocessos encapsulam lógica complexa e melhoram a legibilidade do modelo.",
+    "categoria": "Subprocessos",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Seção 14.2",
+    "titulo": "Sub-Processes - Reusable (Call Activity)",
+    "descricao": "Call Activities referenciam processos reutilizáveis definidos separadamente. Permitem reutilização de lógica de processo em múltiplos contextos. O processo chamado é executado como uma instância separada, mas pode compartilhar dados através de Data Associations. Call Activities são essenciais para modelagem modular e manutenção de processos complexos.",
+    "categoria": "Subprocessos",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Seção 15.1",
+    "titulo": "Transaction e Compensation",
+    "descricao": "Transactions são subprocessos que devem ser executados atomicamente (tudo ou nada). Se uma falha ocorre, todas as atividades completadas dentro da transação são compensadas (revertidas). Compensation é o mecanismo de desfazer trabalho já completado. Compensation Handlers são atividades especiais que definem como reverter o trabalho. Essencial para processos que requerem consistência transacional.",
+    "categoria": "Transações",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Seção 16.1",
+    "titulo": "Event Sub-Processes",
+    "descricao": "Event Sub-Processes são subprocessos que são iniciados por eventos, não por Sequence Flow. Podem ser Interrupting (interrompem o processo pai) ou Non-Interrupting (executam em paralelo). Úteis para tratamento de exceções, timeouts, ou eventos que podem ocorrer a qualquer momento durante a execução do processo pai. Sempre começam com um Start Event.",
+    "categoria": "Subprocessos",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Boas Práticas 1",
+    "titulo": "Nomenclatura e Legibilidade",
+    "descricao": "Use nomes descritivos e verbos de ação para atividades (ex: 'Aprovar Pedido', não 'Aprovação'). Gateways devem ter perguntas claras. Evite diagramas muito complexos - use subprocessos para simplificar. Mantenha consistência na direção do fluxo (geralmente da esquerda para direita ou de cima para baixo). Use cores e estilos consistentes para facilitar compreensão.",
+    "categoria": "Boas Práticas",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Boas Práticas 2",
+    "titulo": "Tratamento de Erros",
+    "descricao": "Sempre modele tratamento de erros usando Error Events e Boundary Events. Error Boundary Events podem ser anexadas a atividades para capturar erros específicos. Use Intermediate Error Events para propagar erros. Defina Error Codes para diferentes tipos de erro. Considere usar Event Sub-Processes para tratamento global de erros. Documente estratégias de retry e compensação.",
+    "categoria": "Boas Práticas",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Boas Práticas 3",
+    "titulo": "Modelagem de Timeouts e Escalações",
+    "descricao": "Use Timer Events para modelar timeouts e prazos. Timer Intermediate Events podem ser usados para esperar por um período específico. Timer Boundary Events podem interromper atividades que excedem um tempo limite. Use Escalation Events para modelar situações que requerem atenção de nível superior. Combine timers com escalações para processos que requerem acompanhamento temporal.",
+    "categoria": "Boas Práticas",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Boas Práticas 4",
+    "titulo": "Paralelismo e Sincronização",
+    "descricao": "Use Parallel Gateways para executar atividades independentes em paralelo. Sempre sincronize fluxos paralelos antes de continuar o processo. Um Parallel Gateway de divergência deve ter um correspondente de convergência. Evite deadlocks garantindo que todos os caminhos paralelos eventualmente convergem. Use Multi-Instance Activities para processar listas de itens em paralelo ou sequencialmente.",
+    "categoria": "Boas Práticas",
+    "versao": "2.0"
+  },
+  {
+    "framework": "BPMN",
+    "codigo": "BPMN 2.0 - Boas Práticas 5",
+    "titulo": "Condições e Expressões",
+    "descricao": "Condições em Sequence Flows devem ser mutuamente exclusivas quando saem de um Exclusive Gateway. Use expressões claras e testáveis. Prefira expressões baseadas em dados do processo (ex: 'amount > 1000') a expressões baseadas em estado interno. Documente lógica complexa em Annotations. Considere usar Decision Tables para múltiplas condições complexas.",
+    "categoria": "Boas Práticas",
+    "versao": "2.0"
+  }
+]
+

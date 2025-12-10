@@ -1,0 +1,43 @@
+[
+  {
+    "framework": "ANEEL",
+    "codigo": "Módulo 3 - Procedimentos de Rede",
+    "titulo": "Requisitos de Segurança para Redes Operativas",
+    "descricao": "As redes operativas devem implementar controles de segurança adequados para proteger sistemas críticos de energia elétrica. Isso inclui segmentação de rede, controle de acesso, monitoramento contínuo e planos de resposta a incidentes. As redes devem estar isoladas de redes corporativas e ter proteção contra ameaças cibernéticas.",
+    "categoria": "Segurança",
+    "versao": "2024.1"
+  },
+  {
+    "framework": "ANEEL",
+    "codigo": "Resolução 964/2021",
+    "titulo": "Requisitos de Conformidade para Sistemas de Operação",
+    "descricao": "Estabelece requisitos mínimos de conformidade para sistemas de operação de redes elétricas, incluindo documentação, procedimentos operacionais, capacitação de pessoal e manutenção preventiva. Os sistemas devem estar em conformidade com normas técnicas nacionais e internacionais aplicáveis.",
+    "categoria": "Conformidade",
+    "versao": "2021"
+  },
+  {
+    "framework": "ONS",
+    "codigo": "PROC-2.1",
+    "titulo": "Procedimentos de Operação de Redes",
+    "descricao": "Define procedimentos operacionais para redes do Sistema Interligado Nacional (SIN), incluindo coordenação entre operadores, comunicação de eventos, gestão de contingências e restabelecimento de serviço. Os operadores devem seguir protocolos estabelecidos para garantir a estabilidade e confiabilidade do sistema.",
+    "categoria": "Operação",
+    "versao": "2024"
+  },
+  {
+    "framework": "ONS",
+    "codigo": "PROC-3.5",
+    "titulo": "Requisitos de Comunicação em Redes Operativas",
+    "descricao": "Estabelece requisitos para sistemas de comunicação em redes operativas, incluindo redundância, latência máxima, protocolos de comunicação seguros e backup de comunicações. As comunicações críticas devem ter múltiplos caminhos e mecanismos de failover automático.",
+    "categoria": "Comunicação",
+    "versao": "2024"
+  },
+  {
+    "framework": "ANEEL",
+    "codigo": "Portaria 465/2022",
+    "titulo": "Requisitos de Cibersegurança para Infraestrutura Crítica",
+    "descricao": "Define requisitos de cibersegurança para infraestrutura crítica de energia elétrica, incluindo gestão de vulnerabilidades, testes de penetração, resposta a incidentes e continuidade de negócios. As organizações devem implementar programas de segurança cibernética alinhados com frameworks reconhecidos.",
+    "categoria": "Cibersegurança",
+    "versao": "2022"
+  }
+]
+

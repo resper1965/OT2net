@@ -1,0 +1,89 @@
+[
+  {
+    "framework": "ONS",
+    "codigo": "PR-INDICE",
+    "titulo": "Procedimentos de Rede — página com todos os submódulos vigentes",
+    "descricao": "Página de índice geral onde se acessam os PR (Procedimentos de Rede) vigentes. Esta é a página principal que contém links para todos os procedimentos de rede atualmente em vigor no ONS.",
+    "categoria": "Índice",
+    "versao": "Vigente",
+    "url": "https://www.ons.org.br/paginas/sobre-o-ons/procedimentos-de-rede/vigentes",
+    "tipo": "Página Web",
+    "observacao": "Página de índice geral onde se acessam os PR (Procedimentos de Rede) vigentes"
+  },
+  {
+    "framework": "ONS",
+    "codigo": "PR-23.3",
+    "titulo": "Submódulo 23.3 – Diretrizes e critérios para estudos elétricos",
+    "descricao": "Estabelece diretrizes e critérios para realização de estudos elétricos no Sistema Interligado Nacional (SIN). Define metodologias, parâmetros técnicos e requisitos para estudos de planejamento, operação e análise de sistemas elétricos.",
+    "categoria": "Estudos Elétricos",
+    "versao": "2018.08",
+    "url": "https://www.ons.org.br/ProcedimentosDeRede/M%C3%B3dulo%2023/Subm%C3%B3dulo%2023.3/Subm%C3%B3dulo%2023.3%202018.08.pdf",
+    "tipo": "PDF",
+    "observacao": "Versão 2018.08 (atual)",
+    "modulo": "23",
+    "submodulo": "23.3"
+  },
+  {
+    "framework": "ONS",
+    "codigo": "PR-23.3-REV0",
+    "titulo": "Submódulo 23.3 – Diretrizes e critérios para estudos elétricos (Versão Histórica)",
+    "descricao": "Versão histórica (Rev_0.0) do Submódulo 23.3 sobre diretrizes e critérios para estudos elétricos. Esta versão foi substituída pela versão 2018.08, mas é mantida para referência histórica e rastreabilidade.",
+    "categoria": "Estudos Elétricos",
+    "versao": "Rev_0.0",
+    "url": "https://www.ons.org.br/ProcedimentosDeRede/M%C3%B3dulo%2023/Subm%C3%B3dulo%2023.3/Subm%C3%B3dulo%2023.3_Rev_0.0.pdf",
+    "tipo": "PDF",
+    "observacao": "Versão antiga / histórica do mesmo submódulo",
+    "modulo": "23",
+    "submodulo": "23.3",
+    "historico": true
+  },
+  {
+    "framework": "ONS",
+    "codigo": "PR-10.1",
+    "titulo": "Submódulo 10.1 – Manual de Procedimentos da Operação: conceituação geral",
+    "descricao": "Apresenta a conceituação geral do Manual de Procedimentos da Operação (MPO), que estabelece as diretrizes e procedimentos para a operação do Sistema Interligado Nacional. Define estrutura, objetivos, escopo e princípios fundamentais do MPO.",
+    "categoria": "Operação",
+    "versao": "Rev_1.0",
+    "url": "https://www.ons.org.br/ProcedimentosDeRede/M%C3%B3dulo%2010/Subm%C3%B3dulo%2010.1/Subm%C3%B3dulo%2010.1_Rev_1.0.pdf",
+    "tipo": "PDF",
+    "observacao": "Visão geral do Módulo 10 / MPO (Manual de Procedimentos da Operação)",
+    "modulo": "10",
+    "submodulo": "10.1"
+  },
+  {
+    "framework": "ONS",
+    "codigo": "PR-10.14",
+    "titulo": "Submódulo 10.14 – Requisitos operacionais para centros de operação / subestações / usinas",
+    "descricao": "Estabelece requisitos operacionais para centros de operação, subestações e usinas do Sistema Interligado Nacional. Define normas para operação, telecomunicação, teleassistência, infraestrutura física, sistemas de controle, segurança e demais aspectos técnicos necessários para operação segura e confiável.",
+    "categoria": "Operação",
+    "versao": "2020.06",
+    "url": "https://www.ons.org.br/ProcedimentosDeRede/M%C3%B3dulo%2010/Subm%C3%B3dulo%2010.14/Subm%C3%B3dulo%2010.14%20-%202020.06.pdf",
+    "tipo": "PDF",
+    "observacao": "Normas para operação, telecomunicação, teleassistência etc.",
+    "modulo": "10",
+    "submodulo": "10.14"
+  },
+  {
+    "framework": "ONS",
+    "codigo": "RO-CB.BR.01",
+    "titulo": "RO‑CB.BR.01 – Controles mínimos de segurança cibernética para o Ambiente Regulado Cibernético",
+    "descricao": "Norma de cibersegurança aplicada a ambientes operativos regulados pelo ONS (ARCiber - Ambiente Regulado Cibernético). Estabelece controles mínimos de segurança cibernética, requisitos de proteção, monitoramento, resposta a incidentes e conformidade para sistemas críticos de infraestrutura elétrica.",
+    "categoria": "Cibersegurança",
+    "versao": "Rev.00",
+    "url": "https://www.ons.org.br/AcervoDigitalDocumentosEPublicacoes/RO-CB.BR.01_Rev.00.pdf",
+    "tipo": "PDF",
+    "observacao": "Norma de cibersegurança aplicada a ambientes operativos regulados pelo ONS (ARCiber)"
+  },
+  {
+    "framework": "ONS",
+    "codigo": "PR-MAPEAMENTO",
+    "titulo": "Relação dos submódulos dos Procedimentos de Rede reestruturados com antiga estrutura",
+    "descricao": "Tabela de mapeamento de submódulos antigos para a nova estrutura dos Procedimentos de Rede. Documento útil para histórico, rastreabilidade e migração de referências entre versões antigas e novas dos procedimentos.",
+    "categoria": "Referência",
+    "versao": "Atual",
+    "url": "https://www.ons.org.br/AcervoDigitalDocumentosEPublicacoes/relacao_SM_reestruturados_antiga_estrutura.pdf",
+    "tipo": "PDF",
+    "observacao": "Tabela de mapeamento de submódulos antigos → novos (útil para histórico e rastreabilidade)"
+  }
+]
+

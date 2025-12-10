@@ -108,6 +108,15 @@ NODE_ENV=development
 # Claude API (opcional por enquanto)
 ANTHROPIC_API_KEY=your_anthropic_api_key_here
 
+# Google Gemini API (para RAG de regras ANEEL/ONS)
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Opcional: Usar Vertex AI para embeddings (mais preciso)
+GEMINI_USE_VERTEX_AI=false
+
+# Opcional: Usar OpenAI para embeddings como fallback (recomendado para produção)
+OPENAI_API_KEY=your_openai_api_key_here
+
 # Redis (opcional por enquanto)
 REDIS_URL=redis://localhost:6379
 ```
@@ -159,6 +168,8 @@ Se as connection strings estiverem corretas, o Prisma Client será gerado com su
 - `DATABASE_URL` com senha real
 - `DIRECT_URL` com senha real
 - `ANTHROPIC_API_KEY` (chave privada)
+- `GEMINI_API_KEY` (chave privada)
+- `OPENAI_API_KEY` (chave privada)
 
 ## Troubleshooting
 
