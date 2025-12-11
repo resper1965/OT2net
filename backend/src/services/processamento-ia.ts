@@ -1,3 +1,4 @@
+import { VertexAIService } from './vertexAiService'
 import { GeminiService } from './gemini'
 import { prisma } from '../lib/prisma'
 import { logger } from '../utils/logger'
@@ -48,14 +49,17 @@ interface ProcessamentoResult {
     risco_percebido?: string
     categoria?: string
   }>
+  approval_text?: string
+  mermaid_graph?: string
 }
 
-const SYSTEM_PROMPT = `Você é um especialista em normalização de processos operacionais de Tecnologia Operacional (TO).
-
-Sua tarefa é analisar descrições operacionais raw (em linguagem natural) e extrair informações estruturadas sobre processos, etapas, ativos, dificuldades e workarounds.
+const SYSTEM_PROMPT = `Você é um consultor sênior de processos TO (Tecnologia Operacional) e especialista em BPMN.
+Sua tarefa é analisar descrições operacionais e gerar um pacote de validação para o cliente.
 
 Retorne APENAS um JSON válido no seguinte formato:
 {
+  "approval_text": "Texto profissional e cordial (em português) dirigido ao entrevistado, resumindo o entendimento do processo para validação. Deve ser executivo mas detalhado o suficiente para confirmar o fluxo.",
+  "mermaid_graph": "Código Mermaid válido (flowchart TD) representando o processo. Use nós claros e estilize se possível.",
   "processo": {
     "nome": "Nome do processo",
     "objetivo": "Objetivo do processo",
@@ -110,17 +114,17 @@ Retorne APENAS um JSON válido no seguinte formato:
 }
 
 IMPORTANTE:
-- Retorne APENAS o JSON, sem markdown, sem explicações
-- Seja preciso e detalhado
-- Identifique todos os ativos mencionados (sistemas, equipamentos, documentos, pessoas)
-- Identifique dificuldades e workarounds mencionados
-- Mantenha a ordem lógica das etapas`
+- "approval_text" deve ser pronto para apresentação.
+- "mermaid_graph" deve ser sintaticamente correto.
+- Mantenha a extração estruturada (processo, etapas, etc) precisa.
+- Retorne APENAS o JSON.
+`
 
 export class ProcessamentoIAService {
   /**
    * Processa uma descrição operacional raw e retorna processo normalizado
    */
-  static async processarDescricaoRaw(descricaoRawId: string, tenantId: string): Promise<ProcessamentoResult> {
+  static async processarDescricaoRaw(descricaoRawId: string, tenantId: string): Promise<ProcessamentoResult & { bpmn: any }> {
     // Buscar descrição raw
     const descricaoRaw = await prisma.descricaoOperacionalRaw.findUnique({
       where: { id: descricaoRawId },
@@ -137,38 +141,31 @@ export class ProcessamentoIAService {
     })
 
     try {
-      // Construir prompt
-      const prompt = `Analise a seguinte descrição operacional e extraia o processo normalizado:
+      const vertexService = new VertexAIService();
+      
+      // 1. Generate BPMN 2.0 JSON (Keep strict generation for standard compliance)
+      const bpmnJson = await vertexService.generateBpmnJson(descricaoRaw.descricao_completa);
 
-Título: ${descricaoRaw.titulo}
+      // 2. Generate Structured Data + Approval Text + Mermaid
+      const extractionPrompt = `
+      ${SYSTEM_PROMPT}
+      
+      Descrição Operacional:
+      ${descricaoRaw.descricao_completa}
+      `;
+      
+      const rawRes = await vertexService.generateResponse(extractionPrompt + "\nReturn ONLY JSON.");
+      let cleanJson = rawRes.replace(/```json\\n?|\\n?```/g, "").trim();
+      
+      // Sanitize standard markers if AI adds them despite instruction
+      if (cleanJson.startsWith('```')) cleanJson = cleanJson.replace(/^```(json)?/, '').replace(/```$/, '');
 
-Descrição:
-${descricaoRaw.descricao_completa}
+      const structuredData: ProcessamentoResult = JSON.parse(cleanJson);
 
-${descricaoRaw.frequencia ? `Frequência: ${descricaoRaw.frequencia}` : ''}
-${descricaoRaw.impacto ? `Impacto: ${descricaoRaw.impacto}` : ''}
-${descricaoRaw.dificuldades ? `Dificuldades mencionadas: ${descricaoRaw.dificuldades}` : ''}`
-
-      // Chamar Gemini API
-      // Usando Pro para melhor raciocínio na extração de JSON complexo
-      const response = await GeminiService.sendMessage(
-        prompt,
-        {
-          systemInstruction: SYSTEM_PROMPT,
-          useFlash: false, // Usa Pro
-          jsonMode: true,  // Força JSON
-          temperature: 0.3,
-        }
-      )
-
-      const text = response.content
-      // Parse JSON (Gemini com jsonMode geralmente retorna raw json, mas prevenir markdown blocks)
-      let jsonText = text.trim()
-      if (jsonText.startsWith('```')) {
-        jsonText = jsonText.replace(/^```json\n?/, '').replace(/```$/, '').trim()
-      }
-
-      const resultado: ProcessamentoResult = JSON.parse(jsonText)
+      const resultado = {
+        ...structuredData,
+        bpmn: bpmnJson
+      };
 
       // Salvar resultado no banco
       await prisma.descricaoOperacionalRaw.update({
@@ -180,7 +177,7 @@ ${descricaoRaw.dificuldades ? `Dificuldades mencionadas: ${descricaoRaw.dificuld
         },
       })
 
-      logger.info({ descricaoRawId }, 'Descrição raw processada com sucesso')
+      logger.info({ descricaoRawId }, 'Descrição raw processada com sucesso (Vertex AI)')
 
       return resultado
     } catch (error: any) {

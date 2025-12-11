@@ -76,8 +76,8 @@ export function Sidebar({ className }: SidebarProps = {}) {
       icon: LayoutDashboard,
     },
     {
-      title: "Clientes",
-      href: "/dashboard/clientes",
+      title: "Organizações",
+      href: "/dashboard/organizacoes",
       icon: Building2,
     },
     {

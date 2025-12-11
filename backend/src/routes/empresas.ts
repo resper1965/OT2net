@@ -7,7 +7,7 @@ import { authenticateToken } from '../middleware/auth';
 const router = Router();
 
 const createEmpresaSchema = z.object({
-  cliente_id: z.string().uuid().optional(),
+  organizacao_id: z.string().uuid().optional(),
   identificacao: z.string().min(1),
   tipo: z.string().optional(),
   participacao_acionaria: z.string().optional(),
@@ -21,14 +21,14 @@ const updateEmpresaSchema = createEmpresaSchema.partial();
 // GET /api/empresas - Listar todas as empresas
 router.get('/', authenticateToken, async (req, res, next) => {
   try {
-    const { cliente_id } = req.query;
-    const where = cliente_id ? { cliente_id: cliente_id as string } : {};
+    const { organizacao_id } = req.query;
+    const where = organizacao_id ? { organizacao_id: organizacao_id as string } : {};
     
     const empresas = await prisma.empresa.findMany({
       where,
       orderBy: { created_at: 'desc' },
       include: {
-        cliente: true,
+        organizacao: true,
         sites: true,
       },
     });
@@ -45,7 +45,7 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
     const empresa = await prisma.empresa.findUnique({
       where: { id },
       include: {
-        cliente: true,
+        organizacao: true,
         sites: true,
       },
     });

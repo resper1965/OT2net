@@ -16,7 +16,7 @@ interface Empresa {
   ambito_operacional?: string;
   contexto_operacional?: string;
   status?: string;
-  cliente_id?: string;
+  organizacao_id?: string;
   created_at: string;
   updated_at: string;
 }

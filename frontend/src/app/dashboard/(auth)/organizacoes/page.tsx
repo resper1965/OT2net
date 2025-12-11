@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { Building2, Search, Filter, Plus, Download } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
 
-interface Cliente {
+interface Organizacao {
   id: string;
   razao_social: string;
   cnpj: string;
@@ -21,9 +21,9 @@ interface Cliente {
   created_at: string;
 }
 
-export default function ClientesPage() {
-  usePageTitleEffect("Clientes");
-  const [clientes, setClientes] = useState<Cliente[]>([]);
+export default function OrganizacoesPage() {
+  usePageTitleEffect("Organizações");
+  const [organizacoes, setOrganizacoes] = useState<Organizacao[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,17 +34,17 @@ export default function ClientesPage() {
   const toast = useToast();
 
   useEffect(() => {
-    loadClientes();
+    loadOrganizacoes();
   }, []);
 
-  async function loadClientes() {
+  async function loadOrganizacoes() {
     try {
       setLoading(true);
-      const data = await api.clientes.list();
-      setClientes(Array.isArray(data) ? data : []);
+      const data = await api.organizacoes.list();
+      setOrganizacoes(Array.isArray(data) ? data : []);
       setError(null);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar clientes";
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar organizações";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -59,22 +59,22 @@ export default function ClientesPage() {
     if (!deleteDialog.id) {return;}
 
     try {
-      await api.clientes.delete(deleteDialog.id);
-      await loadClientes();
-      toast.success("Cliente excluído com sucesso");
+      await api.organizacoes.delete(deleteDialog.id);
+      await loadOrganizacoes();
+      toast.success("Organização excluída com sucesso");
       setDeleteDialog({ open: false, id: null });
     } catch (err: unknown) {
       const error = err as Error;
-      toast.error(error.message || "Erro ao excluir cliente");
+      toast.error(error.message || "Erro ao excluir organização");
     }
   }
 
   // Filtros
-  const filteredClientes = clientes.filter((cliente) => {
+  const filteredOrganizacoes = organizacoes.filter((org) => {
     const matchesSearch =
-      cliente.razao_social.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cliente.cnpj.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cliente.classificacao?.toLowerCase().includes(searchQuery.toLowerCase());
+      org.razao_social.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      org.cnpj.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      org.classificacao?.toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchesSearch;
   });
@@ -88,8 +88,8 @@ export default function ClientesPage() {
             <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-md transition-shadow p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Total de Clientes</p>
-                  <p className="text-2xl font-bold text-black dark:text-zinc-50">{clientes.length}</p>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Total de Organizações</p>
+                  <p className="text-2xl font-bold text-black dark:text-zinc-50">{organizacoes.length}</p>
                 </div>
                 <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <Building2 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
@@ -101,7 +101,7 @@ export default function ClientesPage() {
                 <div>
                   <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Com Classificação</p>
                   <p className="text-2xl font-bold text-black dark:text-zinc-50">
-                    {clientes.filter((c) => c.classificacao).length}
+                    {organizacoes.filter((o) => o.classificacao).length}
                   </p>
                 </div>
                 <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
@@ -112,7 +112,7 @@ export default function ClientesPage() {
             <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Cadastrados</p>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Cadastradas</p>
                   <p className="text-2xl font-bold text-black dark:text-zinc-50">
                     {new Date().getFullYear()}
                   </p>
@@ -131,10 +131,10 @@ export default function ClientesPage() {
                 <Download className="h-4 w-4 mr-2" />
                 Exportar
               </Button>
-              <Link href="/dashboard/clientes/novo">
+              <Link href="/dashboard/organizacoes/novo">
                 <Button variant="default">
                   <Plus className="h-4 w-4 mr-2" />
-                  Novo Cliente
+                  Nova Organização
                 </Button>
               </Link>
             </div>
@@ -173,24 +173,24 @@ export default function ClientesPage() {
             <div className="p-6">
               <SkeletonTable rows={5} cols={4} />
             </div>
-          ) : filteredClientes.length === 0 ? (
+          ) : filteredOrganizacoes.length === 0 ? (
             <EmptyState
               icon={Building2}
               title={
                 searchQuery
-                  ? "Nenhum cliente encontrado"
-                  : "Nenhum cliente cadastrado"
+                  ? "Nenhuma organização encontrada"
+                  : "Nenhuma organização cadastrada"
               }
               description={
                 searchQuery
                   ? "Tente ajustar os filtros de busca"
-                  : "Comece criando seu primeiro cliente"
+                  : "Comece criando sua primeira organização"
               }
               action={
                 !searchQuery
                   ? {
-                      label: "Criar Primeiro Cliente",
-                      onClick: () => (window.location.href = "/dashboard/clientes/novo"),
+                      label: "Criar Primeira Organização",
+                      onClick: () => (window.location.href = "/dashboard/organizacoes/novo"),
                       variant: "default",
                     }
                   : undefined
@@ -200,7 +200,7 @@ export default function ClientesPage() {
             <>
               <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
                 <h2 className="text-lg font-semibold text-black dark:text-zinc-50">
-                  Lista de Clientes ({filteredClientes.length})
+                  Lista de Organizações ({filteredOrganizacoes.length})
                 </h2>
               </div>
               <div className="overflow-x-auto">
@@ -222,9 +222,9 @@ export default function ClientesPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
-                    {filteredClientes.map((cliente, index) => (
+                    {filteredOrganizacoes.map((org, index) => (
                       <tr
-                        key={cliente.id}
+                        key={org.id}
                         className={cn(
                           "hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors",
                           index % 2 === 0 && "bg-zinc-50/30 dark:bg-zinc-900/30"
@@ -232,19 +232,19 @@ export default function ClientesPage() {
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Link
-                            href={`/dashboard/clientes/${cliente.id}`}
+                            href={`/dashboard/organizacoes/${org.id}`}
                             className="text-sm font-medium text-black dark:text-zinc-50 hover:underline"
                           >
-                            {cliente.razao_social}
+                            {org.razao_social}
                           </Link>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-600 dark:text-zinc-400">
-                          {cliente.cnpj}
+                          {org.cnpj}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {cliente.classificacao ? (
+                          {org.classificacao ? (
                             <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200">
-                              {cliente.classificacao}
+                              {org.classificacao}
                             </span>
                           ) : (
                             <span className="text-sm text-zinc-400">-</span>
@@ -253,13 +253,13 @@ export default function ClientesPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <div className="flex items-center justify-end gap-3">
                             <Link
-                              href={`/dashboard/clientes/${cliente.id}/editar`}
+                              href={`/dashboard/organizacoes/${org.id}/editar`}
                               className="text-blue-600 dark:text-blue-400 hover:underline"
                             >
                               Editar
                             </Link>
                             <button
-                              onClick={() => handleDeleteClick(cliente.id)}
+                              onClick={() => handleDeleteClick(org.id)}
                               className="text-red-600 dark:text-red-400 hover:underline"
                             >
                               Excluir
@@ -278,8 +278,8 @@ export default function ClientesPage() {
         <ConfirmDialog
           open={deleteDialog.open}
           onOpenChange={(open) => setDeleteDialog({ open, id: deleteDialog.id })}
-          title="Excluir Cliente"
-          description="Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita."
+          title="Excluir Organização"
+          description="Tem certeza que deseja excluir esta organização? Esta ação não pode ser desfeita."
           confirmText="Excluir"
           cancelText="Cancelar"
           variant="destructive"
@@ -289,5 +289,3 @@ export default function ClientesPage() {
     </div>
   );
 }
-
-

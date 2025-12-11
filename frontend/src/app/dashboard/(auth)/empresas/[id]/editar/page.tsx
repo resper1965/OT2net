@@ -21,7 +21,7 @@ export default function EditarEmpresaPage() {
     ambito_operacional: "",
     contexto_operacional: "",
     status: "",
-    cliente_id: "",
+    organizacao_id: "",
   });
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function EditarEmpresaPage() {
         ambito_operacional: data.ambito_operacional || "",
         contexto_operacional: data.contexto_operacional || "",
         status: data.status || "",
-        cliente_id: data.cliente_id || "",
+        organizacao_id: data.organizacao_id || "",
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Erro ao carregar empresa";

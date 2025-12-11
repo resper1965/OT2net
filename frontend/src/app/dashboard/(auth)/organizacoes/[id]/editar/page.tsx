@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
+import { usePageTitleEffect } from "@/hooks/use-page-title";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
-export default function NovoClientePage() {
+export default function EditarOrganizacaoPage() {
+  usePageTitleEffect("Editar Organização");
+  const params = useParams();
   const router = useRouter();
+  const id = params.id as string;
   const [loading, setLoading] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
   const toast = useToast();
   const [formData, setFormData] = useState({
     razao_social: "",
@@ -34,17 +38,58 @@ export default function NovoClientePage() {
     certificacoes: [] as string[],
   });
   const [agenciaInput, setAgenciaInput] = useState("");
+  const [certificacaoInput, setCertificacaoInput] = useState("");
+
+  useEffect(() => {
+    if (id) {
+      loadOrganizacao();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  async function loadOrganizacao() {
+    try {
+      setLoadingData(true);
+      const data = await api.organizacoes.get(id);
+      setFormData({
+        razao_social: data.razao_social || "",
+        cnpj: data.cnpj || "",
+        endereco: data.endereco || {
+          logradouro: "",
+          numero: "",
+          complemento: "",
+          bairro: "",
+          cidade: "",
+          estado: "",
+          cep: "",
+        },
+        contatos: data.contatos || {
+          telefone: "",
+          email: "",
+          responsavel: "",
+        },
+        classificacao: data.classificacao || "",
+        agencias_reguladoras: data.agencias_reguladoras || [],
+        certificacoes: data.certificacoes || [],
+      });
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar organização";
+      toast.error(errorMessage);
+    } finally {
+      setLoadingData(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
 
     try {
-      await api.clientes.create(formData);
-      toast.success("Cliente criado com sucesso");
-      router.push("/dashboard/clientes");
+      await api.organizacoes.update(id, formData);
+      toast.success("Organização atualizada com sucesso");
+      router.push(`/dashboard/organizacoes/${id}`);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Erro ao criar cliente";
+      const errorMessage = err instanceof Error ? err.message : "Erro ao atualizar organização";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -68,16 +113,48 @@ export default function NovoClientePage() {
     });
   }
 
+  function addCertificacao() {
+    if (certificacaoInput.trim()) {
+      setFormData({
+        ...formData,
+        certificacoes: [...formData.certificacoes, certificacaoInput.trim()],
+      });
+      setCertificacaoInput("");
+    }
+  }
+
+  function removeCertificacao(index: number) {
+    setFormData({
+      ...formData,
+      certificacoes: formData.certificacoes.filter((_, i) => i !== index),
+    });
+  }
+
+  if (loadingData) {
+    return (
+      <div>
+        <div>
+          <div className="text-center py-12">
+            <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div>
+    <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
+      <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Link
-            href="/dashboard/clientes"
+            href={`/dashboard/organizacoes/${id}`}
             className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
           >
+            &larr; Voltar
           </Link>
+          <h1 className="text-3xl font-bold tracking-tight text-black dark:text-zinc-50">
+            Editar Organização
+          </h1>
         </div>
 
         <form
@@ -88,11 +165,12 @@ export default function NovoClientePage() {
             <label className="block text-sm font-medium mb-2 text-black dark:text-zinc-50">
               Razão Social *
             </label>
-            <Input
+            <input
               type="text"
               required
               value={formData.razao_social}
               onChange={(e) => setFormData({ ...formData, razao_social: e.target.value })}
+              className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50"
             />
           </div>
 
@@ -100,11 +178,12 @@ export default function NovoClientePage() {
             <label className="block text-sm font-medium mb-2 text-black dark:text-zinc-50">
               CNPJ *
             </label>
-            <Input
+            <input
               type="text"
               required
               value={formData.cnpj}
               onChange={(e) => setFormData({ ...formData, cnpj: e.target.value })}
+              className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50"
               placeholder="00.000.000/0000-00"
             />
           </div>
@@ -192,6 +271,60 @@ export default function NovoClientePage() {
           </div>
 
           <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
+            <h2 className="text-lg font-semibold mb-4 text-black dark:text-zinc-50">Contatos</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-black dark:text-zinc-50">
+                  Telefone
+                </label>
+                <input
+                  type="text"
+                  value={formData.contatos.telefone}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      contatos: { ...formData.contatos, telefone: e.target.value },
+                    })
+                  }
+                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2 text-black dark:text-zinc-50">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={formData.contatos.email}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      contatos: { ...formData.contatos, email: e.target.value },
+                    })
+                  }
+                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2 text-black dark:text-zinc-50">
+                  Responsável
+                </label>
+                <input
+                  type="text"
+                  value={formData.contatos.responsavel}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      contatos: { ...formData.contatos, responsavel: e.target.value },
+                    })
+                  }
+                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
             <h2 className="text-lg font-semibold mb-4 text-black dark:text-zinc-50">
               Agências Reguladoras
             </h2>
@@ -215,7 +348,7 @@ export default function NovoClientePage() {
             <div className="flex flex-wrap gap-2">
               {formData.agencias_reguladoras.map((agencia, index) => (
                 <span
-                  key={`${agencia}-${index}`}
+                  key={index}
                   className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm text-black dark:text-zinc-50 flex items-center gap-2"
                 >
                   {agencia}
@@ -231,11 +364,51 @@ export default function NovoClientePage() {
             </div>
           </div>
 
+          <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
+            <h2 className="text-lg font-semibold mb-4 text-black dark:text-zinc-50">
+              Certificações
+            </h2>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={certificacaoInput}
+                onChange={(e) => setCertificacaoInput(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addCertificacao())}
+                className="flex-1 px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-zinc-50"
+                placeholder="Ex: ISO 27001, etc."
+              />
+              <button
+                type="button"
+                onClick={addCertificacao}
+                className="px-4 py-2 bg-zinc-200 dark:bg-zinc-700 text-black dark:text-zinc-50 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600"
+              >
+                Adicionar
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {formData.certificacoes.map((cert, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm text-black dark:text-zinc-50 flex items-center gap-2"
+                >
+                  {cert}
+                  <button
+                    type="button"
+                    onClick={() => removeCertificacao(index)}
+                    className="text-red-600 dark:text-red-400 hover:underline"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+
           <div className="flex gap-4">
             <Button type="submit" disabled={loading} variant="default">
               Salvar
             </Button>
-            <Link href="/dashboard/clientes">
+            <Link href={`/dashboard/organizacoes/${id}`}>
               <Button type="button" variant="outline">
                 Cancelar
               </Button>
@@ -246,5 +419,3 @@ export default function NovoClientePage() {
     </div>
   );
 }
-
-

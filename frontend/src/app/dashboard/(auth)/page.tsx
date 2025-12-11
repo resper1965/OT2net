@@ -63,15 +63,15 @@ export default function DashboardPage() {
       setLoading(true);
       
       // Carregar estatísticas principais
-      const [clientes, empresas, projetos, descricoes, processosNorm] = await Promise.all([
-        api.clientes.list().catch(() => []),
+      const [organizacoes, empresas, projetos, descricoes, processosNorm] = await Promise.all([
+        api.organizacoes.list().catch(() => []),
         api.empresas.list().catch(() => []),
         api.projetos.list().catch(() => []),
         api.descricoesRaw?.list().catch(() => []) || Promise.resolve([]),
         api.processosNormalizados?.list().catch(() => []) || Promise.resolve([]),
       ]);
 
-      const clientesArray = Array.isArray(clientes) ? clientes : [];
+      const organizacoesArray = Array.isArray(organizacoes) ? organizacoes : [];
       const empresasArray = Array.isArray(empresas) ? empresas : [];
       const projetosArray = Array.isArray(projetos) ? projetos : [];
       const descricoesArray = Array.isArray(descricoes) ? descricoes : [];
@@ -88,7 +88,7 @@ export default function DashboardPage() {
       const processosEmProcessamento = descricoesArray.filter((p: ProcessoItem) => p.status_processamento === "processando").length;
 
       setStats({
-        clientes: clientesArray.length,
+        clientes: organizacoesArray.length,
         empresas: empresasArray.length,
         projetos: projetosArray.length,
         processos: descricoesArray.length + processosArray.length,
@@ -122,10 +122,10 @@ export default function DashboardPage() {
 
   const kpiCards = [
     {
-      title: "Clientes",
+      title: "Organizações",
       value: stats.clientes,
       icon: Building2,
-      href: "/dashboard/clientes",
+      href: "/dashboard/organizacoes",
       color: "text-blue-600 dark:text-blue-400",
       bgColor: "bg-blue-50 dark:bg-blue-900/20",
     },

@@ -7,7 +7,7 @@ import { authenticateToken } from '../middleware/auth';
 const router = Router();
 
 // Schema de validação
-const createClienteSchema = z.object({
+const createOrganizacaoSchema = z.object({
   razao_social: z.string().min(1),
   cnpj: z.string().min(14).max(18),
   endereco: z.object({
@@ -30,29 +30,29 @@ const createClienteSchema = z.object({
   certificacoes: z.array(z.string()).optional(),
 });
 
-const updateClienteSchema = createClienteSchema.partial();
+const updateOrganizacaoSchema = createOrganizacaoSchema.partial();
 
-// GET /api/clientes - Listar todos os clientes
+// GET /api/organizacoes - Listar todas as organizações
 router.get('/', authenticateToken, async (req, res, next) => {
   try {
-    const clientes = await prisma.cliente.findMany({
+    const organizacoes = await prisma.organizacao.findMany({
       orderBy: { created_at: 'desc' },
       include: {
         empresas: true,
         projetos: true,
       },
     });
-    res.json(clientes);
+    res.json(organizacoes);
   } catch (error) {
     next(error);
   }
 });
 
-// GET /api/clientes/:id - Obter cliente por ID
+// GET /api/organizacoes/:id - Obter organização por ID
 router.get('/:id', authenticateToken, async (req, res, next) => {
   try {
     const { id } = req.params;
-    const cliente = await prisma.cliente.findUnique({
+    const organizacao = await prisma.organizacao.findUnique({
       where: { id },
       include: {
         empresas: {
@@ -64,27 +64,27 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
       },
     });
 
-    if (!cliente) {
-      return res.status(404).json({ error: 'Cliente não encontrado' });
+    if (!organizacao) {
+      return res.status(404).json({ error: 'Organização não encontrada' });
     }
 
-    res.json(cliente);
+    res.json(organizacao);
   } catch (error) {
     next(error);
   }
 });
 
-// POST /api/clientes - Criar novo cliente
+// POST /api/organizacoes - Criar nova organização
 router.post(
   '/',
   authenticateToken,
-  validate({ body: createClienteSchema }),
+  validate({ body: createOrganizacaoSchema }),
   async (req, res, next) => {
     try {
-      const cliente = await prisma.cliente.create({
+      const organizacao = await prisma.organizacao.create({
         data: req.body,
       });
-      res.status(201).json(cliente);
+      res.status(201).json(organizacao);
     } catch (error: any) {
       if (error.code === 'P2002') {
         return res.status(409).json({ error: 'CNPJ já cadastrado' });
@@ -94,51 +94,42 @@ router.post(
   }
 );
 
-// PUT /api/clientes/:id - Atualizar cliente
+// PUT /api/organizacoes/:id - Atualizar organização
 router.put(
   '/:id',
   authenticateToken,
-  validate({ body: updateClienteSchema }),
+  validate({ body: updateOrganizacaoSchema }),
   async (req, res, next) => {
     try {
       const { id } = req.params;
-      const cliente = await prisma.cliente.update({
+      const organizacao = await prisma.organizacao.update({
         where: { id },
         data: req.body,
       });
-      res.json(cliente);
+      res.json(organizacao);
     } catch (error: any) {
       if (error.code === 'P2025') {
-        return res.status(404).json({ error: 'Cliente não encontrado' });
+        return res.status(404).json({ error: 'Organização não encontrada' });
       }
       next(error);
     }
   }
 );
 
-// DELETE /api/clientes/:id - Deletar cliente
+// DELETE /api/organizacoes/:id - Deletar organização
 router.delete('/:id', authenticateToken, async (req, res, next) => {
   try {
     const { id } = req.params;
-    await prisma.cliente.delete({
+    await prisma.organizacao.delete({
       where: { id },
     });
     res.status(204).send();
   } catch (error: any) {
     if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Cliente não encontrado' });
+      return res.status(404).json({ error: 'Organização não encontrada' });
     }
     next(error);
   }
 });
 
 export default router;
-
-
-
-
-
-
-
-
-

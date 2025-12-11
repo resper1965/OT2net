@@ -14,7 +14,7 @@ interface Projeto {
   descricao?: string;
   fase_atual?: string;
   progresso_geral?: number;
-  cliente_id?: string;
+  organizacao_id?: string;
   created_at: string;
   updated_at: string;
 }

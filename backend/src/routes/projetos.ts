@@ -7,7 +7,7 @@ import { authenticateToken } from '../middleware/auth';
 const router = Router();
 
 const createProjetoSchema = z.object({
-  cliente_id: z.string().uuid().optional(),
+  organizacao_id: z.string().uuid().optional(),
   nome: z.string().min(1),
   descricao: z.string().optional(),
   fase_atual: z.string().optional(),
@@ -19,14 +19,14 @@ const updateProjetoSchema = createProjetoSchema.partial();
 // GET /api/projetos - Listar todos os projetos
 router.get('/', authenticateToken, async (req, res, next) => {
   try {
-    const { cliente_id } = req.query;
-    const where = cliente_id ? { cliente_id: cliente_id as string } : {};
+    const { organizacao_id } = req.query;
+    const where = organizacao_id ? { organizacao_id: organizacao_id as string } : {};
     
     const projetos = await prisma.projeto.findMany({
       where,
       orderBy: { created_at: 'desc' },
       include: {
-        cliente: true,
+        organizacao: true,
         membros_equipe: true,
         stakeholders: true,
       },
@@ -44,7 +44,7 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
     const projeto = await prisma.projeto.findUnique({
       where: { id },
       include: {
-        cliente: {
+        organizacao: {
           include: {
             empresas: {
               include: {

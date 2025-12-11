@@ -46,15 +46,15 @@ resource "google_cloud_run_v2_service" "frontend" {
 }
 
 # Domain Mapping
-# resource "google_cloud_run_domain_mapping" "default" {
-#   location = var.region
-#   name     = "ot2net.ness.com.br"
-#
-#   metadata {
-#     namespace = var.project_id
-#   }
-#
-#   spec {
-#     route_name = google_cloud_run_v2_service.frontend.name
-#   }
-# }
+resource "google_cloud_run_domain_mapping" "default" {
+  location = var.region
+  name     = "ot2net.ness.com.br"
+
+  metadata {
+    namespace = var.project_id
+  }
+
+  spec {
+    route_name = google_cloud_run_v2_service.frontend.name
+  }
+}

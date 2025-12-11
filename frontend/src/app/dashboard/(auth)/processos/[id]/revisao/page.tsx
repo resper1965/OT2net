@@ -7,6 +7,11 @@ import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
+import { convertJsonToBpmnXml } from "@/lib/bpmn-converter";
+
+const BPMNViewer = dynamic(() => import("@/components/processos/BPMNViewer"), { ssr: false });
+const Mermaid = dynamic(() => import("@/components/Mermaid"), { ssr: false });
 
 interface DescricaoRaw {
   id: string;
@@ -16,7 +21,13 @@ interface DescricaoRaw {
   impacto?: string;
   dificuldades?: string;
   status_processamento: string;
-  resultado_processamento?: Record<string, unknown>;
+  resultado_processamento?: {
+    approval_text?: string;
+    mermaid_graph?: string;
+    bpmn?: any;
+    processo_id?: string;
+    [key: string]: any;
+  };
   created_at: string;
 }
 
@@ -210,6 +221,33 @@ export default function RevisaoProcessoPage() {
           </div>
         </div>
 
+        <div className="space-y-6 mb-6">
+          {/* Approval Text Card */}
+          {descricaoRaw.resultado_processamento?.approval_text && (
+             <div className="bg-white dark:bg-zinc-900 rounded-lg border border-blue-200 dark:border-blue-900 shadow-sm p-6 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                <h2 className="text-lg font-semibold text-blue-800 dark:text-blue-300 mb-3 flex items-center">
+                  <span className="mr-2">📋</span> Resumo Executivo para Aprovação
+                </h2>
+                <div className="prose dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap font-serif text-lg leading-relaxed">
+                  {descricaoRaw.resultado_processamento.approval_text}
+                </div>
+             </div>
+          )}
+
+          {/* Mermaid Flowchart Card */}
+          {descricaoRaw.resultado_processamento?.mermaid_graph && (
+             <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm p-6">
+                <h2 className="text-lg font-semibold text-black dark:text-zinc-50 mb-4 border-b border-zinc-100 dark:border-zinc-800 pb-2">
+                   Fluxo Visual Simplificado
+                </h2>
+                <div className="overflow-x-auto p-4 bg-zinc-50 dark:bg-zinc-950 rounded-lg flex justify-center">
+                   <Mermaid chart={descricaoRaw.resultado_processamento.mermaid_graph} />
+                </div>
+             </div>
+          )}
+        </div>
+
         <div className="grid grid-cols-2 gap-6">
           {/* Coluna Esquerda: Descrição Raw */}
           <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
@@ -353,6 +391,22 @@ export default function RevisaoProcessoPage() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* BPMN Diagram Section */}
+          <div className="col-span-2 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+            <h2 className="text-xl font-semibold mb-4 text-black dark:text-zinc-50 border-b border-zinc-200 dark:border-zinc-700 pb-2">
+              Diagrama Técnico BPMN 2.0 (Background)
+            </h2>
+             {descricaoRaw.resultado_processamento?.bpmn ? (
+                <div className="border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden h-[600px]">
+                  <BPMNViewer xml={convertJsonToBpmnXml({ definitions: { process: descricaoRaw.resultado_processamento.bpmn } })} />
+                </div>
+             ) : (
+                <div className="text-center py-12 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg">
+                  <p className="text-zinc-500">Nenhum diagrama BPMN gerado.</p>
+                </div>
+             )}
           </div>
         </div>
 

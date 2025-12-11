@@ -25,7 +25,7 @@ model Tenant {
   updated_at  DateTime? @default(now()) @db.Timestamptz(6)
 
   // Relations
-  clientes                Cliente[]
+  organizacoes            Organizacao[]
   empresas                Empresa[]
   sites                   Site[]
   projetos                Projeto[]
@@ -50,11 +50,11 @@ model Tenant {
 // Cliente e Organização
 // ============================================
 
-model Cliente {
+model Organizacao {
   id                  String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   tenant_id           String    @db.Uuid
   razao_social        String    @db.Text
-  cnpj                String    @db.Text // Removido unique global, pois pode repetir entre tenants (teoricamente não, mas melhor isolar) -> Manter unique composto se necessario, mas simplificando para SaaS.
+  cnpj                String    @db.Text
   endereco            Json?     @db.JsonB
   contatos            Json?     @db.JsonB
   classificacao       String?   @db.Text
@@ -71,13 +71,13 @@ model Cliente {
 
   @@index([tenant_id])
   @@index([cnpj])
-  @@map("clientes")
+  @@map("organizacoes")
 }
 
 model Empresa {
   id                    String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   tenant_id             String    @db.Uuid
-  cliente_id            String?   @db.Uuid
+  organizacao_id        String?   @db.Uuid
   identificacao         String    @db.Text
   tipo                  String?   @db.Text
   participacao_acionaria String?  @db.Text
@@ -88,11 +88,11 @@ model Empresa {
   updated_at            DateTime? @default(now()) @db.Timestamptz(6)
 
   tenant                Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  cliente               Cliente?  @relation(fields: [cliente_id], references: [id], onDelete: Cascade)
+  organizacao           Organizacao? @relation(fields: [organizacao_id], references: [id], onDelete: Cascade)
   sites                 Site[]
 
   @@index([tenant_id])
-  @@index([cliente_id])
+  @@index([organizacao_id])
   @@map("empresas")
 }
 
@@ -129,7 +129,7 @@ model Site {
 model Projeto {
   id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   tenant_id       String    @db.Uuid
-  cliente_id      String?   @db.Uuid
+  organizacao_id  String?   @db.Uuid
   nome            String    @db.Text
   descricao       String?   @db.Text
   fase_atual      String?   @default("fase-1") @db.Text
@@ -138,7 +138,7 @@ model Projeto {
   updated_at      DateTime? @default(now()) @db.Timestamptz(6)
 
   tenant          Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  cliente         Cliente?  @relation(fields: [cliente_id], references: [id], onDelete: Cascade)
+  organizacao     Organizacao? @relation(fields: [organizacao_id], references: [id], onDelete: Cascade)
   membros_equipe  MembroEquipe[]
   iniciativas     Iniciativa[]
   descricoes_operacionais_raw DescricaoOperacionalRaw[]
@@ -147,7 +147,7 @@ model Projeto {
   riscos          Risco[]
 
   @@index([tenant_id])
-  @@index([cliente_id])
+  @@index([organizacao_id])
   @@map("projetos")
 }
 
@@ -484,17 +484,17 @@ model Usuario {
   tenant_id       String    @db.Uuid
   firebase_uid    String?   @unique @db.Text // Mudança para Firebase UID
   nome            String    @db.Text
-  email           String    @db.Text // Remover unique global, usar unique composto com tenant se necessario
+  email           String    @db.Text
   role            UserRole  @default(CONSULTOR)
   organizacao     String?   @db.Text
-  cliente_id      String?   @db.Uuid
+  organizacao_id  String?   @db.Uuid
   status          String?   @default("ativo") @db.Text
   ultimo_acesso   DateTime? @db.Timestamptz(6)
   created_at      DateTime? @default(now()) @db.Timestamptz(6)
   updated_at      DateTime? @default(now()) @db.Timestamptz(6)
 
   tenant          Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  cliente         Cliente?  @relation(fields: [cliente_id], references: [id], onDelete: SetNull)
+  organizacao_rel Organizacao? @relation(fields: [organizacao_id], references: [id], onDelete: SetNull)
   permissoes      Permissao[]
 
   @@unique([tenant_id, email]) // Email único por tenant

@@ -72,10 +72,10 @@ export const navItems: NavGroup[] = [
     title: "Gestão",
     items: [
       {
-        title: "Clientes",
-        href: "/dashboard/clientes",
+        title: "Organizações",
+        href: "/dashboard/organizacoes",
         icon: Building2,
-        requiredPermission: { resource: 'clientes', action: 'read' }
+        requiredPermission: { resource: 'organizacoes', action: 'read' }
       },
       {
         title: "Empresas",

@@ -10,20 +10,19 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // Rewrites para desenvolvimento local (quando NEXT_PUBLIC_API_URL está definido)
   async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    // Configuração de Proxy para o Backend
+    // Necessário tanto em dev quanto em prod (Cloud Run) para evitar CORS
+    // e simplificar chamadas para /api/*
+    
+    // Fallback para URL do Backend no Cloud Run
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://ot2net-backend-21597837536.us-central1.run.app";
 
-    // Se NEXT_PUBLIC_API_URL estiver definido (desenvolvimento local), faz proxy
-    if (apiUrl && process.env.NODE_ENV === "development") {
-      return [
-        {
-          source: "/api/:path*",
-          destination: `${apiUrl}/api/:path*`,
-        },
-      ];
-    }
-
-    // Em produção no Vercel, as rotas /api/* são servidas pelas serverless functions
-    return [];
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${backendUrl}/api/:path*`,
+      },
+    ];
   },
 };
 

@@ -23,9 +23,10 @@ export default function ForgotPasswordPage() {
       await sendPasswordResetEmail(auth, email);
       setSubmitted(true);
       toast.success("Email de recuperação enviado!");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      if (err.code === 'auth/user-not-found') {
+      const error = err as { code?: string };
+      if (error.code === 'auth/user-not-found') {
          // Por segurança, as vezes é melhor não dizer que o user não existe, 
          // mas para UX interna vamos avisar ou tratar genericamente.
          toast.error("Usuário não encontrado.");

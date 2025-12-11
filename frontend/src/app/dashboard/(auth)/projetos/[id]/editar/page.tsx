@@ -19,7 +19,7 @@ export default function EditarProjetoPage() {
     descricao: "",
     fase_atual: "fase-1",
     progresso_geral: 0,
-    cliente_id: "",
+    organizacao_id: "",
   });
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function EditarProjetoPage() {
           descricao: data.descricao || "",
           fase_atual: data.fase_atual || "fase-1",
           progresso_geral: data.progresso_geral || 0,
-          cliente_id: data.cliente_id || "",
+          organizacao_id: data.organizacao_id || "",
         });
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "Erro ao carregar projeto";

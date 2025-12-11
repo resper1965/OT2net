@@ -9,7 +9,7 @@ import { usePageTitle } from "@/contexts/PageTitleContext";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
 
-interface Cliente {
+interface Organizacao {
   id: string;
   razao_social: string;
   cnpj: string;
@@ -35,12 +35,12 @@ interface Cliente {
   updated_at: string;
 }
 
-export default function ClienteDetalhesPage() {
+export default function OrganizacaoDetalhesPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
   const { setTitle } = usePageTitle();
-  const [cliente, setCliente] = useState<Cliente | null>(null);
+  const [organizacao, setOrganizacao] = useState<Organizacao | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteDialog, setDeleteDialog] = useState(false);
@@ -48,21 +48,21 @@ export default function ClienteDetalhesPage() {
 
   useEffect(() => {
     if (id) {
-      loadCliente();
+      loadOrganizacao();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  async function loadCliente() {
+  async function loadOrganizacao() {
     try {
       setLoading(true);
-      const data = await api.clientes.get(id);
-      setCliente(data);
-      setTitle(data.razao_social || "Cliente");
+      const data = await api.organizacoes.get(id);
+      setOrganizacao(data);
+      setTitle(data.razao_social || "Organização");
       setError(null);
     } catch (err: unknown) {
       const error = err as Error;
-      setError(error.message || "Erro ao carregar cliente");
+      setError(error.message || "Erro ao carregar organização");
       // Erro já tratado
     } finally {
       setLoading(false);
@@ -71,12 +71,12 @@ export default function ClienteDetalhesPage() {
 
   async function handleDeleteConfirm() {
     try {
-      await api.clientes.delete(id);
-      toast.success("Cliente excluído com sucesso");
-      router.push("/dashboard/clientes");
+      await api.organizacoes.delete(id);
+      toast.success("Organização excluída com sucesso");
+      router.push("/dashboard/organizacoes");
     } catch (err: unknown) {
       const error = err as Error;
-      toast.error(error.message || "Erro ao excluir cliente");
+      toast.error(error.message || "Erro ao excluir organização");
     }
   }
 
@@ -92,12 +92,12 @@ export default function ClienteDetalhesPage() {
     );
   }
 
-  if (error || !cliente) {
+  if (error || !organizacao) {
     return (
       <div>
         <div className="max-w-4xl mx-auto">
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
-            <p className="text-red-800 dark:text-red-200">{error || "Cliente não encontrado"}</p>
+            <p className="text-red-800 dark:text-red-200">{error || "Organização não encontrada"}</p>
           </div>
         </div>
       </div>
@@ -110,7 +110,7 @@ export default function ClienteDetalhesPage() {
         <div className="mb-8">
           <div className="flex justify-end items-center">
             <div className="flex gap-2">
-              <Link href={`/dashboard/clientes/${id}/editar`}>
+              <Link href={`/dashboard/organizacoes/${id}/editar`}>
                 <Button variant="default">Editar</Button>
               </Link>
               <Button variant="destructive" onClick={() => setDeleteDialog(true)}>
@@ -131,64 +131,64 @@ export default function ClienteDetalhesPage() {
                   Razão Social
                 </dt>
                 <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                  {cliente.razao_social}
+                  {organizacao.razao_social}
                 </dd>
               </div>
               <div>
                 <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">CNPJ</dt>
-                <dd className="mt-1 text-sm text-black dark:text-zinc-50">{cliente.cnpj}</dd>
+                <dd className="mt-1 text-sm text-black dark:text-zinc-50">{organizacao.cnpj}</dd>
               </div>
-              {cliente.classificacao && (
+              {organizacao.classificacao && (
                 <div>
                   <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
                     Classificação
                   </dt>
                   <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                    {cliente.classificacao}
+                    {organizacao.classificacao}
                   </dd>
                 </div>
               )}
             </dl>
           </div>
 
-          {cliente.endereco && (
+          {organizacao.endereco && (
             <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
               <h2 className="text-lg font-semibold mb-4 text-black dark:text-zinc-50">Endereço</h2>
               <dl className="grid grid-cols-2 gap-4">
-                {cliente.endereco.logradouro && (
+                {organizacao.endereco.logradouro && (
                   <div>
                     <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
                       Logradouro
                     </dt>
                     <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                      {cliente.endereco.logradouro}
-                      {cliente.endereco.numero && `, ${cliente.endereco.numero}`}
-                      {cliente.endereco.complemento && ` - ${cliente.endereco.complemento}`}
+                      {organizacao.endereco.logradouro}
+                      {organizacao.endereco.numero && `, ${organizacao.endereco.numero}`}
+                      {organizacao.endereco.complemento && ` - ${organizacao.endereco.complemento}`}
                     </dd>
                   </div>
                 )}
-                {cliente.endereco.bairro && (
+                {organizacao.endereco.bairro && (
                   <div>
                     <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Bairro</dt>
                     <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                      {cliente.endereco.bairro}
+                      {organizacao.endereco.bairro}
                     </dd>
                   </div>
                 )}
-                {cliente.endereco.cidade && (
+                {organizacao.endereco.cidade && (
                   <div>
                     <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Cidade</dt>
                     <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                      {cliente.endereco.cidade}
-                      {cliente.endereco.estado && ` - ${cliente.endereco.estado}`}
+                      {organizacao.endereco.cidade}
+                      {organizacao.endereco.estado && ` - ${organizacao.endereco.estado}`}
                     </dd>
                   </div>
                 )}
-                {cliente.endereco.cep && (
+                {organizacao.endereco.cep && (
                   <div>
                     <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">CEP</dt>
                     <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                      {cliente.endereco.cep}
+                      {organizacao.endereco.cep}
                     </dd>
                   </div>
                 )}
@@ -196,35 +196,35 @@ export default function ClienteDetalhesPage() {
             </div>
           )}
 
-          {cliente.contatos && (
+          {organizacao.contatos && (
             <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
               <h2 className="text-lg font-semibold mb-4 text-black dark:text-zinc-50">Contatos</h2>
               <dl className="grid grid-cols-2 gap-4">
-                {cliente.contatos.telefone && (
+                {organizacao.contatos.telefone && (
                   <div>
                     <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
                       Telefone
                     </dt>
                     <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                      {cliente.contatos.telefone}
+                      {organizacao.contatos.telefone}
                     </dd>
                   </div>
                 )}
-                {cliente.contatos.email && (
+                {organizacao.contatos.email && (
                   <div>
                     <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Email</dt>
                     <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                      {cliente.contatos.email}
+                      {organizacao.contatos.email}
                     </dd>
                   </div>
                 )}
-                {cliente.contatos.responsavel && (
+                {organizacao.contatos.responsavel && (
                   <div>
                     <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
                       Responsável
                     </dt>
                     <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                      {cliente.contatos.responsavel}
+                      {organizacao.contatos.responsavel}
                     </dd>
                   </div>
                 )}
@@ -232,13 +232,13 @@ export default function ClienteDetalhesPage() {
             </div>
           )}
 
-          {cliente.agencias_reguladoras && cliente.agencias_reguladoras.length > 0 && (
+          {organizacao.agencias_reguladoras && organizacao.agencias_reguladoras.length > 0 && (
             <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
               <h2 className="text-lg font-semibold mb-4 text-black dark:text-zinc-50">
                 Agências Reguladoras
               </h2>
               <div className="flex flex-wrap gap-2">
-                {cliente.agencias_reguladoras.map((agencia) => (
+                {organizacao.agencias_reguladoras.map((agencia) => (
                   <span
                     key={agencia}
                     className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm text-black dark:text-zinc-50"
@@ -250,13 +250,13 @@ export default function ClienteDetalhesPage() {
             </div>
           )}
 
-          {cliente.certificacoes && cliente.certificacoes.length > 0 && (
+          {organizacao.certificacoes && organizacao.certificacoes.length > 0 && (
             <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
               <h2 className="text-lg font-semibold mb-4 text-black dark:text-zinc-50">
                 Certificações
               </h2>
               <div className="flex flex-wrap gap-2">
-                {cliente.certificacoes.map((cert) => (
+                {organizacao.certificacoes.map((cert) => (
                   <span
                     key={cert}
                     className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm text-black dark:text-zinc-50"
@@ -273,7 +273,7 @@ export default function ClienteDetalhesPage() {
               <div>
                 <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Criado em</dt>
                 <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                  {new Date(cliente.created_at).toLocaleString("pt-BR")}
+                  {new Date(organizacao.created_at).toLocaleString("pt-BR")}
                 </dd>
               </div>
               <div>
@@ -281,7 +281,7 @@ export default function ClienteDetalhesPage() {
                   Atualizado em
                 </dt>
                 <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                  {new Date(cliente.updated_at).toLocaleString("pt-BR")}
+                  {new Date(organizacao.updated_at).toLocaleString("pt-BR")}
                 </dd>
               </div>
             </dl>
@@ -291,8 +291,8 @@ export default function ClienteDetalhesPage() {
         <ConfirmDialog
           open={deleteDialog}
           onOpenChange={setDeleteDialog}
-          title="Excluir Cliente"
-          description="Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita."
+          title="Excluir Organização"
+          description="Tem certeza que deseja excluir esta organização? Esta ação não pode ser desfeita."
           confirmText="Excluir"
           cancelText="Cancelar"
           variant="destructive"

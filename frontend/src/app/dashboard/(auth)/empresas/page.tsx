@@ -15,7 +15,7 @@ interface Empresa {
   identificacao: string;
   tipo?: string;
   status?: string;
-  cliente_id?: string;
+  organizacao_id?: string;
 }
 
 export default function EmpresasPage() {

@@ -62,30 +62,30 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}): Promi
 }
 
 export const api = {
-  // Clientes
-  clientes: {
-    list: () => fetchWithAuth("/api/clientes").then((r) => r.json()).then((data) => data.clientes || []),
-    get: (id: string) => fetchWithAuth(`/api/clientes/${id}`).then((r) => r.json()),
+  // Organizações
+  organizacoes: {
+    list: () => fetchWithAuth("/api/organizacoes").then((r) => r.json()).then((data) => data.organizacoes || []),
+    get: (id: string) => fetchWithAuth(`/api/organizacoes/${id}`).then((r) => r.json()),
     create: (data: Record<string, unknown>) =>
-      fetchWithAuth("/api/clientes", {
+      fetchWithAuth("/api/organizacoes", {
         method: "POST",
         body: JSON.stringify(data),
       }).then((r) => r.json()),
     update: (id: string, data: Record<string, unknown>) =>
-      fetchWithAuth(`/api/clientes/${id}`, {
+      fetchWithAuth(`/api/organizacoes/${id}`, {
         method: "PATCH",
         body: JSON.stringify(data),
       }).then((r) => r.json()),
     delete: (id: string) =>
-      fetchWithAuth(`/api/clientes/${id}`, {
+      fetchWithAuth(`/api/organizacoes/${id}`, {
         method: "DELETE",
       }),
   },
 
   // Empresas
   empresas: {
-    list: (clienteId?: string) => {
-      const url = clienteId ? `/api/empresas?cliente_id=${clienteId}` : "/api/empresas";
+    list: (organizacaoId?: string) => {
+      const url = organizacaoId ? `/api/empresas?organizacao_id=${organizacaoId}` : "/api/empresas";
       return fetchWithAuth(url).then((r) => r.json()).then((data) => data.empresas || []);
     },
     get: (id: string) => fetchWithAuth(`/api/empresas/${id}`).then((r) => r.json()),
@@ -176,8 +176,8 @@ export const api = {
 
   // Projetos
   projetos: {
-    list: (clienteId?: string) => {
-      const url = clienteId ? `/api/projetos?cliente_id=${clienteId}` : "/api/projetos";
+    list: (organizacaoId?: string) => {
+      const url = organizacaoId ? `/api/projetos?organizacao_id=${organizacaoId}` : "/api/projetos";
       return fetchWithAuth(url).then((r) => r.json()).then((data) => data.projetos || []);
     },
     get: (id: string) => fetchWithAuth(`/api/projetos/${id}`).then((r) => r.json()),
