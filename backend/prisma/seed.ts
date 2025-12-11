@@ -1,294 +1,276 @@
-/**
- * Prisma Seed Script
- * 
- * Popula o banco de dados com dados iniciais para desenvolvimento e testes.
- * 
- * Executar com: npx tsx prisma/seed.ts
- * ou: npm run prisma:seed
- */
+import { PrismaClient } from '@prisma/client';
 
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Iniciando seed do banco de dados...')
+  console.log('🌱 Starting database seed...');
 
-  // ============================================
-  // 1. Criar usuário administrador
-  // ============================================
-  console.log('📝 Criando usuário administrador...')
-  
-  const adminUser = await prisma.usuario.upsert({
-    where: { email: 'admin@ot2net.com' },
+  // 1. TENANT
+  console.log('1️⃣  Creating tenant...');
+  const tenant = await prisma.tenant.upsert({
+    where: { slug: 'demo' },
     update: {},
     create: {
-      email: 'admin@ot2net.com',
-      nome: 'Administrador',
-      perfil: 'Administrador',
-      organizacao: 'OT2net',
-      status: 'ativo',
-    },
-  })
-
-  console.log('✅ Usuário admin criado:', adminUser.email)
-
-  // ============================================
-  // 2. Criar permissões básicas para admin
-  // ============================================
-  console.log('🔐 Criando permissões básicas...')
-
-  const permissoes = [
-    { entidade_tipo: 'cliente', acao: 'view' },
-    { entidade_tipo: 'cliente', acao: 'create' },
-    { entidade_tipo: 'cliente', acao: 'edit' },
-    { entidade_tipo: 'cliente', acao: 'delete' },
-    { entidade_tipo: 'projeto', acao: 'view' },
-    { entidade_tipo: 'projeto', acao: 'create' },
-    { entidade_tipo: 'projeto', acao: 'edit' },
-    { entidade_tipo: 'projeto', acao: 'delete' },
-    { entidade_tipo: 'processo', acao: 'view' },
-    { entidade_tipo: 'processo', acao: 'create' },
-    { entidade_tipo: 'processo', acao: 'edit' },
-    { entidade_tipo: 'processo', acao: 'delete' },
-    { entidade_tipo: 'questionario', acao: 'view' },
-    { entidade_tipo: 'questionario', acao: 'create' },
-    { entidade_tipo: 'questionario', acao: 'edit' },
-    { entidade_tipo: 'questionario', acao: 'delete' },
-    { entidade_tipo: 'usuario', acao: 'view' },
-    { entidade_tipo: 'usuario', acao: 'create' },
-    { entidade_tipo: 'usuario', acao: 'edit' },
-    { entidade_tipo: 'usuario', acao: 'delete' },
-  ]
-
-  // Verificar se já existem permissões para evitar duplicatas
-  const permissoesExistentes = await prisma.permissao.findMany({
-    where: { usuario_id: adminUser.id },
-  })
-
-  const permissoesParaCriar = permissoes.filter(
-    (p) =>
-      !permissoesExistentes.some(
-        (ep) => ep.entidade_tipo === p.entidade_tipo && ep.acao === p.acao
-      )
-  )
-
-  if (permissoesParaCriar.length > 0) {
-    await prisma.permissao.createMany({
-      data: permissoesParaCriar.map((p) => ({
-        usuario_id: adminUser.id,
-        entidade_tipo: p.entidade_tipo,
-        acao: p.acao,
-      })),
-    })
-  }
-
-  console.log(`✅ ${permissoes.length} permissões criadas para admin`)
-
-  // ============================================
-  // 3. Criar cliente de exemplo
-  // ============================================
-  console.log('🏢 Criando cliente de exemplo...')
-
-  const clienteExemplo = await prisma.cliente.upsert({
-    where: { cnpj: '12345678000190' },
-    update: {},
-    create: {
-      razao_social: 'Empresa Exemplo Ltda',
-      cnpj: '12345678000190',
-      endereco: {
-        logradouro: 'Rua Exemplo, 123',
-        cidade: 'São Paulo',
-        estado: 'SP',
-        cep: '01234-567',
-      },
-      contatos: {
-        telefone: '(11) 1234-5678',
-        email: 'contato@exemplo.com',
-      },
-      classificacao: 'Distribuidora de Energia',
-      agencias_reguladoras: ['ANEEL'],
-      certificacoes: [],
-    },
-  })
-
-  console.log('✅ Cliente de exemplo criado:', clienteExemplo.razao_social)
-
-  // ============================================
-  // 4. Criar empresa de exemplo
-  // ============================================
-  console.log('🏭 Criando empresa de exemplo...')
-
-  // Verificar se já existe
-  let empresaExemplo = await prisma.empresa.findFirst({
-    where: { cliente_id: clienteExemplo.id, identificacao: 'Empresa Exemplo - Matriz' },
-  })
-
-  if (!empresaExemplo) {
-    empresaExemplo = await prisma.empresa.create({
-      data: {
-        cliente_id: clienteExemplo.id,
-        identificacao: 'Empresa Exemplo - Matriz',
-        tipo: 'Matriz',
-        status: 'ativo',
-        ambito_operacional: 'Geração e Distribuição',
-      },
-    })
-  }
-
-  console.log('✅ Empresa de exemplo criada:', empresaExemplo.identificacao)
-
-  // ============================================
-  // 5. Criar site de exemplo
-  // ============================================
-  console.log('📍 Criando site de exemplo...')
-
-  let siteExemplo = await prisma.site.findFirst({
-    where: { empresa_id: empresaExemplo.id, identificacao: 'Subestação Exemplo' },
-  })
-
-  if (!siteExemplo) {
-    siteExemplo = await prisma.site.create({
-      data: {
-        empresa_id: empresaExemplo.id,
-        identificacao: 'Subestação Exemplo',
-        classificacao: 'Subestação de Transmissão',
-        criticidade_operacional: 'Alta',
-        localizacao_geografica: {
-          latitude: -23.5505,
-          longitude: -46.6333,
-          endereco: 'Rua Exemplo, 456',
-          cidade: 'São Paulo',
-          estado: 'SP',
-        },
-        sistemas_principais: ['SCADA', 'Sistema de Proteção'],
-      },
-    })
-  }
-
-  console.log('✅ Site de exemplo criado:', siteExemplo.identificacao)
-
-  // ============================================
-  // 6. Criar projeto de exemplo
-  // ============================================
-  console.log('📊 Criando projeto de exemplo...')
-
-  let projetoExemplo = await prisma.projeto.findFirst({
-    where: {
-      cliente_id: clienteExemplo.id,
-      nome: 'Projeto de Governança e Segurança TO - Exemplo',
-    },
-  })
-
-  if (!projetoExemplo) {
-    projetoExemplo = await prisma.projeto.create({
-      data: {
-        cliente_id: clienteExemplo.id,
-        nome: 'Projeto de Governança e Segurança TO - Exemplo',
-        descricao: 'Projeto piloto para demonstração da plataforma',
-        fase_atual: 'fase-0',
-        progresso_geral: 0,
-      },
-    })
-  }
-
-  console.log('✅ Projeto de exemplo criado:', projetoExemplo.nome)
-
-  // ============================================
-  // 7. Criar membro da equipe (admin no projeto)
-  // ============================================
-  console.log('👥 Criando membro da equipe...')
-
-  let membroEquipe = await prisma.membroEquipe.findFirst({
-    where: {
-      projeto_id: projetoExemplo.id,
-      usuario_id: adminUser.id,
-    },
-  })
-
-  if (!membroEquipe) {
-    membroEquipe = await prisma.membroEquipe.create({
-      data: {
-        projeto_id: projetoExemplo.id,
-        usuario_id: adminUser.id,
-        papel: 'Consultor Líder',
-        responsabilidade: 'Responsável',
-        autoridade: 'Responsável',
-        consultado: 'Responsável',
-        informado: 'Responsável',
-      },
-    })
-  }
-
-  console.log('✅ Membro da equipe criado')
-
-  // ============================================
-  // 8. Criar indicadores de exemplo
-  // ============================================
-  console.log('📈 Criando indicadores de exemplo...')
-
-  const indicadores = [
-    {
-      dominio_governanca: 'Governança',
-      tipo: 'KPI',
-      nome: 'Taxa de Conformidade com REN 964/21',
-      formula: '(Requisitos Atendidos / Total de Requisitos) * 100',
-      fonte_dados: 'Análise de Conformidade',
-      baseline: 0,
-      target: 100,
-      threshold_verde: 90,
-      threshold_amarelo: 70,
-      threshold_vermelho: 50,
-    },
-    {
-      dominio_governanca: 'Segurança',
-      tipo: 'KRI',
-      nome: 'Número de Incidentes de Segurança',
-      formula: 'COUNT(Incidentes)',
-      fonte_dados: 'Sistema de Gestão de Incidentes',
-      baseline: 0,
-      target: 0,
-      threshold_verde: 0,
-      threshold_amarelo: 1,
-      threshold_vermelho: 3,
-    },
-  ]
-
-  for (const indicador of indicadores) {
-    const existe = await prisma.indicador.findFirst({
-      where: {
-        dominio_governanca: indicador.dominio_governanca,
-        nome: indicador.nome,
-      },
-    })
-
-    if (!existe) {
-      await prisma.indicador.create({
-        data: indicador,
-      })
+      name: 'Demo Company',
+      slug: 'demo'
     }
-  }
+  });
+  console.log(`✅ Tenant: ${tenant.name}`);
 
-  console.log(`✅ ${indicadores.length} indicadores criados`)
+  // 2. ORGANIZAÇÕES
+  console.log('2️⃣  Creating organizações...');
+  const org1 = await prisma.organizacao.create({
+    data: {
+      tenant_id: tenant.id,
+      razao_social: 'Eletrobras Holding S.A.',
+      cnpj: '00.001.180/0001-26',
+      agencias_reguladoras: ['ANEEL', 'ONS'],
+      certificacoes: ['ISO 27001', 'IEC 62443-2-1']
+    }
+  });
 
-  console.log('\n🎉 Seed concluído com sucesso!')
-  console.log('\n📋 Resumo:')
-  console.log(`   - 1 usuário admin (${adminUser.email})`)
-  console.log(`   - ${permissoes.length} permissões`)
-  console.log(`   - 1 cliente de exemplo`)
-  console.log(`   - 1 empresa de exemplo`)
-  console.log(`   - 1 site de exemplo`)
-  console.log(`   - 1 projeto de exemplo`)
-  console.log(`   - 1 membro da equipe`)
-  console.log(`   - ${indicadores.length} indicadores`)
+  const org2 = await prisma.organizacao.create({
+    data: {
+      tenant_id: tenant.id,
+      razao_social: 'CEMIG Geração e Transmissão S.A.',
+      cnpj: '06.981.176/0001-58',
+      agencias_reguladoras: ['ANEEL'],
+      certificacoes: ['ISO 27001']
+    }
+  });
+  console.log(`✅ Organizações: 2 created`);
+
+  // 3. EMPRESAS (5)
+  console.log('3️⃣  Creating empresas...');
+  const empresas = await Promise.all([
+    prisma.empresa.create({
+      data: {
+        tenant_id: tenant.id,
+        organizacao_id: org1.id,
+        identificacao: 'Eletronorte',
+        tipo: 'Geradora',
+        status: 'ativa'
+      }
+    }),
+    prisma.empresa.create({
+      data: {
+        tenant_id: tenant.id,
+        organizacao_id: org1.id,
+        identificacao: 'Furnas',
+        tipo: 'Geradora/Transmissora',
+        status: 'ativa'
+      }
+    }),
+    prisma.empresa.create({
+      data: {
+        tenant_id: tenant.id,
+        organizacao_id: org1.id,
+        identificacao: 'Chesf',
+        tipo: 'Geradora/Transmissora',
+        status: 'ativa'
+      }
+    }),
+    prisma.empresa.create({
+      data: {
+        tenant_id: tenant.id,
+        organizacao_id: org2.id,
+        identificacao: 'CEMIG GT',
+        tipo: 'Geradora/Transmissora',
+        status: 'ativa'
+      }
+    }),
+    prisma.empresa.create({
+      data: {
+        tenant_id: tenant.id,
+        organizacao_id: org2.id,
+        identificacao: 'CEMIG Distribuição',
+        tipo: 'Distribuidora',
+        status: 'ativa'
+      }
+    }),
+  ]);
+  console.log(`✅ Empresas: ${empresas.length} created`);
+
+  // 4. SITES (10)
+  console.log('4️⃣  Creating sites...');
+  const sites = await Promise.all([
+    prisma.site.create({
+      data: {
+        tenant_id: tenant.id,
+        empresa_id: empresas[0].id,
+        nome: 'UHE Tucuruí',
+        tipo_instalacao: 'Usina Hidrelétrica'
+      }
+    }),
+    prisma.site.create({
+      data: {
+        tenant_id: tenant.id,
+        empresa_id: empresas[0].id,
+        nome: 'SE Tucuruí 500kV',
+        tipo_instalacao: 'Subestação'
+      }
+    }),
+    prisma.site.create({
+      data: {
+        tenant_id: tenant.id,
+        empresa_id: empresas[1].id,
+        nome: 'UHE Furnas',
+        tipo_instalacao: 'Usina Hidrelétrica'
+      }
+    }),
+    prisma.site.create({
+      data: {
+        tenant_id: tenant.id,
+        empresa_id: empresas[1].id,
+        nome: 'UTE Santa Cruz',
+        tipo_instalacao: 'Usina Termelétrica'
+      }
+    }),
+    prisma.site.create({
+      data: {
+        tenant_id: tenant.id,
+        empresa_id: empresas[2].id,
+        nome: 'UHE Paulo Afonso IV',
+        tipo_instalacao: 'Usina Hidrelétrica'
+      }
+    }),
+    prisma.site.create({
+      data: {
+        tenant_id: tenant.id,
+        empresa_id: empresas[2].id,
+        nome: 'SE Angelim II 500kV',
+        tipo_instalacao: 'Subestação'
+      }
+    }),
+    prisma.site.create({
+      data: {
+        tenant_id: tenant.id,
+        empresa_id: empresas[3].id,
+        nome: 'UHE Emborcação',
+        tipo_instalacao: 'Usina Hidrelétrica'
+      }
+    }),
+    prisma.site.create({
+      data: {
+        tenant_id: tenant.id,
+        empresa_id: empresas[3].id,
+        nome: 'UHE Jaguara',
+        tipo_instalacao: 'Usina Hidrelétrica'
+      }
+    }),
+    prisma.site.create({
+      data: {
+        tenant_id: tenant.id,
+        empresa_id: empresas[4].id,
+        nome: 'SE Barreiro 138kV',
+        tipo_instalacao: 'Subestação'
+      }
+    }),
+    prisma.site.create({
+      data: {
+        tenant_id: tenant.id,
+        empresa_id: empresas[4].id,
+        nome: 'Centro de Operação do Sistema (COS)',
+        tipo_instalacao: 'Centro de Controle'
+      }
+    }),
+  ]);
+  console.log(`✅ Sites: ${sites.length} created`);
+
+  // 5. PROJETOS (3)
+  console.log('5️⃣  Creating projetos...');
+  const projetos = [
+    await prisma.projeto.create({
+      data: {
+        tenant_id: tenant.id,
+        organizacao_id: org1.id,
+        nome: 'Adequação ANEEL 964/21 - Eletrobras',
+        objetivo: 'Compliance com Resolução ANEEL 964/21',
+        fase_atual: 'discovery',
+        status: 'em_andamento'
+      }
+    }),
+    await prisma.projeto.create({
+      data: {
+        tenant_id: tenant.id,
+        organizacao_id: org2.id,
+        nome: 'Mapeamento AS-IS - CEMIG',
+        objetivo: 'Levantamento de processos operacionais',
+        fase_atual: 'discovery',
+        status: 'em_andamento'
+      }
+    }),
+    await prisma.projeto.create({
+      data: {
+        tenant_id: tenant.id,
+        organizacao_id: org1.id,
+        nome: 'Assessment IEC 62443 - Furnas',
+        objetivo: 'Avaliação de conformidade IEC 62443',
+        fase_atual: 'planejamento',
+        status: 'planejado'
+      }
+    }),
+  ];
+  console.log(`✅ Projetos: ${projetos.length} created`);
+
+  // 6. DESCRIÇÕES RAW (20)
+  console.log('6️⃣  Creating descrições raw...');
+  const descricoes = await Promise.all(
+    Array.from({ length: 20 }).map((_, i) => {
+      const isProcessado = i < 10;
+      return prisma.descricaoOperacionalRaw.create({
+        data: {
+          tenant_id: tenant.id,
+          projeto_id: projetos[i < 12 ? 0 : 1].id,
+          site_id: sites[i % 10].id,
+          titulo: `Processo Operacional ${i + 1}`,
+          descricao_completa: `Descrição detalhada do processo ${i + 1}. Envolve verificação SCADA, análise de alarmes e registro.`,
+          status_processamento: isProcessado ? 'processado' : 'pendente',
+          resultado_processamento: isProcessado ? {
+            approval_text: `Processo ${i + 1}: monitoramento de sistemas SCADA com impacto moderado.`,
+            mermaid_graph: `flowchart TD\n    A[Início] --> B[Verificar]\n    B --> C[Fim]`,
+            bpmn: { id: `proc-${i}` }
+          } : null
+        }
+      });
+    })
+  );
+  console.log(`✅ Descrições: ${descricoes.length} (${descricoes.filter(d => d.status_processamento === 'processado').length} processadas)`);
+
+  // 7. PROCESSOS NORMALIZADOS (10)
+  console.log('7️⃣  Creating processos normalizados...');
+  const processosNorm = await Promise.all(
+    descricoes.slice(0, 10).map((desc, i) => {
+      return prisma.processoNormalizado.create({
+        data: {
+          tenant_id: tenant.id,
+          descricao_raw_id: desc.id,
+          nome: `${desc.titulo} (Normalizado)`,
+          bpmn_json: { id: `norm-${i}` },
+          approval_text: (desc.resultado_processamento as any)?.approval_text,
+          mermaid_graph: (desc.resultado_processamento as any)?.mermaid_graph,
+          nivel_confianca_normalizacao: 0.85,
+          status: i < 5 ? 'aprovado' : 'revisao'
+        }
+      });
+    })
+  );
+  console.log(`✅ Processos Normalizados: ${processosNorm.length} created`);
+
+  console.log('\n🎉 Seed completed!');
+  console.log('📊 Summary:');
+  console.log(`   - Tenants: 1`);
+  console.log(`   - Organizações: 2`);
+  console.log(`   - Empresas: ${empresas.length}`);
+  console.log(`   - Sites: ${sites.length}`);
+  console.log(`   - Projetos: ${projetos.length}`);
+  console.log(`   - Descrições Raw: ${descricoes.length}`);
+  console.log(`   - Processos Normalizados: ${processosNorm.length}`);
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Erro ao executar seed:', e)
-    process.exit(1)
+    console.error('❌ Error:', e);
+    process.exit(1);
   })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
-
+  .finally(() => prisma.$disconnect());

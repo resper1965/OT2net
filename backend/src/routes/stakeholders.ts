@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requirePermission } from '../middleware/permissions';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { validate } from '../middleware/validation';
@@ -32,12 +33,12 @@ const createStakeholderSchema = z.object({
 const updateStakeholderSchema = createStakeholderSchema.partial();
 
 // GET /api/stakeholders - Listar todos os stakeholders
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', authenticateToken, requirePermission('stakeholders', 'read'), async (req: any, res, next) => {
   try {
     const { projeto_id } = req.query;
     const where = projeto_id ? { projeto_id: projeto_id as string } : {};
     
-    const stakeholders = await prisma.stakeholder.findMany({
+    const stakeholders = await req.prisma.stakeholder.findMany({
       where,
       orderBy: { created_at: 'desc' },
       include: {
@@ -51,10 +52,10 @@ router.get('/', authenticateToken, async (req, res, next) => {
 });
 
 // GET /api/stakeholders/:id - Obter stakeholder por ID
-router.get('/:id', authenticateToken, async (req, res, next) => {
+router.get('/:id', authenticateToken, async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    const stakeholder = await prisma.stakeholder.findUnique({
+    const stakeholder = await req.prisma.stakeholder.findUnique({
       where: { id },
       include: {
         projeto: true,
@@ -76,9 +77,9 @@ router.post(
   '/',
   authenticateToken,
   validate({ body: createStakeholderSchema }),
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
-      const stakeholder = await prisma.stakeholder.create({
+      const stakeholder = await req.prisma.stakeholder.create({
         data: req.body,
       });
       res.status(201).json(stakeholder);
@@ -93,10 +94,10 @@ router.put(
   '/:id',
   authenticateToken,
   validate({ body: updateStakeholderSchema }),
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
       const { id } = req.params;
-      const stakeholder = await prisma.stakeholder.update({
+      const stakeholder = await req.prisma.stakeholder.update({
         where: { id },
         data: req.body,
       });
@@ -111,10 +112,10 @@ router.put(
 );
 
 // DELETE /api/stakeholders/:id - Deletar stakeholder
-router.delete('/:id', authenticateToken, async (req, res, next) => {
+router.delete('/:id', authenticateToken, requirePermission('stakeholders', 'delete'), async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    await prisma.stakeholder.delete({
+    await req.prisma.stakeholder.delete({
       where: { id },
     });
     res.status(204).send();

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requirePermission } from '../middleware/permissions';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { validate } from '../middleware/validation';
@@ -19,12 +20,12 @@ const createMembroEquipeSchema = z.object({
 const updateMembroEquipeSchema = createMembroEquipeSchema.partial();
 
 // GET /api/membros-equipe - Listar todos os membros
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', authenticateToken, requirePermission('membros_equipe', 'read'), async (req: any, res, next) => {
   try {
     const { projeto_id } = req.query;
     const where = projeto_id ? { projeto_id: projeto_id as string } : {};
     
-    const membros = await prisma.membroEquipe.findMany({
+    const membros = await req.prisma.membroEquipe.findMany({
       where,
       orderBy: { created_at: 'desc' },
       include: {
@@ -38,10 +39,10 @@ router.get('/', authenticateToken, async (req, res, next) => {
 });
 
 // GET /api/membros-equipe/:id - Obter membro por ID
-router.get('/:id', authenticateToken, async (req, res, next) => {
+router.get('/:id', authenticateToken, async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    const membro = await prisma.membroEquipe.findUnique({
+    const membro = await req.prisma.membroEquipe.findUnique({
       where: { id },
       include: {
         projeto: true,
@@ -63,9 +64,9 @@ router.post(
   '/',
   authenticateToken,
   validate({ body: createMembroEquipeSchema }),
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
-      const membro = await prisma.membroEquipe.create({
+      const membro = await req.prisma.membroEquipe.create({
         data: req.body,
       });
       res.status(201).json(membro);
@@ -80,10 +81,10 @@ router.put(
   '/:id',
   authenticateToken,
   validate({ body: updateMembroEquipeSchema }),
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
       const { id } = req.params;
-      const membro = await prisma.membroEquipe.update({
+      const membro = await req.prisma.membroEquipe.update({
         where: { id },
         data: req.body,
       });
@@ -98,10 +99,10 @@ router.put(
 );
 
 // DELETE /api/membros-equipe/:id - Deletar membro
-router.delete('/:id', authenticateToken, async (req, res, next) => {
+router.delete('/:id', authenticateToken, requirePermission('membros_equipe', 'delete'), async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    await prisma.membroEquipe.delete({
+    await req.prisma.membroEquipe.delete({
       where: { id },
     });
     res.status(204).send();

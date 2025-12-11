@@ -1,98 +1,75 @@
-import { Request, Response, NextFunction } from 'express'
-import { firebaseAuth } from '../lib/firebase'
+import { auth } from '../lib/firebase/admin';
+import { Request, Response, NextFunction } from 'express';
+import { prisma } from '../lib/prisma';
+import { applyTenantIsolation } from './tenant';
+
+interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    role: string;
+    tenant_id: string;
+  };
+  prisma?: any;
+}
 
 /**
- * Middleware de autenticação para rotas do Express
- * Verifica token JWT do Supabase e adiciona dados do usuário ao request
+ * Middleware de autenticação Firebase
+ * Valida token JWT e injeta user + prisma com RLS no request
  */
-export async function authenticate(
-  req: Request,
+export async function authenticateToken(
+  req: AuthRequest,
   res: Response,
   next: NextFunction
-) {
+): Promise<void> {
   try {
-    // Extrair token do header Authorization
-    const authHeader = req.headers.authorization
-
+    const authHeader = req.headers.authorization;
+    
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
-        error: 'Token não fornecido',
-        message: 'Authorization header deve conter: Bearer <token>',
-      })
+      res.status(401).json({ error: 'Missing or invalid authorization header' });
+      return;
     }
 
-    const token = authHeader.replace('Bearer ', '')
+    const token = authHeader.split('Bearer ')[1];
+    
+    // Validar token com Firebase Admin
+    const decodedToken = await auth.verifyIdToken(token);
+    
+    // Extrair claims customizados
+    const { uid, email } = decodedToken;
+    const role = (decodedToken as any).role || 'VISUALIZADOR';
+    const tenant_id = (decodedToken as any).tenant_id;
 
-    // Verificar token com Firebase Auth
-    const decodedToken = await firebaseAuth.verifyIdToken(token)
-
-    if (!decodedToken) {
-      return res.status(401).json({
-        error: 'Token inválido ou expirado',
-        message: 'Faça login novamente',
-      })
+    if (!tenant_id) {
+      res.status(403).json({ 
+        error: 'User not associated with a tenant',
+        hint: 'Contact administrator to assign tenant'
+      });
+      return;
     }
 
-    // Adicionar dados do usuário ao request
-    // Estrutura customizada com tenant_id e role
-    ;(req as any).user = {
-        id: decodedToken.uid,
-        email: decodedToken.email,
-        tenant_id: decodedToken.tenant_id, // Custom claim
-        role: decodedToken.role // Custom claim
-    }
-    ;(req as any).userId = decodedToken.uid
+    // Anexar informações do usuário
+    req.user = {
+      id: uid,
+      email: email || '',
+      role,
+      tenant_id
+    };
 
-    next()
-  } catch (error) {
-    console.error('Erro na autenticação:', error)
-    return res.status(401).json({
-      error: 'Falha na autenticação',
-      message: 'Token inválido',
-    })
+    // Aplicar RLS ao Prisma Client
+    const isolationExtension = applyTenantIsolation(tenant_id);
+    req.prisma = isolationExtension(prisma);
+
+    next();
+  } catch (error: any) {
+    console.error('Authentication error:', error);
+    
+    if (error.code === 'auth/id-token-expired') {
+      res.status(401).json({ error: 'Token expired' });
+    } else if (error.code === 'auth/argument-error') {
+      res.status(401).json({ error: 'Invalid token format' });
+    } else {
+      res.status(401).json({ error: 'Unauthorized' });
+    }
   }
 }
-
-/**
- * Middleware opcional de autenticação
- * Não retorna erro se não houver token, apenas adiciona user se existir
- */
-export async function optionalAuthenticate(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const authHeader = req.headers.authorization
-
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.replace('Bearer ', '')
-      try {
-        const decodedToken = await firebaseAuth.verifyIdToken(token)
-
-        if (decodedToken) {
-          ;(req as any).user = {
-            id: decodedToken.uid,
-            email: decodedToken.email,
-            tenant_id: decodedToken.tenant_id,
-            role: decodedToken.role
-          }
-          ;(req as any).userId = decodedToken.uid
-        }
-      } catch (e) {
-        // Ignora erro se token inválido no opcional
-      }
-    }
-
-    next()
-  } catch (error) {
-    // Em caso de erro, continua sem autenticação
-    next()
-  }
-}
-
-/**
- * Alias para compatibilidade com rotas existentes
- */
-export const authenticateToken = authenticate
-

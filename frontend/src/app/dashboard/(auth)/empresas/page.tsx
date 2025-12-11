@@ -6,9 +6,12 @@ import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
 import { Factory, Search, Filter } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
+import { LoadingState } from "@/components/ui/loading-state";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface Empresa {
   id: string;
@@ -141,23 +144,17 @@ export default function EmpresasPage() {
         {/* Content Card */}
         <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-zinc-600 dark:text-zinc-400">Carregando...</p>
-            </div>
+            <LoadingState type="table" rows={8} />
           ) : filteredEmpresas.length === 0 ? (
-            <div className="text-center py-12 p-6">
-              <Factory className="h-12 w-12 text-zinc-400 mx-auto mb-4" />
-              <p className="text-zinc-600 dark:text-zinc-400 mb-4">
-                {searchQuery
-                  ? "Nenhuma empresa encontrada com os filtros aplicados"
-                  : "Nenhuma empresa cadastrada"}
-              </p>
-              {!searchQuery && (
-                <Link href="/dashboard/empresas/novo">
-                  <Button variant="default">Cadastrar primeira empresa</Button>
-                </Link>
-              )}
-            </div>
+            <EmptyState
+              icon={Factory}
+              title={searchQuery ? "Nenhuma empresa encontrada" : "Nenhuma empresa cadastrada"}
+              description={searchQuery ? "Tente ajustar os filtros de busca" : "Comece cadastrando sua primeira empresa"}
+              action={!searchQuery ? {
+                label: "Cadastrar primeira empresa",
+                onClick: () => window.location.href = '/dashboard/empresas/novo'
+              } : undefined}
+            />
           ) : (
             <>
               <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">

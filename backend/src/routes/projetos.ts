@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requirePermission } from '../middleware/permissions';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { validate } from '../middleware/validation';
@@ -17,12 +18,12 @@ const createProjetoSchema = z.object({
 const updateProjetoSchema = createProjetoSchema.partial();
 
 // GET /api/projetos - Listar todos os projetos
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', authenticateToken, requirePermission('projetos', 'read'), async (req: any, res, next) => {
   try {
     const { organizacao_id } = req.query;
     const where = organizacao_id ? { organizacao_id: organizacao_id as string } : {};
     
-    const projetos = await prisma.projeto.findMany({
+    const projetos = await req.prisma.projeto.findMany({
       where,
       orderBy: { created_at: 'desc' },
       include: {
@@ -38,10 +39,10 @@ router.get('/', authenticateToken, async (req, res, next) => {
 });
 
 // GET /api/projetos/:id - Obter projeto por ID
-router.get('/:id', authenticateToken, async (req, res, next) => {
+router.get('/:id', authenticateToken, async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    const projeto = await prisma.projeto.findUnique({
+    const projeto = await req.prisma.projeto.findUnique({
       where: { id },
       include: {
         organizacao: {
@@ -73,9 +74,9 @@ router.post(
   '/',
   authenticateToken,
   validate({ body: createProjetoSchema }),
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
-      const projeto = await prisma.projeto.create({
+      const projeto = await req.prisma.projeto.create({
         data: req.body,
       });
       res.status(201).json(projeto);
@@ -90,10 +91,10 @@ router.put(
   '/:id',
   authenticateToken,
   validate({ body: updateProjetoSchema }),
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
       const { id } = req.params;
-      const projeto = await prisma.projeto.update({
+      const projeto = await req.prisma.projeto.update({
         where: { id },
         data: req.body,
       });
@@ -108,10 +109,10 @@ router.put(
 );
 
 // DELETE /api/projetos/:id - Deletar projeto
-router.delete('/:id', authenticateToken, async (req, res, next) => {
+router.delete('/:id', authenticateToken, requirePermission('projetos', 'delete'), async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    await prisma.projeto.delete({
+    await req.prisma.projeto.delete({
       where: { id },
     });
     res.status(204).send();

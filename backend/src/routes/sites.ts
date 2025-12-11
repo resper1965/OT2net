@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requirePermission } from '../middleware/permissions';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { validate } from '../middleware/validation';
@@ -27,12 +28,12 @@ const createSiteSchema = z.object({
 const updateSiteSchema = createSiteSchema.partial();
 
 // GET /api/sites - Listar todos os sites
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', authenticateToken, requirePermission('sites', 'read'), async (req: any, res, next) => {
   try {
     const { empresa_id } = req.query;
     const where = empresa_id ? { empresa_id: empresa_id as string } : {};
     
-    const sites = await prisma.site.findMany({
+    const sites = await req.prisma.site.findMany({
       where,
       orderBy: { created_at: 'desc' },
       include: {
@@ -50,10 +51,10 @@ router.get('/', authenticateToken, async (req, res, next) => {
 });
 
 // GET /api/sites/:id - Obter site por ID
-router.get('/:id', authenticateToken, async (req, res, next) => {
+router.get('/:id', authenticateToken, async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    const site = await prisma.site.findUnique({
+    const site = await req.prisma.site.findUnique({
       where: { id },
       include: {
         empresa: {
@@ -79,9 +80,9 @@ router.post(
   '/',
   authenticateToken,
   validate({ body: createSiteSchema }),
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
-      const site = await prisma.site.create({
+      const site = await req.prisma.site.create({
         data: req.body,
       });
       res.status(201).json(site);
@@ -96,10 +97,10 @@ router.put(
   '/:id',
   authenticateToken,
   validate({ body: updateSiteSchema }),
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
       const { id } = req.params;
-      const site = await prisma.site.update({
+      const site = await req.prisma.site.update({
         where: { id },
         data: req.body,
       });
@@ -114,10 +115,10 @@ router.put(
 );
 
 // DELETE /api/sites/:id - Deletar site
-router.delete('/:id', authenticateToken, async (req, res, next) => {
+router.delete('/:id', authenticateToken, requirePermission('sites', 'delete'), async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    await prisma.site.delete({
+    await req.prisma.site.delete({
       where: { id },
     });
     res.status(204).send();

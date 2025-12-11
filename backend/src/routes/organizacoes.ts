@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { validate } from '../middleware/validation';
 import { authenticateToken } from '../middleware/auth';
+import { requirePermission } from '../middleware/permissions';
 
 const router = Router();
 
@@ -33,26 +34,24 @@ const createOrganizacaoSchema = z.object({
 const updateOrganizacaoSchema = createOrganizacaoSchema.partial();
 
 // GET /api/organizacoes - Listar todas as organizações
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', authenticateToken, requirePermission('organizacoes', 'read'), async (req: any, res, next) => {
   try {
-    const organizacoes = await prisma.organizacao.findMany({
+    // ✅ Usa req.prisma que já tem RLS aplicado
+    const organizacoes = await req.prisma.organizacao.findMany({
       orderBy: { created_at: 'desc' },
-      include: {
-        empresas: true,
-        projetos: true,
-      },
     });
-    res.json(organizacoes);
+    
+    res.json({ organizacoes });
   } catch (error) {
     next(error);
   }
 });
 
 // GET /api/organizacoes/:id - Obter organização por ID
-router.get('/:id', authenticateToken, async (req, res, next) => {
+router.get('/:id', authenticateToken, requirePermission('organizacoes', 'read'), async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    const organizacao = await prisma.organizacao.findUnique({
+    const organizacao = await req.prisma.organizacao.findUnique({
       where: { id },
       include: {
         empresas: {
@@ -78,10 +77,10 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
 router.post(
   '/',
   authenticateToken,
-  validate({ body: createOrganizacaoSchema }),
-  async (req, res, next) => {
+  requirePermission('organizacoes', 'create'),
+  async (req: any, res, next) => {
     try {
-      const organizacao = await prisma.organizacao.create({
+      const organizacao = await req.prisma.organizacao.create({
         data: req.body,
       });
       res.status(201).json(organizacao);
@@ -98,11 +97,11 @@ router.post(
 router.put(
   '/:id',
   authenticateToken,
-  validate({ body: updateOrganizacaoSchema }),
-  async (req, res, next) => {
+  requirePermission('organizacoes', 'update'),
+  async (req: any, res, next) => {
     try {
       const { id } = req.params;
-      const organizacao = await prisma.organizacao.update({
+      const organizacao = await req.prisma.organizacao.update({
         where: { id },
         data: req.body,
       });
@@ -117,10 +116,10 @@ router.put(
 );
 
 // DELETE /api/organizacoes/:id - Deletar organização
-router.delete('/:id', authenticateToken, async (req, res, next) => {
+router.delete('/:id', authenticateToken, requirePermission('organizacoes', 'delete'), async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    await prisma.organizacao.delete({
+    await req.prisma.organizacao.delete({
       where: { id },
     });
     res.status(204).send();

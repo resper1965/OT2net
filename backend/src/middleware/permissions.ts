@@ -1,138 +1,144 @@
-import { Request, Response, NextFunction } from 'express'
-import { prisma } from '../lib/prisma'
+import { Request, Response, NextFunction } from 'express';
 
 /**
- * Middleware de autorização baseado em permissões
- * Verifica se o usuário tem permissão para realizar ação em entidade
+ * Matriz de permissões por role (Role-Based Access Control)
+ * Formato: 'resource:action' ou wildcard '*'
  */
-export function requirePermission(entidadeTipo: string, acao: string) {
-  return async (req: Request, res: Response, next: NextFunction) => {
+const PERMISSIONS: Record<string, string[]> = {
+  PLATFORM_ADMIN: ['*'], // Acesso total a tudo
+  ADMIN: [
+    'organizacoes:*',
+    'empresas:*',
+    'projetos:*',
+    'sites:*',
+    'stakeholders:*',
+    'equipe:*',
+    'descricoes:*',
+    'processos:*',
+    'relatorios:*',
+    'usuarios:read' // Admin pode ver usuários mas não modificar roles
+  ],
+  CONSULTOR: [
+    'projetos:read',
+    'projetos:update', // Pode editar projetos que está alocado
+    'descricoes:*', // Full CRUD em descrições operacionais
+    'processos:*', // Full CRUD em processos normalizados
+    'relatorios:read',
+    'stakeholders:read',
+    'equipe:read',
+    'sites:read'
+  ],
+  GESTOR: [
+    'projetos:read',
+    'processos:read',
+    'descrições:read',
+    'relatorios:read',
+    'stakeholders:read',
+    'equipe:read'
+  ],
+  VISUALIZADOR: [
+    'relatorios:read'
+  ],
+  AUDITOR: [
+    '*:read' // Read-only universal
+  ]
+};
+
+/**
+ * Middleware que valida se o usuário tem permissão para acessar o recurso
+ * @param resource - Nome do recurso (ex: 'organizacoes', 'projetos')
+ * @param action - Ação desejada (ex: 'read', 'create', 'update', 'delete')
+ */
+export function requirePermission(resource: string, action: string) {
+  return async (req: any, res: Response, next: NextFunction) => {
     try {
-      const userId = (req as any).userId
-
-      if (!userId) {
-        return res.status(401).json({
-          error: 'Não autenticado',
-          message: 'Faça login para acessar este recurso',
-        })
+      const userRole = req.user?.role;
+      
+      if (!userRole) {
+        return res.status(403).json({ 
+          error: 'Forbidden', 
+          message: 'User role not found'
+        });
       }
 
-      // Buscar permissão do usuário
-      const permissao = await prisma.permissao.findFirst({
-        where: {
-          usuario_id: userId,
-          entidade_tipo: entidadeTipo,
-          acao: acao,
-        },
-      })
-
-      if (!permissao) {
-        return res.status(403).json({
-          error: 'Acesso negado',
-          message: `Você não tem permissão para ${acao} ${entidadeTipo}`,
-        })
+      const userPermissions = PERMISSIONS[userRole] || [];
+      
+      // Verificar permissões
+      const requiredPerm = `${resource}:${action}`;
+      const hasWildcard = userPermissions.includes('*');
+      const hasResourceWildcard = userPermissions.includes(`${resource}:*`);
+      const hasActionWildcard = userPermissions.includes(`*:${action}`);
+      const hasExactPerm = userPermissions.includes(requiredPerm);
+      
+      if (hasWildcard || hasResourceWildcard || hasActionWildcard || hasExactPerm) {
+        return next();
       }
-
-      next()
+      
+      // Permissão negada
+      return res.status(403).json({ 
+        error: 'Forbidden',
+        message: `Insufficient permissions. Required: ${requiredPerm}`,
+        userRole,
+        userPermissions
+      });
     } catch (error) {
-      console.error('Erro na verificação de permissão:', error)
-      return res.status(500).json({
-        error: 'Erro interno na verificação de permissão',
-        message: 'Tente novamente mais tarde',
-      })
+      next(error);
     }
-  }
+  };
 }
 
 /**
- * Helper para verificar múltiplas permissões (OR)
- * Usuário precisa ter pelo menos uma das permissões
+ * Middleware que valida se o usuário é ADMIN ou PLATFORM_ADMIN
  */
-export function requireAnyPermission(
-  permissoes: Array<{ entidadeTipo: string; acao: string }>
-) {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const userId = (req as any).userId
-
-      if (!userId) {
-        return res.status(401).json({
-          error: 'Não autenticado',
-          message: 'Faça login para acessar este recurso',
-        })
-      }
-
-      // Verificar se usuário tem pelo menos uma permissão
-      const permissoesEncontradas = await prisma.permissao.findMany({
-        where: {
-          usuario_id: userId,
-          OR: permissoes.map((p) => ({
-            entidade_tipo: p.entidadeTipo,
-            acao: p.acao,
-          })),
-        },
-      })
-
-      if (permissoesEncontradas.length === 0) {
-        return res.status(403).json({
-          error: 'Acesso negado',
-          message: 'Você não tem permissão para acessar este recurso',
-        })
-      }
-
-      next()
-    } catch (error) {
-      console.error('Erro na verificação de permissão:', error)
-      return res.status(500).json({
-        error: 'Erro interno na verificação de permissão',
-        message: 'Tente novamente mais tarde',
-      })
-    }
+export function requireAdmin(req: any, res: Response, next: NextFunction) {
+  const userRole = req.user?.role;
+  
+  if (userRole === 'ADMIN' || userRole === 'PLATFORM_ADMIN') {
+    return next();
   }
+  
+  return res.status(403).json({ 
+    error: 'Forbidden',
+    message: 'Admin access required'
+  });
 }
 
 /**
- * Helper para verificar se usuário é admin
- * Verifica se usuário tem permissão de delete em qualquer entidade (indicador de admin)
+ * Middleware que valida se o usuário pode acessar um projeto específico
+ * Verifica se o usuário está alocado no projeto ou tem role ADMIN+
  */
-export async function requireAdmin(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export async function requireProjectAccess(req: any, res: Response, next: NextFunction) {
   try {
-    const userId = (req as any).userId
-
-    if (!userId) {
-      return res.status(401).json({
-        error: 'Não autenticado',
-        message: 'Faça login para acessar este recurso',
-      })
+    const projectId = req.params.id || req.body.projeto_id || req.query.projeto_id;
+    const userRole = req.user?.role;
+    const userId = req.user?.id;
+    
+    // Admins sempre têm acesso
+    if (['PLATFORM_ADMIN', 'ADMIN'].includes(userRole)) {
+      return next();
     }
-
-    // Verificar se usuário tem permissão de delete em usuários (indicador de admin)
-    const isAdmin = await prisma.permissao.findFirst({
+    
+    if (!projectId) {
+      return res.status(400).json({ error: 'Project ID required' });
+    }
+    
+    // Verificar se usuário está alocado no projeto
+    const member = await req.prisma.membroEquipe.findFirst({
       where: {
-        usuario_id: userId,
-        entidade_tipo: 'usuario',
-        acao: 'delete',
-      },
-    })
-
-    if (!isAdmin) {
-      return res.status(403).json({
-        error: 'Acesso negado',
-        message: 'Apenas administradores podem acessar este recurso',
-      })
+        projeto_id: projectId,
+        usuario_id: userId
+      }
+    });
+    
+    if (member) {
+      return next();
     }
-
-    next()
+    
+    return res.status(403).json({ 
+      error: 'Forbidden',
+      message: 'You are not a member of this project'
+    });
   } catch (error) {
-    console.error('Erro na verificação de admin:', error)
-    return res.status(500).json({
-      error: 'Erro interno na verificação de permissão',
-      message: 'Tente novamente mais tarde',
-    })
+    next(error);
   }
 }
-

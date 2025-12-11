@@ -5,6 +5,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
 import { Button } from "@/components/ui/button";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
 import {
   FolderKanban,
@@ -238,7 +239,7 @@ export default function ProjetosPage() {
         {/* Content */}
         {loading ? (
           <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-12 text-center">
-            <p className="text-zinc-600 dark:text-zinc-400">Carregando projetos...</p>
+            <LoadingState type="table" rows={8} />
           </div>
         ) : filteredProjetos.length === 0 ? (
           <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-12 text-center">

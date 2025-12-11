@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requirePermission } from '../middleware/permissions';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { validate } from '../middleware/validation';
@@ -8,7 +9,7 @@ import { MermaidGeneratorService } from '../services/mermaid-generator';
 const router = Router();
 
 // GET /api/processos-normalizados - Listar processos normalizados
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', authenticateToken, requirePermission('processos_normalizados', 'read'), async (req: any, res, next) => {
   try {
     const { projeto_id, status } = req.query;
     const where: any = {};
@@ -20,7 +21,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
     }
     if (status) where.status = status as string;
     
-    const processos = await prisma.processoNormalizado.findMany({
+    const processos = await req.prisma.processoNormalizado.findMany({
       where,
       orderBy: { created_at: 'desc' },
       include: {
@@ -43,10 +44,10 @@ router.get('/', authenticateToken, async (req, res, next) => {
 });
 
 // GET /api/processos-normalizados/:id - Obter processo normalizado por ID
-router.get('/:id', authenticateToken, async (req, res, next) => {
+router.get('/:id', authenticateToken, async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    const processo = await prisma.processoNormalizado.findUnique({
+    const processo = await req.prisma.processoNormalizado.findUnique({
       where: { id },
       include: {
         descricao_raw: {
@@ -76,12 +77,12 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
 });
 
 // GET /api/processos-normalizados/:id/diagrama - Gerar diagrama Mermaid
-router.get('/:id/diagrama', authenticateToken, async (req, res, next) => {
+router.get('/:id/diagrama', authenticateToken, async (req: any, res, next) => {
   try {
     const { id } = req.params;
     const { tipo = 'flowchart' } = req.query;
 
-    const processo = await prisma.processoNormalizado.findUnique({
+    const processo = await req.prisma.processoNormalizado.findUnique({
       where: { id },
       include: {
         etapas: {
@@ -123,7 +124,7 @@ router.get('/:id/diagrama', authenticateToken, async (req, res, next) => {
 router.put(
   '/:id',
   authenticateToken,
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
       const { id } = req.params;
       const updateSchema = z.object({
@@ -140,7 +141,7 @@ router.put(
 
       const data = updateSchema.parse(req.body);
       
-      const processo = await prisma.processoNormalizado.update({
+      const processo = await req.prisma.processoNormalizado.update({
         where: { id },
         data,
         include: {

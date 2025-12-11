@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requirePermission } from '../middleware/permissions';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { validate } from '../middleware/validation';
@@ -19,12 +20,12 @@ const createEmpresaSchema = z.object({
 const updateEmpresaSchema = createEmpresaSchema.partial();
 
 // GET /api/empresas - Listar todas as empresas
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', authenticateToken, requirePermission('empresas', 'read'), async (req: any, res, next) => {
   try {
     const { organizacao_id } = req.query;
     const where = organizacao_id ? { organizacao_id: organizacao_id as string } : {};
     
-    const empresas = await prisma.empresa.findMany({
+    const empresas = await req.prisma.empresa.findMany({
       where,
       orderBy: { created_at: 'desc' },
       include: {
@@ -39,10 +40,10 @@ router.get('/', authenticateToken, async (req, res, next) => {
 });
 
 // GET /api/empresas/:id - Obter empresa por ID
-router.get('/:id', authenticateToken, async (req, res, next) => {
+router.get('/:id', authenticateToken, async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    const empresa = await prisma.empresa.findUnique({
+    const empresa = await req.prisma.empresa.findUnique({
       where: { id },
       include: {
         organizacao: true,
@@ -65,9 +66,9 @@ router.post(
   '/',
   authenticateToken,
   validate({ body: createEmpresaSchema }),
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
-      const empresa = await prisma.empresa.create({
+      const empresa = await req.prisma.empresa.create({
         data: req.body,
       });
       res.status(201).json(empresa);
@@ -82,10 +83,10 @@ router.put(
   '/:id',
   authenticateToken,
   validate({ body: updateEmpresaSchema }),
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
       const { id } = req.params;
-      const empresa = await prisma.empresa.update({
+      const empresa = await req.prisma.empresa.update({
         where: { id },
         data: req.body,
       });
@@ -100,10 +101,10 @@ router.put(
 );
 
 // DELETE /api/empresas/:id - Deletar empresa
-router.delete('/:id', authenticateToken, async (req, res, next) => {
+router.delete('/:id', authenticateToken, requirePermission('empresas', 'delete'), async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    await prisma.empresa.delete({
+    await req.prisma.empresa.delete({
       where: { id },
     });
     res.status(204).send();

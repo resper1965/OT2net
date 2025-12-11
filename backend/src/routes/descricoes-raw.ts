@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requirePermission } from '../middleware/permissions';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { validate } from '../middleware/validation';
@@ -24,7 +25,7 @@ const createDescricaoRawSchema = z.object({
 const updateDescricaoRawSchema = createDescricaoRawSchema.partial();
 
 // GET /api/descricoes-raw - Listar descrições raw
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', authenticateToken, requirePermission('descricoes_raw', 'read'), async (req: any, res, next) => {
   try {
     const { projeto_id, site_id, status } = req.query;
     const where: any = {};
@@ -33,7 +34,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
     if (site_id) where.site_id = site_id as string;
     if (status) where.status_processamento = status as string;
     
-    const descricoes = await prisma.descricaoOperacionalRaw.findMany({
+    const descricoes = await req.prisma.descricaoOperacionalRaw.findMany({
       where,
       orderBy: { created_at: 'desc' },
       include: {
@@ -49,10 +50,10 @@ router.get('/', authenticateToken, async (req, res, next) => {
 });
 
 // GET /api/descricoes-raw/:id - Obter descrição raw por ID
-router.get('/:id', authenticateToken, async (req, res, next) => {
+router.get('/:id', authenticateToken, async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    const descricao = await prisma.descricaoOperacionalRaw.findUnique({
+    const descricao = await req.prisma.descricaoOperacionalRaw.findUnique({
       where: { id },
       include: {
         projeto: true,
@@ -75,9 +76,9 @@ router.post(
   '/',
   authenticateToken,
   validate({ body: createDescricaoRawSchema }),
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
-      const descricao = await prisma.descricaoOperacionalRaw.create({
+      const descricao = await req.prisma.descricaoOperacionalRaw.create({
         data: req.body,
       });
       res.status(201).json(descricao);
@@ -92,10 +93,10 @@ router.put(
   '/:id',
   authenticateToken,
   validate({ body: updateDescricaoRawSchema }),
-  async (req, res, next) => {
+  async (req: any, res, next) => {
     try {
       const { id } = req.params;
-      const descricao = await prisma.descricaoOperacionalRaw.update({
+      const descricao = await req.prisma.descricaoOperacionalRaw.update({
         where: { id },
         data: req.body,
       });
@@ -110,10 +111,10 @@ router.put(
 );
 
 // DELETE /api/descricoes-raw/:id - Deletar descrição raw
-router.delete('/:id', authenticateToken, async (req, res, next) => {
+router.delete('/:id', authenticateToken, requirePermission('descricoes_raw', 'delete'), async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    await prisma.descricaoOperacionalRaw.delete({
+    await req.prisma.descricaoOperacionalRaw.delete({
       where: { id },
     });
     res.status(204).send();
@@ -126,7 +127,7 @@ router.delete('/:id', authenticateToken, async (req, res, next) => {
 });
 
 // POST /api/descricoes-raw/:id/processar - Processar descrição raw com IA
-router.post('/:id/processar', authenticateToken, async (req, res, next) => {
+router.post('/:id/processar', authenticateToken, async (req: any, res, next) => {
   try {
     const { id } = req.params;
     const { criar_processo } = req.query;

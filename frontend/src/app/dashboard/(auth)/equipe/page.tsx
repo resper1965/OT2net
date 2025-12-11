@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
 import { UserCog, Search, Filter } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
@@ -115,7 +116,7 @@ export default function EquipePage() {
         {/* Content */}
         {loading ? (
           <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-12 text-center">
-            <p className="text-zinc-600 dark:text-zinc-400">Carregando equipe...</p>
+            <LoadingState type="table" rows={8} />
           </div>
         ) : filteredMembros.length === 0 ? (
           <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-12 text-center">
