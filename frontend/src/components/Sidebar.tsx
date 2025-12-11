@@ -189,6 +189,24 @@ export function Sidebar({ className }: SidebarProps = {}) {
               <NessLogo variant="default" />
             </Link>
           </div>
+          
+          {/* Project Phase Indicator */}
+          <div className="px-6 pb-2">
+             <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-md p-2">
+               <div className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-1">
+                 Fase Atual
+               </div>
+               <div className="flex items-center gap-2">
+                 <span className="relative flex h-2 w-2">
+                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                   <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                 </span>
+                 <span className="text-xs font-medium text-amber-900 dark:text-amber-100">
+                   Fase 0: Discovery
+                 </span>
+               </div>
+             </div>
+          </div>
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto p-4">
