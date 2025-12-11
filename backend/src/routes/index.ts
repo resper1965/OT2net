@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import clientesRouter from './clientes'
+import organizacoesRouter from './organizacoes'
 import empresasRouter from './empresas'
 import sitesRouter from './sites'
 import stakeholdersRouter from './stakeholders'

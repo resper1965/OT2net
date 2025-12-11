@@ -7,7 +7,7 @@ resource "google_cloud_run_v2_service" "backend" {
 
   template {
     containers {
-      image = "us-docker.pkg.dev/cloudrun/container/hello" # Placeholder
+      image = "us-central1-docker.pkg.dev/ot2net/ot2net-repo/ot2net-backend:latest"
       
       env {
         name  = "DATABASE_URL"
@@ -33,7 +33,7 @@ resource "google_cloud_run_v2_service" "frontend" {
 
   template {
     containers {
-      image = "us-docker.pkg.dev/cloudrun/container/hello" # Placeholder
+      image = "us-central1-docker.pkg.dev/ot2net/ot2net-repo/ot2net-frontend:latest"
       
       env {
         name  = "NEXT_PUBLIC_API_URL"
@@ -45,6 +45,7 @@ resource "google_cloud_run_v2_service" "frontend" {
   depends_on = [google_project_service.apis]
 }
 
+# Domain Mapping
 # Domain Mapping
 resource "google_cloud_run_domain_mapping" "default" {
   location = var.region
