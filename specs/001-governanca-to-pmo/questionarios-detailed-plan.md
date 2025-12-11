@@ -85,7 +85,7 @@ Os questionários complementam entrevistas individuais e observações de campo,
 │  └──────────────────────────────────────────────────────┘  │
 │                                                              │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │              Claude API (Opcional)                    │  │
+│  │              Gemini Pro API (Opcional)                    │  │
 │  │  - Análise de respostas de texto livre                │  │
 │  │  - Extração de dores, processos, sistemas             │  │
 │  └──────────────────────────────────────────────────────┘  │

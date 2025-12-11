@@ -13,7 +13,7 @@ import {
 import Link from "next/link";
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { auth } from "@/lib/firebase/client";
 import { useRouter } from "next/navigation";
 
 export default function UserMenu() {
@@ -23,19 +23,22 @@ export default function UserMenu() {
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        setUserEmail(user.email || null);
-        setUserName(user.user_metadata?.full_name || user.email?.split("@")[0] || "Usuário");
-        setUserAvatar(user.user_metadata?.avatar_url || null);
+        setUserEmail(user.email);
+        setUserName(user.displayName || user.email?.split("@")[0] || "Usuário");
+        setUserAvatar(user.photoURL || null);
+      } else {
+        setUserEmail(null);
+        setUserName(null);
+        setUserAvatar(null);
       }
-    };
-    getUser();
+    });
+    return () => unsubscribe();
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await auth.signOut();
     router.push("/login");
   };
 

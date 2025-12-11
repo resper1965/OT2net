@@ -815,7 +815,7 @@ const ACOES_RESTRITAS = [
   {
     id: 'ver_custos_ia',
     label: 'Ver Custos de IA',
-    descricao: 'Permite visualizar dashboard de custos de chamadas à Claude API'
+    descricao: 'Permite visualizar dashboard de custos de chamadas à Gemini Pro API'
   }
 ];
 ```
@@ -1077,7 +1077,7 @@ interface DashboardCustosIA {
   <CardHeader>
     <CardTitle>Dashboard de Custos de IA</CardTitle>
     <CardDescription>
-      Acompanhamento de custos de chamadas à Claude API
+      Acompanhamento de custos de chamadas à Gemini Pro API
     </CardDescription>
   </CardHeader>
   <CardContent>

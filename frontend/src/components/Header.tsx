@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { supabase } from "@/lib/supabase/client";
+import { auth } from "@/lib/firebase/client";
 import {
   Search,
   Bell,
@@ -21,24 +21,21 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   useEffect(() => {
-    async function getUser() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session) {
-        setUserEmail(session.user.email || null);
-        setUserName(
-          session.user.user_metadata?.full_name ||
-            session.user.user_metadata?.name ||
-            null
-        );
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserEmail(user.email);
+        setUserName(user.displayName || user.email?.split("@")[0] || null);
+      } else {
+        setUserEmail(null);
+        setUserName(null);
       }
-    }
-    getUser();
+    });
+
+    return () => unsubscribe();
   }, []);
 
   async function handleLogout() {
-    await supabase.auth.signOut();
+    await auth.signOut();
     window.location.href = "/login";
   }
 

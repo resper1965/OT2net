@@ -1,4 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
+import { type User } from "firebase/auth";
 
 /**
  * User roles disponíveis no sistema
@@ -119,6 +120,12 @@ const ROLE_PERMISSIONS: Record<UserRole, { resource: string; action: PermissionA
   ]
 };
 
+// Interface extending Firebase User to include the optional role property
+// This avoids using 'any' and satisfies linting rules while matching the runtime expectation
+interface ExtendedUser extends User {
+  role?: UserRole;
+}
+
 /**
  * Hook para gerenciamento de permissões de usuário
  * @returns Funções e flags para verificação de permissões
@@ -133,9 +140,14 @@ export function usePermissions() {
    * @returns true se tem permissão, false caso contrário
    */
   const can = (resource: Resource | string, action: PermissionAction): boolean => {
-    if (!user?.role) {return false;}
+    // Safely cast to ExtendedUser to check for role existence
+    const extendedUser = user as unknown as ExtendedUser;
     
-    const userRole = user.role as UserRole;
+    if (!extendedUser?.role) {
+      return false;
+    }
+    
+    const userRole = extendedUser.role;
     const permissions = ROLE_PERMISSIONS[userRole];
     
     if (!permissions) {return false;}
@@ -176,7 +188,8 @@ export function usePermissions() {
   };
   
   // Flags de role
-  const role = user?.role as UserRole | undefined;
+  // Using explicit type assertion instead of 'any' for better type safety
+  const role = (user as unknown as ExtendedUser)?.role;
   const isAdmin = role === 'ADMIN';
   const isGerente = role === 'GERENTE_PROJETO';
   const isConsultor = role === 'CONSULTOR';

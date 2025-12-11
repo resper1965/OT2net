@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import { authenticate } from '@/middleware/auth'
-import { requirePermission } from '@/middleware/permissions'
-import { RAGService, FrameworkType } from '@/services/rag-service'
-import { AppError } from '@/middleware/errorHandler'
+import { authenticate } from '../middleware/auth'
+import { requirePermission } from '../middleware/permissions'
+import { RAGService, FrameworkType } from '../services/rag-service'
+import { AppError } from '../middleware/errorHandler'
 import { z } from 'zod'
 
 const router = Router()

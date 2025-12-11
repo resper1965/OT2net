@@ -79,10 +79,10 @@ Este documento quebra a implementação do Sistema de Gestão de Governança e S
 - [ ] T029 [P] Implementar logging estruturado (Winston/Pino)
 - [ ] T030 [P] Configurar Supabase Auto REST APIs (para CRUD simples via frontend)
 
-### Integração Base com Claude API
+### Integração Base com Gemini Pro API
 
-- [ ] T031 [P] Configurar cliente Anthropic SDK
-- [ ] T032 [P] Criar serviço base de integração com Claude API
+- [ ] T031 [P] Configurar cliente Google Vertex AI SDK
+- [ ] T032 [P] Criar serviço base de integração com Gemini Pro API
 - [ ] T033 [P] Implementar retry logic e tratamento de erros
 - [ ] T034 [P] Implementar tracking de custos (tokens, custo por chamada)
 - [ ] T035 [P] Criar modelo ChamadaIA no Prisma para auditoria
@@ -93,7 +93,7 @@ Este documento quebra a implementação do Sistema de Gestão de Governança e S
 - [ ] T036B [P] Criar modelo Prisma: AnaliseConformidade
 - [ ] T036C [P] Habilitar extensão pgvector no Supabase (via SQL migration)
 - [ ] T036D [P] Criar serviço de vetorização (VectorService)
-- [ ] T036E [P] Implementar geração de embeddings usando Claude API
+- [ ] T036E [P] Implementar geração de embeddings usando Gemini Pro API
 - [ ] T036F [P] Criar script de importação de requisitos dos frameworks (REN 964/21, ONS, CIS, ISA, NIST)
 - [ ] T036G [P] Implementar processo de vetorização em lote dos requisitos
 - [ ] T036H [P] Criar índice HNSW no Supabase PostgreSQL para busca rápida
@@ -185,7 +185,7 @@ Este documento quebra a implementação do Sistema de Gestão de Governança e S
 
 ### Backend - Processamento com IA
 
-- [ ] T067 [US2] Criar serviço de processamento de descrições raw com Claude API
+- [ ] T067 [US2] Criar serviço de processamento de descrições raw com Gemini Pro API
   - Prompt especializado de normalização
   - Extração de processo com etapas sequenciais
   - Identificação de ativos (formais e informais)

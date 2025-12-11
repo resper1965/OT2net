@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { firebaseAuth } from '@/lib/firebase'
+import { firebaseAuth } from '../lib/firebase'
 
 /**
  * Middleware de autenticação para rotas do Express

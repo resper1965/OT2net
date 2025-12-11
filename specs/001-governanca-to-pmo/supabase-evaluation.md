@@ -9,7 +9,7 @@
 
 O **Supabase** é uma plataforma Backend-as-a-Service (BaaS) que oferece PostgreSQL gerenciado, autenticação, APIs automáticas, storage, Realtime, Edge Functions e Vector Search. Esta análise avalia se a adoção do Supabase traria benefícios significativos em relação à stack atual (PostgreSQL + Express + Prisma + JWT + S3/MinIO).
 
-**Recomendação**: **Adoção Híbrida** - Usar Supabase para funcionalidades específicas (Auth, Storage, Realtime) mantendo backend Express para lógica de negócio complexa e integração com Claude API.
+**Recomendação**: **Adoção Híbrida** - Usar Supabase para funcionalidades específicas (Auth, Storage, Realtime) mantendo backend Express para lógica de negócio complexa e integração com Gemini Pro API.
 
 ---
 
@@ -164,7 +164,7 @@ supabase
 │  - Auth (JWT + RLS)  │    │  - Processamento IA          │
 │  - PostgreSQL +      │    │  - Workflows complexos       │
 │    pgvector          │    │  - Jobs assíncronos (Bull)   │
-│  - Storage (Files)   │    │  - Integração Claude API     │
+│  - Storage (Files)   │    │  - Integração Gemini Pro API     │
 │  - Realtime          │    │  - Lógica de negócio         │
 │  - Auto REST APIs    │    │  - Validações complexas      │
 └──────────────────────┘    └──────────────────────────────┘
@@ -173,7 +173,7 @@ supabase
          ▼                              ▼
 ┌──────────────────────┐    ┌──────────────────────────────┐
 │   SUPABASE SERVICES  │    │   EXTERNAL SERVICES          │
-│  - PostgreSQL DB     │    │  - Claude API (Anthropic)    │
+│  - PostgreSQL DB     │    │  - Gemini Pro API (Google Vertex AI)    │
 │  - Storage Buckets   │    │  - Redis (Bull jobs)         │
 │  - Edge Functions    │    │  - Email Service (SMTP/SES)  │
 └──────────────────────┘    └──────────────────────────────┘
@@ -210,7 +210,7 @@ supabase
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │              EXTERNAL SERVICES                              │
-│  - Claude API (via Edge Functions)                          │
+│  - Gemini Pro API (via Edge Functions)                          │
 │  - Redis (via Edge Functions ou externo)                    │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -278,7 +278,7 @@ supabase
 
 ### Tarefas que Permanecem
 
-- ✅ T028-T032 (Claude API) - Mantém Express
+- ✅ T028-T032 (Gemini Pro API) - Mantém Express
 - ✅ T033A-T033J (Vetorização) - Funciona com Supabase
 - ✅ T067-T073 (Processamento IA) - Mantém Express
 - ✅ T070 (Jobs assíncronos) - Mantém Express + Bull
@@ -330,7 +330,7 @@ supabase
    - ✅ CRUD simples (APIs automáticas para Cliente, Empresa, Site)
 
 2. Manter Express para:
-   - ✅ Processamento IA (Claude API)
+   - ✅ Processamento IA (Gemini Pro API)
    - ✅ Workflows complexos
    - ✅ Jobs assíncronos (Bull)
    - ✅ Lógica de negócio específica

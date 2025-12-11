@@ -1,11 +1,10 @@
-import { User } from '@supabase/supabase-js'
+import { User } from 'firebase-admin/auth';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: User
-      userId?: string
+      user?: User | any;
+      userId?: string;
     }
   }
 }
-

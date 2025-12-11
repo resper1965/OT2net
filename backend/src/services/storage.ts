@@ -1,6 +1,6 @@
-import { supabaseAdmin } from '@/lib/supabase'
-import { logger } from '@/utils/logger'
-import { AppError } from '@/middleware/errorHandler'
+import { supabaseAdmin } from '../lib/supabase'
+import { logger } from '../utils/logger'
+import { AppError } from '../middleware/errorHandler'
 
 /**
  * Serviço de gerenciamento de arquivos no Supabase Storage

@@ -1,7 +1,7 @@
 import { GeminiService } from './gemini'
-import { prisma } from '@/lib/prisma'
-import { logger } from '@/utils/logger'
-import { AppError } from '@/middleware/errorHandler'
+import { prisma } from '../lib/prisma'
+import { logger } from '../utils/logger'
+import { AppError } from '../middleware/errorHandler'
 
 /**
  * Serviço de RAG (Retrieval-Augmented Generation) para regras regulatórias

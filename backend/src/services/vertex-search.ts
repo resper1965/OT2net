@@ -1,5 +1,5 @@
-import { logger } from "@/utils/logger";
-import { AppError } from "@/middleware/errorHandler";
+import { logger } from "../utils/logger";
+import { AppError } from "../middleware/errorHandler";
 
 // Interfaces para Vertex AI Search
 interface VertexSearchResult {

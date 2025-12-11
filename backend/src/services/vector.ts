@@ -10,9 +10,8 @@ import { AppError } from '../middleware/errorHandler'
  */
 export class VectorService {
   /**
-   * Gera embedding usando Claude API
-   * Nota: Claude não tem endpoint de embeddings nativo
-   * Esta função usa uma abordagem alternativa ou delega para serviço de embeddings
+  /**
+   * Gera embedding usando Vertex AI (Gecko)
    */
   static async generateEmbedding(text: string): Promise<number[]> {
     return await GeminiService.generateEmbedding(text)

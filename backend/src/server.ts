@@ -14,7 +14,7 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 dotenv.config(); // Fallback para .env se .env.local não existir
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = Number(process.env.PORT) || 3001;
 
 // Middleware
 app.use(cors({

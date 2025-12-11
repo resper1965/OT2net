@@ -59,7 +59,7 @@ export function Sidebar({ className }: SidebarProps = {}) {
       
       user.getIdTokenResult().then((idTokenResult) => {
         const role = idTokenResult.claims.role;
-        setIsAdmin(role === 'admin' || role === 'PLATFORM_ADMIN');
+        setIsAdmin(role === 'admin' || role === 'ADMIN' || role === 'PLATFORM_ADMIN');
       });
     } else {
         setUserEmail(null);

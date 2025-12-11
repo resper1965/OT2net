@@ -5,9 +5,9 @@
 
 ## Summary
 
-Plataforma web administrativa inteligente para suportar projetos de consultoria em Governança e Segurança de Tecnologia Operacional (TO). A plataforma automatiza coleta e processamento de informações operacionais usando IA (Claude API), estrutura dados de governança, facilita execução de projetos em múltiplas fases, gera documentação automaticamente e monitora progresso e conformidade com frameworks regulatórios (ANEEL 964/21, ONS RO-CB.BR.01, CIS Controls v8.1, ISA IEC 62443, NIST SP 800-82).
+Plataforma web administrativa inteligente para suportar projetos de consultoria em Governança e Segurança de Tecnologia Operacional (TO). A plataforma automatiza coleta e processamento de informações operacionais usando IA (Gemini Pro API), estrutura dados de governança, facilita execução de projetos em múltiplas fases, gera documentação automaticamente e monitora progresso e conformidade com frameworks regulatórios (ANEEL 964/21, ONS RO-CB.BR.01, CIS Controls v8.1, ISA IEC 62443, NIST SP 800-82).
 
-**Abordagem Técnica**: Aplicação web full-stack usando Next.js (React 18) no frontend, arquitetura híbrida com Supabase (Auth, Storage, Realtime, PostgreSQL gerenciado) e Node.js/Express para lógica de negócio complexa e processamento IA. Prisma como ORM, pgvector para busca semântica, e integração com Claude API para processamento inteligente. Template base shadcn-ui-kit-dashboard será adaptado para acelerar desenvolvimento de componentes UI.
+**Abordagem Técnica**: Aplicação web full-stack usando Next.js (React 18) no frontend, arquitetura híbrida com Supabase (Auth, Storage, Realtime, PostgreSQL gerenciado) e Node.js/Express para lógica de negócio complexa e processamento IA. Prisma como ORM, pgvector para busca semântica, e integração com Gemini Pro API para processamento inteligente. Template base shadcn-ui-kit-dashboard será adaptado para acelerar desenvolvimento de componentes UI.
 
 ## Technical Context
 
@@ -19,7 +19,7 @@ Plataforma web administrativa inteligente para suportar projetos de consultoria 
 
 **Primary Dependencies**: 
 - **Frontend**: Next.js 14, React 18, TypeScript, TailwindCSS, shadcn/ui, React Hook Form, Zod, Recharts, Mermaid.js, Supabase Client, React Context API
-- **Backend (Express)**: Express.js, TypeScript, Prisma, Anthropic SDK (Claude API), Bull/BullMQ (Redis), Winston/Pino
+- **Backend (Express)**: Express.js, TypeScript, Prisma, Google Vertex AI SDK (Gemini Pro API), Bull/BullMQ (Redis), Winston/Pino
 - **Supabase**: Auth, Storage, Realtime, PostgreSQL gerenciado, Auto REST APIs, Edge Functions (opcional)
 - **Database**: PostgreSQL 14+ (via Supabase), extensões: uuid-ossp, pg_trgm, pgvector (para embeddings e busca semântica)
 - **Vector Search**: pgvector (PostgreSQL via Supabase) para busca semântica de frameworks regulatórios
@@ -65,7 +65,7 @@ Plataforma web administrativa inteligente para suportar projetos de consultoria 
 
 ✅ **Iterative Refinement**: Especificação será refinada durante implementação conforme feedback.
 
-✅ **AI Integration**: Claude API integrada para processamento inteligente, análise e geração de conteúdo.
+✅ **AI Integration**: Gemini Pro API integrada para processamento inteligente, análise e geração de conteúdo.
 
 ✅ **Documentation**: ADRs e documentação técnica serão mantidos atualizados.
 
@@ -135,7 +135,7 @@ ot2net/
 │   │   ├── routes/             # API routes
 │   │   ├── controllers/        # Route handlers
 │   │   ├── services/           # Business logic
-│   │   │   ├── ai/             # Claude API integration
+│   │   │   ├── ai/             # Gemini Pro API integration
 │   │   │   ├── auth/           # Authentication service
 │   │   │   ├── questionarios/  # Questionário processing
 │   │   │   └── relatorios/     # Report generation
@@ -193,7 +193,7 @@ ot2net/
 │  - Auth (JWT + RLS)  │    │  - Processamento IA          │
 │  - PostgreSQL +      │    │  - Workflows complexos       │
 │    pgvector          │    │  - Jobs assíncronos (Bull)   │
-│  - Storage (Files)   │    │  - Integração Claude API     │
+│  - Storage (Files)   │    │  - Integração Gemini Pro API     │
 │  - Realtime          │    │  - Lógica de negócio         │
 │  - Auto REST APIs    │    │  - Validações complexas      │
 │  - Edge Functions    │    │                              │
@@ -203,7 +203,7 @@ ot2net/
          ▼                              ▼
 ┌──────────────────────┐    ┌──────────────────────────────┐
 │   SUPABASE SERVICES  │    │   EXTERNAL SERVICES          │
-│  - PostgreSQL DB     │    │  - Claude API (Anthropic)    │
+│  - PostgreSQL DB     │    │  - Gemini Pro API (Google Vertex AI)    │
 │  - Storage Buckets   │    │  - Redis (Bull jobs)         │
 │  - Realtime Engine   │    │  - Email Service (SMTP/SES)  │
 └──────────────────────┘    └──────────────────────────────┘
@@ -583,7 +583,7 @@ interface RequisitoFramework {
 
 **Processo de Vetorização**:
 1. **Importação**: Carregar todos os requisitos dos frameworks em formato estruturado
-2. **Geração de Embeddings**: Para cada requisito, gerar embedding usando Claude API Embeddings
+2. **Geração de Embeddings**: Para cada requisito, gerar embedding usando Gemini Pro API Embeddings
 3. **Armazenamento**: Salvar no PostgreSQL com extensão `pgvector`
 4. **Indexação**: Criar índice HNSW para busca rápida de similaridade (cosine similarity)
 
@@ -751,14 +751,14 @@ CREATE INDEX ON requisitos_framework (framework);
 ```typescript
 // backend/src/services/ai/vector.service.ts
 import { PrismaClient } from '@prisma/client';
-import Anthropic from '@anthropic-ai/sdk';
+import Google Vertex AI from '@anthropic-ai/sdk';
 
 class VectorService {
   private prisma: PrismaClient;
-  private anthropic: Anthropic;
+  private anthropic: Google Vertex AI;
   
   async vetorizarRequisito(requisito: RequisitoFramework): Promise<void> {
-    // Gerar embedding usando Claude API
+    // Gerar embedding usando Gemini Pro API
     const response = await this.anthropic.messages.create({
       model: 'claude-3-5-sonnet-20241022',
       messages: [{
@@ -805,7 +805,7 @@ class VectorService {
   
   private async gerarEmbedding(texto: string): Promise<number[]> {
     // Usar Claude Embeddings API ou alternativa (OpenAI, etc.)
-    // Por enquanto, usar Claude API para embeddings
+    // Por enquanto, usar Gemini Pro API para embeddings
     const response = await this.anthropic.messages.create({
       // Usar endpoint de embeddings quando disponível
     });
@@ -839,7 +839,7 @@ class ConformidadeService {
     // Analisar cada requisito
     const analises = await Promise.all(
       requisitosSimilares.map(async (requisito) => {
-        // Usar Claude API para análise detalhada
+        // Usar Gemini Pro API para análise detalhada
         const analise = await this.claudeService.analisarConformidadeDetalhada(
           entidade,
           requisito
@@ -879,7 +879,7 @@ class ConformidadeService {
 
 ## Integration Points
 
-### Claude API Integration
+### Gemini Pro API Integration
 
 **Service**: `backend/src/services/ai/claude.service.ts`
 
@@ -899,7 +899,7 @@ class ConformidadeService {
 
 **Technology**: 
 - **Vector Database**: PostgreSQL com extensão `pgvector` (ou Pinecone/Weaviate como alternativa)
-- **Embeddings**: Claude API Embeddings (ou OpenAI embeddings) para gerar vetores dos requisitos
+- **Embeddings**: Gemini Pro API Embeddings (ou OpenAI embeddings) para gerar vetores dos requisitos
 
 **Service**: `backend/src/services/ai/vector.service.ts`
 
@@ -938,7 +938,7 @@ interface AnaliseConformidade {
 
 **Workflow de Vetorização**:
 1. **Carregamento Inicial**: Importar todos os requisitos dos frameworks (REN 964/21, ONS, CIS Controls, ISA-62443, NIST)
-2. **Geração de Embeddings**: Para cada requisito, gerar embedding usando Claude API
+2. **Geração de Embeddings**: Para cada requisito, gerar embedding usando Gemini Pro API
 3. **Armazenamento**: Salvar embeddings no PostgreSQL com pgvector
 4. **Indexação**: Criar índice HNSW para busca rápida de similaridade
 

@@ -1,6 +1,6 @@
 import { initializeApp, cert, ServiceAccount, App } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { logger } from '@/utils/logger';
+import { logger } from '../utils/logger';
 
 // Interface para configuração do Firebase (via variável de ambiente JSON string)
 interface FirebaseConfig {

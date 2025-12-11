@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
-import { logger } from '@/utils/logger'
-import { prisma } from '@/lib/prisma'
-import { AppError } from '@/middleware/errorHandler'
+import { logger } from '../utils/logger'
+import { prisma } from '../lib/prisma'
+import { AppError } from '../middleware/errorHandler'
 
 /**
  * Serviço de integração com Google Gemini AI

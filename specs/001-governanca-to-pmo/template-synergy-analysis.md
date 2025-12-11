@@ -193,7 +193,7 @@ O template shadcn-ui-kit-dashboard oferece **alta sinergia** com o projeto OT2ne
 
 ### 3.1 Processamento Inteligente com IA (FR-004, FR-005A)
 
-**Gap**: Template não tem integração com Claude API ou processamento de IA
+**Gap**: Template não tem integração com Gemini Pro API ou processamento de IA
 
 **Solução**:
 - Criar serviço backend dedicado para IA (já especificado)

@@ -15,7 +15,9 @@ async function getAuthToken(): Promise<string | null> {
   const { auth } = await import("./firebase/client");
   const user = auth.currentUser;
   
-  if (!user) return null;
+  if (!user) {
+    return null;
+  }
   
   try {
     return await user.getIdToken();

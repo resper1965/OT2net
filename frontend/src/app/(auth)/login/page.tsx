@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-// import { OAuthButtons } from "@/components/auth/OAuthButtons";
+import { OAuthButtons } from "@/components/auth/OAuthButtons";
 
 function LoginForm() {
   const router = useRouter();
@@ -46,7 +46,7 @@ function LoginForm() {
       router.refresh();
       router.push(redirectTo);
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       const error = err as Error;
       console.error(error);
       toast.error("Erro ao fazer login. Verifique suas credenciais.", { id: toastId });
@@ -73,6 +73,19 @@ function LoginForm() {
           </div>
 
           <form className="space-y-6" onSubmit={handleLogin}>
+            <OAuthButtons />
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">
+                  Ou continue com email
+                </span>
+              </div>
+            </div>
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-foreground">

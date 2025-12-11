@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "",
   },
+  output: "standalone",
   // Rewrites para desenvolvimento local (quando NEXT_PUBLIC_API_URL está definido)
   async rewrites() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;

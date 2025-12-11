@@ -55,3 +55,9 @@ logs
 Thumbs.db
 
 
+
+# Terraform keys
+sa-key.json
+*.tfstate
+*.tfstate.backup
+.terraform/
