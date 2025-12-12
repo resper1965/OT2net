@@ -1,8 +1,6 @@
-import { Router } from 'express'
 import organizacoesRouter from './organizacoes'
 import empresasRouter from './empresas'
 import sitesRouter from './sites'
-import stakeholdersRouter from './stakeholders'
 import membrosEquipeRouter from './membros-equipe'
 import projetosRouter from './projetos'
 import relatoriosRouter from './relatorios'
@@ -29,7 +27,6 @@ router.use('/export', exportRouter)
 router.use('/organizacoes', organizacoesRouter)
 router.use('/empresas', empresasRouter)
 router.use('/sites', sitesRouter)
-router.use('/stakeholders', stakeholdersRouter)
 router.use('/membros-equipe', membrosEquipeRouter)
 router.use('/projetos', projetosRouter)
 router.use('/relatorios', relatoriosRouter)
