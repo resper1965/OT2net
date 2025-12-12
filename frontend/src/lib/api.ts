@@ -128,30 +128,7 @@ export const api = {
       }),
   },
 
-  // Stakeholders
-  stakeholders: {
-    list: (projetoId?: string) => {
-      const url = projetoId ? `/api/stakeholders?projeto_id=${projetoId}` : "/api/stakeholders";
-      return fetchWithAuth(url).then((r) => r.json());
-    },
-    get: (id: string) => fetchWithAuth(`/api/stakeholders/${id}`).then((r) => r.json()),
-    create: (data: Record<string, unknown>) =>
-      fetchWithAuth("/api/stakeholders", {
-        method: "POST",
-        body: JSON.stringify(data),
-      }).then((r) => r.json()),
-    update: (id: string, data: Record<string, unknown>) =>
-      fetchWithAuth(`/api/stakeholders/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify(data),
-      }).then((r) => r.json()),
-    delete: (id: string) =>
-      fetchWithAuth(`/api/stakeholders/${id}`, {
-        method: "DELETE",
-      }),
-  },
-
-  // Membros da Equipe
+  // Membros da Equipe (consolidado com Stakeholders)
   membrosEquipe: {
     list: (projetoId?: string) => {
       const url = projetoId ? `/api/membros-equipe?projeto_id=${projetoId}` : "/api/membros-equipe";

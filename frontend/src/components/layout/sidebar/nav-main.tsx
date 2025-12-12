@@ -20,7 +20,6 @@ import {
   MapPin,
   FolderKanban,
   Users,
-  UserCog,
   Workflow,
   BookOpen,
   ChevronRight,
@@ -122,16 +121,10 @@ export const navItems: NavGroup[] = [
     title: "Equipe",
     items: [
       {
-        title: "Membros da Equipe",
+        title: "Equipe & Stakeholders",
         href: "/dashboard/equipe",
         icon: Users,
-        requiredPermission: { resource: 'equipe', action: 'read' }
-      },
-      {
-        title: "Partes Interessadas",
-        href: "/dashboard/stakeholders",
-        icon: UserCog,
-        requiredPermission: { resource: 'partes-interessadas', action: 'read' }
+        requiredPermission: { resource: 'membros-equipe', action: 'read' }
       }
     ]
   },
