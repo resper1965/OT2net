@@ -10,8 +10,8 @@ import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
 import { Factory, Search, Filter } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
-import { LoadingState } from "@/components/ui/loading-state";
 import { EmptyState } from "@/components/ui/empty-state";
+
 
 interface Empresa {
   id: string;
