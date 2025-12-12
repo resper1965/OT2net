@@ -1,7 +1,6 @@
-"use client";
-
 import { usePageTitle } from "@/contexts/PageTitleContext";
 import { DashboardKPIs } from "@/components/dashboard/DashboardKPIs";
+import { ProjectPhasesTimeline } from "@/components/dashboard/ProjectPhasesTimeline";
 
 export default function DashboardPage() {
   const { setTitle } = usePageTitle();
@@ -37,6 +36,9 @@ export default function DashboardPage() {
 
       {/* KPIs */}
       <DashboardKPIs />
+
+      {/* Project Phases Timeline */}
+      <ProjectPhasesTimeline />
     </div>
   );
 }
