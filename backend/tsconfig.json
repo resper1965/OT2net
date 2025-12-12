@@ -1,3 +1,4 @@
+```json
 {
   "compilerOptions": {
     "target": "ES2022",
@@ -10,6 +11,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+    "jsx": "react",
     "moduleResolution": "node",
     "declaration": true,
     "declarationMap": true,

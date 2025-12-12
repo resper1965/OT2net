@@ -92,15 +92,12 @@ export function Sidebar({ className }: SidebarProps = {}) {
     },
     {
       title: "Projetos",
-      href: "/dashboard/projetos",
       icon: FolderKanban,
     },
     {
       title: "Equipe & Stakeholders",
       href: "/dashboard/equipe",
       icon: Users,
-    },
-      icon: UserCog,
     },
     {
       title: "Processos",
