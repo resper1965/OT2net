@@ -1,3 +1,4 @@
+```javascript
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import { ProjectPhaseActivities } from "@/components/projects/ProjectPhaseActivities";
 
 interface Projeto {
   id: string;
@@ -107,14 +109,20 @@ export default function ProjetoDetalhesPage() {
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black p-8">
       <div className="max-w-full">
-        <div className="mb-8">
-          <Link
-            href="/dashboard/projetos"
-            className="text-zinc-600 dark:text-zinc-400 hover:underline mb-4 inline-block"
-          >
-          </Link>
+        <div className="space-y-8">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-black dark:text-zinc-50">{projeto.nome}</h1>
+            <div>
+              <Link
+                href="/dashboard/projetos"
+                className="text-zinc-600 dark:text-zinc-400 hover:underline text-sm mb-2 inline-block"
+              >
+                ← Voltar para Projetos
+              </Link>
+              <h1 className="text-3xl font-bold text-black dark:text-zinc-50">{projeto.nome}</h1>
+              {projeto.descricao && (
+                <p className="text-zinc-600 dark:text-zinc-400 mt-2">{projeto.descricao}</p>
+              )}
+            </div>
             <div className="flex gap-2">
               <Link href={`/dashboard/projetos/${id}/editar`}>
                 <Button variant="default">Editar</Button>
@@ -127,89 +135,100 @@ export default function ProjetoDetalhesPage() {
               </Button>
             </div>
           </div>
-        </div>
 
-        <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 space-y-6">
-          <div>
-            <h2 className="text-lg font-semibold mb-4 text-black dark:text-zinc-50">
-              Informações Básicas
-            </h2>
-            <dl className="grid grid-cols-2 gap-4">
-              <div>
-                <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Nome</dt>
-                <dd className="mt-1 text-sm text-black dark:text-zinc-50">{projeto.nome}</dd>
-              </div>
-              {projeto.fase_atual && (
+          <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 space-y-6">
+            <div>
+              <h2 className="text-lg font-semibold mb-4 text-black dark:text-zinc-50">
+                Informações Básicas
+              </h2>
+              <dl className="grid grid-cols-2 gap-4">
+                <div>
+                  <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Nome</dt>
+                  <dd className="mt-1 text-sm text-black dark:text-zinc-50">{projeto.nome}</dd>
+                </div>
+                {projeto.fase_atual && (
+                  <div>
+                    <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                      Fase Atual
+                    </dt>
+                    <dd className="mt-1 text-sm text-black dark:text-zinc-50">
+                      {projeto.fase_atual}
+                    </dd>
+                  </div>
+                )}
+                {projeto.progresso_geral !== undefined && (
+                  <div className="col-span-2">
+                    <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-2">
+                      Progresso Geral
+                    </dt>
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1 bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
+                        <div
+                          className="bg-black dark:bg-white h-2 rounded-full"
+                          style={{ width: `${projeto.progresso_geral}%` }}
+                        />
+                      </div>
+                      <span className="text-sm text-black dark:text-zinc-50">
+                        {projeto.progresso_geral}%
+                      </span>
+                    </div>
+                  </div>
+                )}
+                {projeto.descricao && (
+                  <div className="col-span-2">
+                    <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                      Descrição
+                    </dt>
+                    <dd className="mt-1 text-sm text-black dark:text-zinc-50 whitespace-pre-wrap">
+                      {projeto.descricao}
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+
+            <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
+              <dl className="grid grid-cols-2 gap-4">
+                <div>
+                  <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Criado em</dt>
+                  <dd className="mt-1 text-sm text-black dark:text-zinc-50">
+                    {new Date(projeto.created_at).toLocaleString("pt-BR")}
+                  </dd>
+                </div>
                 <div>
                   <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                    Fase Atual
+                    Atualizado em
                   </dt>
                   <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                    {projeto.fase_atual}
+                    {new Date(projeto.updated_at).toLocaleString("pt-BR")}
                   </dd>
                 </div>
-              )}
-              {projeto.progresso_geral !== undefined && (
-                <div className="col-span-2">
-                  <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-2">
-                    Progresso Geral
-                  </dt>
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1 bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
-                      <div
-                        className="bg-black dark:bg-white h-2 rounded-full"
-                        style={{ width: `${projeto.progresso_geral}%` }}
-                      />
-                    </div>
-                    <span className="text-sm text-black dark:text-zinc-50">
-                      {projeto.progresso_geral}%
-                    </span>
-                  </div>
-                </div>
-              )}
-              {projeto.descricao && (
-                <div className="col-span-2">
-                  <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                    Descrição
-                  </dt>
-                  <dd className="mt-1 text-sm text-black dark:text-zinc-50 whitespace-pre-wrap">
-                    {projeto.descricao}
-                  </dd>
-                </div>
-              )}
-            </dl>
+              </dl>
+            </div>
           </div>
 
-          <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
-            <dl className="grid grid-cols-2 gap-4">
-              <div>
-                <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Criado em</dt>
-                <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                  {new Date(projeto.created_at).toLocaleString("pt-BR")}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                  Atualizado em
-                </dt>
-                <dd className="mt-1 text-sm text-black dark:text-zinc-50">
-                  {new Date(projeto.updated_at).toLocaleString("pt-BR")}
-                </dd>
-              </div>
-            </dl>
+          {/* Project Phase Activities */}
+          <div>
+            <h2 className="text-2xl font-semibold text-black dark:text-zinc-50 mb-4">
+              Atividades por Fase
+            </h2>
+            <p className="text-zinc-600 dark:text-zinc-400 mb-6">
+              Navegue pelas atividades de cada fase do projeto
+            </p>
+            <ProjectPhaseActivities faseAtual={projeto.fase_atual} projetoId={projeto.id} />
           </div>
+
+          <ConfirmDialog
+            open={deleteDialog}
+            onOpenChange={setDeleteDialog}
+            title="Excluir Projeto"
+            description="Tem certeza que deseja excluir este projeto? Esta ação não pode ser desfeita."
+            confirmText="Excluir"
+            cancelText="Cancelar"
+            variant="destructive"
+            onConfirm={handleDeleteConfirm}
+          />
         </div>
-
-        <ConfirmDialog
-          open={deleteDialog}
-          onOpenChange={setDeleteDialog}
-          title="Excluir Projeto"
-          description="Tem certeza que deseja excluir este projeto? Esta ação não pode ser desfeita."
-          confirmText="Excluir"
-          cancelText="Cancelar"
-          variant="destructive"
-          onConfirm={handleDeleteConfirm}
-        />
       </div>
     </div>
   );
