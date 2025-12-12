@@ -10,6 +10,7 @@ import descricoesRawRouter from './descricoes-raw'
 import processosNormalizadosRouter from './processos-normalizados'
 import ragRouter from './rag'
 import dashboardRouter from './dashboard'
+import exportRouter from './export'
 
 const router = Router()
 
@@ -20,6 +21,9 @@ router.get('/health', (req, res) => {
 
 // Dashboard
 router.use('/dashboard', dashboardRouter)
+
+// Export
+router.use('/export', exportRouter)
 
 // Rotas de cadastramento (User Story 1)
 router.use('/organizacoes', organizacoesRouter)
