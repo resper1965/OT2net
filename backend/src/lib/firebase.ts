@@ -65,3 +65,7 @@ export const firebaseAuth = {
     return getAuth().setCustomUserClaims(uid, claims);
   }
 };
+
+// Export alias for compatibility
+export const auth = firebaseAuth;
+export default firebaseAuth;

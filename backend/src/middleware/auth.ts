@@ -1,14 +1,16 @@
-import { auth } from '../lib/firebase/admin';
+import { auth } from '../lib/firebase';
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { applyTenantIsolation } from './tenant';
+import { UserRole } from '@prisma/client';
 
 interface AuthRequest extends Request {
   user?: {
     id: string;
     email: string;
-    role: string;
-    tenant_id: string;
+    role: UserRole;
+    tenant_id?: string;
+    cliente_id?: string | null;
   };
   prisma?: any;
 }
@@ -30,10 +32,10 @@ export async function authenticateToken(
       return;
     }
 
-    const token = authHeader.split('Bearer ')[1];
+    const authToken = authHeader.split('Bearer ')[1];
     
     // Validar token com Firebase Admin
-    const decodedToken = await auth.verifyIdToken(token);
+    const decodedToken = await auth.verifyIdToken(authToken);
     
     // Extrair claims customizados
     const { uid, email } = decodedToken;
@@ -73,3 +75,6 @@ export async function authenticateToken(
     }
   }
 }
+
+// Export alias for compatibility
+export const authenticate = authenticateToken;

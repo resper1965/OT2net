@@ -1,9 +1,9 @@
+import { Router, Request, Response } from 'express';
 import organizacoesRouter from './organizacoes'
 import empresasRouter from './empresas'
 import sitesRouter from './sites'
 import membrosEquipeRouter from './membros-equipe'
 import projetosRouter from './projetos'
-import relatoriosRouter from './relatorios'
 import descricoesRawRouter from './descricoes-raw'
 import processosNormalizadosRouter from './processos-normalizados'
 import ragRouter from './rag'
@@ -29,7 +29,6 @@ router.use('/empresas', empresasRouter)
 router.use('/sites', sitesRouter)
 router.use('/membros-equipe', membrosEquipeRouter)
 router.use('/projetos', projetosRouter)
-router.use('/relatorios', relatoriosRouter)
 
 // Rotas de processamento (User Story 2)
 router.use('/descricoes-raw', descricoesRawRouter)
