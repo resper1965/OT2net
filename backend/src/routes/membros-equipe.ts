@@ -9,12 +9,36 @@ const router = Router();
 
 const createMembroEquipeSchema = z.object({
   projeto_id: z.string().uuid().optional(),
+  organizacao_id: z.string().uuid().optional(),
   usuario_id: z.string().uuid().optional(),
+  
+  // Identificação
+  nome: z.string().min(1),
+  email: z.string().email().optional(),
+  cargo: z.string().optional(),
+  departamento: z.string().optional(),
+  telefone: z.string().optional(),
+  
+  // Classificação
+  tipo: z.enum(['EQUIPE_INTERNA', 'STAKEHOLDER_EXTERNO', 'PATROCINADOR', 'CLIENTE', 'ENTREVISTADO']).default('EQUIPE_INTERNA'),
   papel: z.string().optional(),
+  
+  // RACI
   responsabilidade: z.string().optional(),
   autoridade: z.string().optional(),
-  consultado: z.string().optional(),
-  informado: z.string().optional(),
+  consultado: z.boolean().optional(),
+  informado: z.boolean().optional(),
+  
+  // Stakeholder Management
+  poder_influencia: z.enum(['ALTO', 'MEDIO', 'BAIXO']).optional(),
+  nivel_interesse: z.enum(['ALTO', 'MEDIO', 'BAIXO']).optional(),
+  estrategia_engajamento: z.string().optional(),
+  expertise: z.string().optional(),
+  localizacao: z.string().optional(),
+  
+  // Metadata
+  ativo: z.boolean().optional(),
+  observacoes: z.string().optional(),
 });
 
 const updateMembroEquipeSchema = createMembroEquipeSchema.partial();
@@ -22,14 +46,19 @@ const updateMembroEquipeSchema = createMembroEquipeSchema.partial();
 // GET /api/membros-equipe - Listar todos os membros
 router.get('/', authenticateToken, requirePermission('membros_equipe', 'read'), async (req: any, res, next) => {
   try {
-    const { projeto_id } = req.query;
-    const where = projeto_id ? { projeto_id: projeto_id as string } : {};
+    const { projeto_id, organizacao_id, tipo } = req.query;
+    
+    const where: any = {};
+    if (projeto_id) where.projeto_id = projeto_id as string;
+    if (organizacao_id) where.organizacao_id = organizacao_id as string;
+    if (tipo) where.tipo = tipo as string;
     
     const membros = await req.prisma.membroEquipe.findMany({
       where,
       orderBy: { created_at: 'desc' },
       include: {
         projeto: true,
+        organizacao: true,
       },
     });
     res.json(membros);

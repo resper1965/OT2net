@@ -67,9 +67,9 @@ const FASES_DETALHADAS: FaseInfo[] = [
       },
       {
         id: "stake",
-        nome: "Stakeholders",
-        descricao: "Cadastrar stakeholders do projeto",
-        menuUrl: "/dashboard/stakeholders",
+        nome: "Equipe & Stakeholders",
+        descricao: "Cadastrar membros da equipe e stakeholders do projeto",
+        menuUrl: "/dashboard/equipe",
         icon: Users,
       },
     ],
