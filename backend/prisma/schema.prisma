@@ -3,13 +3,13 @@
 // Schema otimizado para Vertex AI (Embeddings 768d)
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
   extensions = [uuid_ossp(map: "uuid-ossp"), vector(map: "vector")]
 }
 
@@ -18,29 +18,29 @@ datasource db {
 // ============================================
 
 model Tenant {
-  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name        String    @db.Text
-  slug        String    @unique @db.Text
-  created_at  DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name       String    @db.Text
+  slug       String    @unique @db.Text
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @db.Timestamptz(6)
 
   // Relations
-  organizacoes            Organizacao[]
-  empresas                Empresa[]
-  sites                   Site[]
-  projetos                Projeto[]
-  membros_equipe          MembroEquipe[]
-  usuarios                Usuario[]
-  chamadas_ia             ChamadaIA[]
-  requisitos_framework    RequisitoFramework[]
-  analises_conformidade   AnaliseConformidade[]
-  riscos                  Risco[]
-  indicadores             Indicador[]
-  descricoes_raw          DescricaoOperacionalRaw[]
-  processos_normalizados  ProcessoNormalizado[]
-  iniciativas             Iniciativa[]
-  questionarios           Questionario[]
-  ativos                  Ativo[]
+  organizacoes           Organizacao[]
+  empresas               Empresa[]
+  sites                  Site[]
+  projetos               Projeto[]
+  membros_equipe         MembroEquipe[]
+  usuarios               Usuario[]
+  chamadas_ia            ChamadaIA[]
+  requisitos_framework   RequisitoFramework[]
+  analises_conformidade  AnaliseConformidade[]
+  riscos                 Risco[]
+  indicadores            Indicador[]
+  descricoes_raw         DescricaoOperacionalRaw[]
+  processos_normalizados ProcessoNormalizado[]
+  iniciativas            Iniciativa[]
+  questionarios          Questionario[]
+  ativos                 Ativo[]
 
   @@map("tenants")
 }
@@ -50,23 +50,24 @@ model Tenant {
 // ============================================
 
 model Organizacao {
-  id                  String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id           String    @db.Uuid
-  razao_social        String    @db.Text
-  cnpj                String    @db.Text
-  endereco            Json?     @db.JsonB
-  contatos            Json?     @db.JsonB
-  classificacao       String?   @db.Text
-  estrutura           Json?     @db.JsonB
-  agencias_reguladoras String[] @db.Text
-  certificacoes       String[]  @db.Text
-  created_at          DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at          DateTime? @default(now()) @db.Timestamptz(6)
+  id                   String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id            String    @db.Uuid
+  razao_social         String    @db.Text
+  cnpj                 String    @db.Text
+  endereco             Json?     @db.JsonB
+  contatos             Json?     @db.JsonB
+  classificacao        String?   @db.Text
+  estrutura            Json?     @db.JsonB
+  agencias_reguladoras String[]  @db.Text
+  certificacoes        String[]  @db.Text
+  created_at           DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant              Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  empresas            Empresa[]
-  projetos            Projeto[]
-  usuarios            Usuario[]
+  tenant         Tenant         @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  empresas       Empresa[]
+  projetos       Projeto[]
+  usuarios       Usuario[]
+  membros_equipe MembroEquipe[]
 
   @@index([tenant_id])
   @@index([cnpj])
@@ -74,21 +75,21 @@ model Organizacao {
 }
 
 model Empresa {
-  id                    String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id             String    @db.Uuid
-  organizacao_id        String?   @db.Uuid
-  identificacao         String    @db.Text
-  tipo                  String?   @db.Text
-  participacao_acionaria String?  @db.Text
-  ambito_operacional    String?   @db.Text
-  contexto_operacional  String?   @db.Text
-  status                String?   @db.Text
-  created_at            DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at            DateTime? @default(now()) @db.Timestamptz(6)
+  id                     String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id              String    @db.Uuid
+  organizacao_id         String?   @db.Uuid
+  identificacao          String    @db.Text
+  tipo                   String?   @db.Text
+  participacao_acionaria String?   @db.Text
+  ambito_operacional     String?   @db.Text
+  contexto_operacional   String?   @db.Text
+  status                 String?   @db.Text
+  created_at             DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant                Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  organizacao           Organizacao? @relation(fields: [organizacao_id], references: [id], onDelete: Cascade)
-  sites                 Site[]
+  tenant      Tenant       @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  organizacao Organizacao? @relation(fields: [organizacao_id], references: [id], onDelete: Cascade)
+  sites       Site[]
 
   @@index([tenant_id])
   @@index([organizacao_id])
@@ -96,25 +97,25 @@ model Empresa {
 }
 
 model Site {
-  id                        String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id                 String    @db.Uuid
-  empresa_id                String?   @db.Uuid
-  identificacao             String    @db.Text
-  classificacao             String?   @db.Text
-  criticidade_operacional   String?   @db.Text
-  localizacao_geografica    Json?     @db.JsonB
-  infraestrutura_comunicacao Json?    @db.JsonB
-  sistemas_principais       String[]  @db.Text
-  responsaveis              Json?     @db.JsonB
-  seguranca_fisica          Json?     @db.JsonB
-  created_at                DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at                DateTime? @default(now()) @db.Timestamptz(6)
+  id                         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id                  String    @db.Uuid
+  empresa_id                 String?   @db.Uuid
+  identificacao              String    @db.Text
+  classificacao              String?   @db.Text
+  criticidade_operacional    String?   @db.Text
+  localizacao_geografica     Json?     @db.JsonB
+  infraestrutura_comunicacao Json?     @db.JsonB
+  sistemas_principais        String[]  @db.Text
+  responsaveis               Json?     @db.JsonB
+  seguranca_fisica           Json?     @db.JsonB
+  created_at                 DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant                    Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  empresa                   Empresa?  @relation(fields: [empresa_id], references: [id], onDelete: Cascade)
-  ativos                    Ativo[]
+  tenant                      Tenant                    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  empresa                     Empresa?                  @relation(fields: [empresa_id], references: [id], onDelete: Cascade)
+  ativos                      Ativo[]
   descricoes_operacionais_raw DescricaoOperacionalRaw[]
-  riscos                    Risco[]
+  riscos                      Risco[]
 
   @@index([tenant_id])
   @@index([empresa_id])
@@ -136,13 +137,13 @@ model Projeto {
   created_at      DateTime? @default(now()) @db.Timestamptz(6)
   updated_at      DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant          Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  organizacao     Organizacao? @relation(fields: [organizacao_id], references: [id], onDelete: Cascade)
-  membros_equipe  MembroEquipe[]
-  iniciativas     Iniciativa[]
+  tenant                      Tenant                    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  organizacao                 Organizacao?              @relation(fields: [organizacao_id], references: [id], onDelete: Cascade)
+  membros_equipe              MembroEquipe[]
+  iniciativas                 Iniciativa[]
   descricoes_operacionais_raw DescricaoOperacionalRaw[]
-  questionarios   Questionario[]
-  riscos          Risco[]
+  questionarios               Questionario[]
+  riscos                      Risco[]
 
   @@index([tenant_id])
   @@index([organizacao_id])
@@ -150,46 +151,46 @@ model Projeto {
 }
 
 model MembroEquipe {
-  id                    String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id             String    @db.Uuid
-  projeto_id            String?   @db.Uuid
-  organizacao_id        String?   @db.Uuid
-  usuario_id            String?   @db.Uuid
-  
+  id             String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id      String  @db.Uuid
+  projeto_id     String? @db.Uuid
+  organizacao_id String? @db.Uuid
+  usuario_id     String? @db.Uuid
+
   // Identificação (para todos)
-  nome                  String    @db.Text
-  email                 String?   @db.Text
-  cargo                 String?   @db.Text
-  departamento          String?   @db.Text
-  telefone              String?   @db.Text
-  
+  nome         String  @db.Text
+  email        String? @db.Text
+  cargo        String? @db.Text
+  departamento String? @db.Text
+  telefone     String? @db.Text
+
   // Classificação
-  tipo                  String    @default("EQUIPE_INTERNA") @db.Text // EQUIPE_INTERNA | STAKEHOLDER_EXTERNO | PATROCINADOR | CLIENTE | ENTREVISTADO
-  papel                 String?   @db.Text // Gerente, Consultor, Operador, etc
-  
+  tipo  String  @default("EQUIPE_INTERNA") @db.Text // EQUIPE_INTERNA | STAKEHOLDER_EXTERNO | PATROCINADOR | CLIENTE | ENTREVISTADO
+  papel String? @db.Text // Gerente, Consultor, Operador, etc
+
   // Gestão de Projeto (RACI)
-  responsabilidade      String?   @db.Text // Responsible
-  autoridade            String?   @db.Text // Accountable
-  consultado            Boolean?  @default(false) @db.Boolean // Consulted
-  informado             Boolean?  @default(false) @db.Boolean // Informed
-  
+  responsabilidade String?  @db.Text // Responsible
+  autoridade       String?  @db.Text // Accountable
+  consultado       Boolean? @default(false) @db.Boolean // Consulted
+  informado        Boolean? @default(false) @db.Boolean // Informed
+
   // Stakeholder Management (principalmente para externos)
-  poder_influencia      String?   @db.Text // ALTO | MEDIO | BAIXO
-  nivel_interesse       String?   @db.Text // ALTO | MEDIO | BAIXO
-  estrategia_engajamento String?  @db.Text
-  expertise             String?   @db.Text
-  localizacao           String?   @db.Text
-  
+  poder_influencia       String? @db.Text // ALTO | MEDIO | BAIXO
+  nivel_interesse        String? @db.Text // ALTO | MEDIO | BAIXO
+  estrategia_engajamento String? @db.Text
+  expertise              String? @db.Text
+  localizacao            String? @db.Text
+
   // Metadata
-  ativo                 Boolean?  @default(true) @db.Boolean
-  observacoes           String?   @db.Text
-  created_at            DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at            DateTime? @default(now()) @db.Timestamptz(6)
-  
-  tenant                Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  projeto               Projeto?  @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
-  organizacao           Organizacao? @relation(fields: [organizacao_id], references: [id], onDelete: Cascade)
-  
+  ativo       Boolean?  @default(true) @db.Boolean
+  observacoes String?   @db.Text
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime? @default(now()) @db.Timestamptz(6)
+
+  tenant      Tenant       @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  projeto     Projeto?     @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
+  organizacao Organizacao? @relation(fields: [organizacao_id], references: [id], onDelete: Cascade)
+
   @@index([tenant_id])
   @@index([projeto_id])
   @@index([organizacao_id])
@@ -203,32 +204,32 @@ model MembroEquipe {
 // ============================================
 
 model DescricaoOperacionalRaw {
-  id                    String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id             String    @db.Uuid
-  projeto_id            String?   @db.Uuid
-  titulo                String    @db.Text
-  descricao_completa    String    @db.Text
-  frequencia            String?   @db.Text
-  impacto               String?   @db.Text
-  dificuldades          String?   @db.Text
-  pessoa_id             String?   @db.Uuid
-  site_id               String?   @db.Uuid
-  cargo                 String?   @db.Text
-  turno                 String?   @db.Text
-  data_coleta           DateTime? @default(now()) @db.Timestamptz(6)
-  metodo_coleta         String?   @db.Text
-  status_processamento  String?   @default("pendente") @db.Text
-  resultado_processamento Json?   @db.JsonB
-  score_qualidade       Float?
-  processado_por_ia     Boolean?  @default(false) @db.Boolean
-  revisado_por_id       String?   @db.Uuid
-  created_at            DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at            DateTime? @default(now()) @db.Timestamptz(6)
+  id                      String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id               String    @db.Uuid
+  projeto_id              String?   @db.Uuid
+  titulo                  String    @db.Text
+  descricao_completa      String    @db.Text
+  frequencia              String?   @db.Text
+  impacto                 String?   @db.Text
+  dificuldades            String?   @db.Text
+  pessoa_id               String?   @db.Uuid
+  site_id                 String?   @db.Uuid
+  cargo                   String?   @db.Text
+  turno                   String?   @db.Text
+  data_coleta             DateTime? @default(now()) @db.Timestamptz(6)
+  metodo_coleta           String?   @db.Text
+  status_processamento    String?   @default("pendente") @db.Text
+  resultado_processamento Json?     @db.JsonB
+  score_qualidade         Float?
+  processado_por_ia       Boolean?  @default(false) @db.Boolean
+  revisado_por_id         String?   @db.Uuid
+  created_at              DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant                Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  projeto               Projeto?  @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
-  site                  Site?     @relation(fields: [site_id], references: [id], onDelete: SetNull)
-  processo_normalizado  ProcessoNormalizado?
+  tenant               Tenant               @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  projeto              Projeto?             @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
+  site                 Site?                @relation(fields: [site_id], references: [id], onDelete: SetNull)
+  processo_normalizado ProcessoNormalizado?
 
   @@index([tenant_id])
   @@index([projeto_id])
@@ -237,31 +238,31 @@ model DescricaoOperacionalRaw {
 }
 
 model ProcessoNormalizado {
-  id                        String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id                 String    @db.Uuid
-  descricao_raw_id          String?   @unique @db.Uuid
-  nome                      String    @db.Text
-  objetivo                  String?   @db.Text
-  gatilho                   String?   @db.Text
-  frequencia                String?   @db.Text
-  duracao_estimada          String?   @db.Text
-  criticidade               String?   @db.Text
-  dependencias              String[]  @db.Text
-  observacoes_gerais        String?   @db.Text
+  id                           String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id                    String    @db.Uuid
+  descricao_raw_id             String?   @unique @db.Uuid
+  nome                         String    @db.Text
+  objetivo                     String?   @db.Text
+  gatilho                      String?   @db.Text
+  frequencia                   String?   @db.Text
+  duracao_estimada             String?   @db.Text
+  criticidade                  String?   @db.Text
+  dependencias                 String[]  @db.Text
+  observacoes_gerais           String?   @db.Text
   nivel_confianca_normalizacao Float?
-  tipo_processo             String?   @db.Text
-  status                    String?   @default("pendente") @db.Text
-  versao                    Int?      @default(1)
-  created_at                DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at                DateTime? @default(now()) @db.Timestamptz(6)
+  tipo_processo                String?   @db.Text
+  status                       String?   @default("pendente") @db.Text
+  versao                       Int?      @default(1)
+  created_at                   DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at                   DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant                    Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  descricao_raw             DescricaoOperacionalRaw? @relation(fields: [descricao_raw_id], references: [id], onDelete: Cascade)
-  etapas                    ProcessoEtapa[]
-  ativos                    Ativo[]
-  dificuldades              DificuldadeOperacional[]
-  workarounds               Workaround[]
-  riscos                    Risco[]
+  tenant        Tenant                   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  descricao_raw DescricaoOperacionalRaw? @relation(fields: [descricao_raw_id], references: [id], onDelete: Cascade)
+  etapas        ProcessoEtapa[]
+  ativos        Ativo[]
+  dificuldades  DificuldadeOperacional[]
+  workarounds   Workaround[]
+  riscos        Risco[]
 
   @@index([tenant_id])
   @@index([descricao_raw_id])
@@ -269,48 +270,48 @@ model ProcessoNormalizado {
 }
 
 model ProcessoEtapa {
-  id                    String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id                      String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   // tenant_id removido pois é estritamente filho de ProcessoNormalizado
-  processo_normalizado_id String? @db.Uuid
-  ordem                 Int
-  nome                  String    @db.Text
-  descricao             String    @db.Text
-  tipo_etapa            String?   @db.Text
-  sistemas_envolvidos   String[]  @db.Text
-  ativos_envolvidos     String[]  @db.Text
-  tempo_estimado        String?   @db.Text
-  created_at            DateTime? @default(now()) @db.Timestamptz(6)
+  processo_normalizado_id String?   @db.Uuid
+  ordem                   Int
+  nome                    String    @db.Text
+  descricao               String    @db.Text
+  tipo_etapa              String?   @db.Text
+  sistemas_envolvidos     String[]  @db.Text
+  ativos_envolvidos       String[]  @db.Text
+  tempo_estimado          String?   @db.Text
+  created_at              DateTime? @default(now()) @db.Timestamptz(6)
 
-  processo_normalizado  ProcessoNormalizado? @relation(fields: [processo_normalizado_id], references: [id], onDelete: Cascade)
+  processo_normalizado ProcessoNormalizado? @relation(fields: [processo_normalizado_id], references: [id], onDelete: Cascade)
 
   @@index([processo_normalizado_id, ordem])
   @@map("processo_etapas")
 }
 
 model Ativo {
-  id                      String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id               String    @db.Uuid
-  site_id                 String?   @db.Uuid
-  processo_normalizado_id String?   @db.Uuid
-  tipo                    String    @db.Text
-  nome                    String    @db.Text
-  categoria               String?   @db.Text
-  localizacao             String?   @db.Text
-  criticidade             String?   @db.Text
-  caracteristicas_tecnicas Json?    @db.JsonB
-  rede_conectividade      String?   @db.Text
-  protocolos              String[]  @db.Text
-  seguranca               Json?     @db.JsonB
-  lifecycle               Json?     @db.JsonB
-  documentacao            Json?     @db.JsonB
-  conformidade            Json?     @db.JsonB
-  created_at              DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at              DateTime? @default(now()) @db.Timestamptz(6)
+  id                       String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id                String    @db.Uuid
+  site_id                  String?   @db.Uuid
+  processo_normalizado_id  String?   @db.Uuid
+  tipo                     String    @db.Text
+  nome                     String    @db.Text
+  categoria                String?   @db.Text
+  localizacao              String?   @db.Text
+  criticidade              String?   @db.Text
+  caracteristicas_tecnicas Json?     @db.JsonB
+  rede_conectividade       String?   @db.Text
+  protocolos               String[]  @db.Text
+  seguranca                Json?     @db.JsonB
+  lifecycle                Json?     @db.JsonB
+  documentacao             Json?     @db.JsonB
+  conformidade             Json?     @db.JsonB
+  created_at               DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant                  Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  site                    Site?     @relation(fields: [site_id], references: [id], onDelete: SetNull)
-  processo_normalizado    ProcessoNormalizado? @relation(fields: [processo_normalizado_id], references: [id], onDelete: SetNull)
-  riscos                  Risco[]
+  tenant               Tenant               @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  site                 Site?                @relation(fields: [site_id], references: [id], onDelete: SetNull)
+  processo_normalizado ProcessoNormalizado? @relation(fields: [processo_normalizado_id], references: [id], onDelete: SetNull)
+  riscos               Risco[]
 
   @@index([tenant_id])
   @@index([site_id])
@@ -319,35 +320,35 @@ model Ativo {
 }
 
 model DificuldadeOperacional {
-  id                    String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id                      String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   // tenant_id implícito via processo
-  processo_normalizado_id String? @db.Uuid
-  descricao             String    @db.Text
-  categoria             String?   @db.Text
-  impacto               String?   @db.Text
-  frequencia            String?   @db.Text
-  sistemas_afetados     String[]  @db.Text
-  data_identificacao    DateTime? @default(now()) @db.Timestamptz(6)
-  created_at            DateTime? @default(now()) @db.Timestamptz(6)
+  processo_normalizado_id String?   @db.Uuid
+  descricao               String    @db.Text
+  categoria               String?   @db.Text
+  impacto                 String?   @db.Text
+  frequencia              String?   @db.Text
+  sistemas_afetados       String[]  @db.Text
+  data_identificacao      DateTime? @default(now()) @db.Timestamptz(6)
+  created_at              DateTime? @default(now()) @db.Timestamptz(6)
 
-  processo_normalizado  ProcessoNormalizado? @relation(fields: [processo_normalizado_id], references: [id], onDelete: Cascade)
+  processo_normalizado ProcessoNormalizado? @relation(fields: [processo_normalizado_id], references: [id], onDelete: Cascade)
 
   @@index([processo_normalizado_id])
   @@map("dificuldades_operacionais")
 }
 
 model Workaround {
-  id                    String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id                      String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   // tenant_id implícito via processo
-  processo_normalizado_id String? @db.Uuid
-  descricao             String    @db.Text
-  razao                 String?   @db.Text
-  risco_percebido       String?   @db.Text
-  categoria             String?   @db.Text
-  data_identificacao    DateTime? @default(now()) @db.Timestamptz(6)
-  created_at            DateTime? @default(now()) @db.Timestamptz(6)
+  processo_normalizado_id String?   @db.Uuid
+  descricao               String    @db.Text
+  razao                   String?   @db.Text
+  risco_percebido         String?   @db.Text
+  categoria               String?   @db.Text
+  data_identificacao      DateTime? @default(now()) @db.Timestamptz(6)
+  created_at              DateTime? @default(now()) @db.Timestamptz(6)
 
-  processo_normalizado  ProcessoNormalizado? @relation(fields: [processo_normalizado_id], references: [id], onDelete: Cascade)
+  processo_normalizado ProcessoNormalizado? @relation(fields: [processo_normalizado_id], references: [id], onDelete: Cascade)
 
   @@index([processo_normalizado_id])
   @@map("workarounds")
@@ -372,10 +373,10 @@ model Questionario {
   created_at      DateTime? @default(now()) @db.Timestamptz(6)
   updated_at      DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant          Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  projeto         Projeto?  @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
-  questoes        Questao[]
-  respostas       RespostaQuestionario[]
+  tenant    Tenant                 @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  projeto   Projeto?               @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
+  questoes  Questao[]
+  respostas RespostaQuestionario[]
 
   @@index([tenant_id])
   @@index([projeto_id])
@@ -393,44 +394,44 @@ model Questao {
   ordem           Int
   created_at      DateTime? @default(now()) @db.Timestamptz(6)
 
-  questionario    Questionario? @relation(fields: [questionario_id], references: [id], onDelete: Cascade)
-  respostas       RespostaQuestao[]
+  questionario Questionario?     @relation(fields: [questionario_id], references: [id], onDelete: Cascade)
+  respostas    RespostaQuestao[]
 
   @@index([questionario_id, ordem])
   @@map("questoes")
 }
 
 model RespostaQuestionario {
-  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  questionario_id String?   @db.Uuid
-  respondente_id  String?   @db.Uuid
+  id                 String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  questionario_id    String?   @db.Uuid
+  respondente_id     String?   @db.Uuid
   data_preenchimento DateTime? @default(now()) @db.Timestamptz(6)
-  progresso       Float?    @default(0)
-  status          String?   @default("em_progresso") @db.Text
-  created_at      DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime? @default(now()) @db.Timestamptz(6)
+  progresso          Float?    @default(0)
+  status             String?   @default("em_progresso") @db.Text
+  created_at         DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime? @default(now()) @db.Timestamptz(6)
 
-  questionario    Questionario? @relation(fields: [questionario_id], references: [id], onDelete: Cascade)
-  respostas       RespostaQuestao[]
+  questionario Questionario?     @relation(fields: [questionario_id], references: [id], onDelete: Cascade)
+  respostas    RespostaQuestao[]
 
   @@index([questionario_id])
   @@map("respostas_questionario")
 }
 
 model RespostaQuestao {
-  id                      String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  resposta_questionario_id String?   @db.Uuid
-  questao_id             String?   @db.Uuid
-  resposta_texto         String?   @db.Text
-  resposta_numero        Float?
-  resposta_data          DateTime? @db.Date
-  resposta_multipla_escolha String[] @db.Text
-  resposta_escala        Int?
-  resposta_arquivo_url   String?   @db.Text
-  created_at             DateTime? @default(now()) @db.Timestamptz(6)
+  id                        String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  resposta_questionario_id  String?   @db.Uuid
+  questao_id                String?   @db.Uuid
+  resposta_texto            String?   @db.Text
+  resposta_numero           Float?
+  resposta_data             DateTime? @db.Date
+  resposta_multipla_escolha String[]  @db.Text
+  resposta_escala           Int?
+  resposta_arquivo_url      String?   @db.Text
+  created_at                DateTime? @default(now()) @db.Timestamptz(6)
 
-  resposta_questionario  RespostaQuestionario? @relation(fields: [resposta_questionario_id], references: [id], onDelete: Cascade)
-  questao                Questao?  @relation(fields: [questao_id], references: [id], onDelete: Cascade)
+  resposta_questionario RespostaQuestionario? @relation(fields: [resposta_questionario_id], references: [id], onDelete: Cascade)
+  questao               Questao?              @relation(fields: [questao_id], references: [id], onDelete: Cascade)
 
   @@index([resposta_questionario_id])
   @@map("respostas_questao")
@@ -441,28 +442,28 @@ model RespostaQuestao {
 // ============================================
 
 model Iniciativa {
-  id                  String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id           String    @db.Uuid
-  projeto_id          String?   @db.Uuid
-  plano_diretor_id    String?   @db.Uuid
-  nome                String    @db.Text
-  descricao           String?   @db.Text
-  dominio_governanca  String?   @db.Text
-  status              String?   @default("planejada") @db.Text
-  progresso_percentual Float?   @default(0)
-  saude               String?   @default("verde") @db.Text
-  responsavel_id      String?   @db.Uuid
-  data_inicio         DateTime? @db.Date
-  data_fim_prevista   DateTime? @db.Date
-  data_fim_real       DateTime? @db.Date
-  prioridade          String?   @db.Text
-  custo_estimado      Float?
-  beneficio_estimado  String?   @db.Text
-  created_at          DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at          DateTime? @default(now()) @db.Timestamptz(6)
+  id                   String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id            String    @db.Uuid
+  projeto_id           String?   @db.Uuid
+  plano_diretor_id     String?   @db.Uuid
+  nome                 String    @db.Text
+  descricao            String?   @db.Text
+  dominio_governanca   String?   @db.Text
+  status               String?   @default("planejada") @db.Text
+  progresso_percentual Float?    @default(0)
+  saude                String?   @default("verde") @db.Text
+  responsavel_id       String?   @db.Uuid
+  data_inicio          DateTime? @db.Date
+  data_fim_prevista    DateTime? @db.Date
+  data_fim_real        DateTime? @db.Date
+  prioridade           String?   @db.Text
+  custo_estimado       Float?
+  beneficio_estimado   String?   @db.Text
+  created_at           DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant              Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  projeto             Projeto?  @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
+  tenant  Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  projeto Projeto? @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
 
   @@index([tenant_id])
   @@index([projeto_id])
@@ -483,20 +484,20 @@ enum UserRole {
 }
 
 model Usuario {
-  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id       String    @db.Uuid
-  firebase_uid    String?   @unique @db.Text // Mudança para Firebase UID
-  nome            String    @db.Text
-  email           String    @db.Text
-  role            UserRole  @default(CONSULTOR)
-  organizacao     String?   @db.Text
-  organizacao_id  String?   @db.Uuid
-  status          String?   @default("ativo") @db.Text
-  ultimo_acesso   DateTime? @db.Timestamptz(6)
-  created_at      DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime? @default(now()) @db.Timestamptz(6)
+  id             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id      String    @db.Uuid
+  firebase_uid   String?   @unique @db.Text // Mudança para Firebase UID
+  nome           String    @db.Text
+  email          String    @db.Text
+  role           UserRole  @default(CONSULTOR)
+  organizacao    String?   @db.Text
+  organizacao_id String?   @db.Uuid
+  status         String?   @default("ativo") @db.Text
+  ultimo_acesso  DateTime? @db.Timestamptz(6)
+  created_at     DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant          Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  tenant          Tenant       @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   organizacao_rel Organizacao? @relation(fields: [organizacao_id], references: [id], onDelete: SetNull)
   permissoes      Permissao[]
 
@@ -508,13 +509,13 @@ model Usuario {
 }
 
 model Permissao {
-  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  usuario_id      String?   @db.Uuid
-  entidade_tipo   String    @db.Text
-  acao            String    @db.Text
-  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  usuario_id    String?   @db.Uuid
+  entidade_tipo String    @db.Text
+  acao          String    @db.Text
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
 
-  usuario         Usuario?  @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  usuario Usuario? @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 
   @@index([usuario_id])
   @@map("permissoes")
@@ -525,17 +526,17 @@ model Permissao {
 // ============================================
 
 model ChamadaIA {
-  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id       String?   @db.Uuid // Optional para chamadas de sistema, ou required se sempre vinculado
-  funcionalidade  String    @db.Text
-  tokens_input    Int?
-  tokens_output   Int?
-  custo           Float?
-  sucesso         Boolean?  @default(true) @db.Boolean
-  erro            String?   @db.Text
-  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  id             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id      String?   @db.Uuid // Optional para chamadas de sistema, ou required se sempre vinculado
+  funcionalidade String    @db.Text
+  tokens_input   Int?
+  tokens_output  Int?
+  custo          Float?
+  sucesso        Boolean?  @default(true) @db.Boolean
+  erro           String?   @db.Text
+  created_at     DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant          Tenant?   @relation(fields: [tenant_id], references: [id], onDelete: SetNull)
+  tenant Tenant? @relation(fields: [tenant_id], references: [id], onDelete: SetNull)
 
   @@index([tenant_id])
   @@index([funcionalidade])
@@ -548,19 +549,19 @@ model ChamadaIA {
 // ============================================
 
 model RequisitoFramework {
-  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id       String?   @db.Uuid // Optional: Permite frameworks globais (null) ou privados (tenant)
-  framework       String    @db.Text
-  codigo          String    @db.Text
-  titulo          String    @db.Text
-  descricao       String    @db.Text
-  categoria       String?   @db.Text
-  versao          String?   @db.Text
-  embedding       Unsupported("vector(768)") // Gemini Embeddings
-  data_vetorizacao DateTime? @db.Timestamptz(6)
-  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  id               String                     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id        String?                    @db.Uuid // Optional: Permite frameworks globais (null) ou privados (tenant)
+  framework        String                     @db.Text
+  codigo           String                     @db.Text
+  titulo           String                     @db.Text
+  descricao        String                     @db.Text
+  categoria        String?                    @db.Text
+  versao           String?                    @db.Text
+  embedding        Unsupported("vector(768)") // Gemini Embeddings
+  data_vetorizacao DateTime?                  @db.Timestamptz(6)
+  created_at       DateTime?                  @default(now()) @db.Timestamptz(6)
 
-  tenant          Tenant?   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  tenant                Tenant?               @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   analises_conformidade AnaliseConformidade[]
 
   @@index([tenant_id])
@@ -570,22 +571,22 @@ model RequisitoFramework {
 }
 
 model AnaliseConformidade {
-  id                String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id         String    @db.Uuid
-  requisito_id      String?   @db.Uuid
-  entidade_tipo     String    @db.Text
-  entidade_id       String    @db.Uuid
-  similaridade      Float?
-  status            String?   @db.Text
-  evidencias        String[]  @db.Uuid
-  gaps              String[]  @db.Text
-  recomendacoes     String[]  @db.Text
-  analisado_por_ia  Boolean?  @default(false) @db.Boolean
-  created_at        DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime? @default(now()) @db.Timestamptz(6)
+  id               String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id        String    @db.Uuid
+  requisito_id     String?   @db.Uuid
+  entidade_tipo    String    @db.Text
+  entidade_id      String    @db.Uuid
+  similaridade     Float?
+  status           String?   @db.Text
+  evidencias       String[]  @db.Uuid
+  gaps             String[]  @db.Text
+  recomendacoes    String[]  @db.Text
+  analisado_por_ia Boolean?  @default(false) @db.Boolean
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant            Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  requisito         RequisitoFramework? @relation(fields: [requisito_id], references: [id], onDelete: Cascade)
+  tenant    Tenant              @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  requisito RequisitoFramework? @relation(fields: [requisito_id], references: [id], onDelete: Cascade)
 
   @@index([tenant_id])
   @@index([requisito_id])
@@ -598,27 +599,27 @@ model AnaliseConformidade {
 // ============================================
 
 model Risco {
-  id                String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id         String    @db.Uuid
-  projeto_id        String?   @db.Uuid
-  ativo_id          String?   @db.Uuid
-  processo_id       String?   @db.Uuid
-  site_id           String?   @db.Uuid
-  nome              String    @db.Text
-  descricao         String?   @db.Text
-  classificacao     String?   @db.Text
-  impacto           String?   @db.Text
-  probabilidade     String?   @db.Text
-  controles_existentes String? @db.Text
-  data_identificacao DateTime? @default(now()) @db.Timestamptz(6)
-  created_at        DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime? @default(now()) @db.Timestamptz(6)
+  id                   String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id            String    @db.Uuid
+  projeto_id           String?   @db.Uuid
+  ativo_id             String?   @db.Uuid
+  processo_id          String?   @db.Uuid
+  site_id              String?   @db.Uuid
+  nome                 String    @db.Text
+  descricao            String?   @db.Text
+  classificacao        String?   @db.Text
+  impacto              String?   @db.Text
+  probabilidade        String?   @db.Text
+  controles_existentes String?   @db.Text
+  data_identificacao   DateTime? @default(now()) @db.Timestamptz(6)
+  created_at           DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant            Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  projeto           Projeto?  @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
-  ativo             Ativo?    @relation(fields: [ativo_id], references: [id], onDelete: SetNull)
-  processo          ProcessoNormalizado? @relation(fields: [processo_id], references: [id], onDelete: SetNull)
-  site              Site?     @relation(fields: [site_id], references: [id], onDelete: SetNull)
+  tenant   Tenant               @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  projeto  Projeto?             @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
+  ativo    Ativo?               @relation(fields: [ativo_id], references: [id], onDelete: SetNull)
+  processo ProcessoNormalizado? @relation(fields: [processo_id], references: [id], onDelete: SetNull)
+  site     Site?                @relation(fields: [site_id], references: [id], onDelete: SetNull)
 
   @@index([tenant_id])
   @@index([projeto_id])
@@ -630,23 +631,23 @@ model Risco {
 // ============================================
 
 model Indicador {
-  id                String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id         String    @db.Uuid
-  dominio_governanca String   @db.Text
-  tipo              String    @db.Text
-  nome              String    @db.Text
-  formula           String?   @db.Text
-  fonte_dados       String?   @db.Text
-  baseline          Float?
-  target            Float?
-  threshold_verde   Float?
-  threshold_amarelo Float?
+  id                 String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id          String    @db.Uuid
+  dominio_governanca String    @db.Text
+  tipo               String    @db.Text
+  nome               String    @db.Text
+  formula            String?   @db.Text
+  fonte_dados        String?   @db.Text
+  baseline           Float?
+  target             Float?
+  threshold_verde    Float?
+  threshold_amarelo  Float?
   threshold_vermelho Float?
-  responsavel_id    String?   @db.Uuid
-  created_at        DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime? @default(now()) @db.Timestamptz(6)
+  responsavel_id     String?   @db.Uuid
+  created_at         DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant            Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
 
   @@index([tenant_id])
   @@index([dominio_governanca])
