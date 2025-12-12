@@ -20,7 +20,7 @@ export type PermissionAction = 'create' | 'read' | 'update' | 'delete';
  * Recursos do sistema
  */
 export type Resource = 
-  | 'clientes'
+  | 'organizacoes'
   | 'empresas'
   | 'localidades'
   | 'projetos'
@@ -43,7 +43,7 @@ const ROLE_PERMISSIONS: Record<UserRole, { resource: string; action: PermissionA
   ],
   
   GERENTE_PROJETO: [
-    { resource: 'clientes', action: 'read' },
+    { resource: 'organizacoes', action: 'read' },
     { resource: 'empresas', action: 'create' },
     { resource: 'empresas', action: 'read' },
     { resource: 'empresas', action: 'update' },
@@ -77,7 +77,7 @@ const ROLE_PERMISSIONS: Record<UserRole, { resource: string; action: PermissionA
   ],
   
   CONSULTOR: [
-    { resource: 'clientes', action: 'read' },
+    { resource: 'organizacoes', action: 'read' },
     { resource: 'empresas', action: 'read' },
     { resource: 'empresas', action: 'update' },
     { resource: 'localidades', action: 'read' },
@@ -106,7 +106,7 @@ const ROLE_PERMISSIONS: Record<UserRole, { resource: string; action: PermissionA
   ],
   
   AUDITOR: [
-    { resource: 'clientes', action: 'read' },
+    { resource: 'organizacoes', action: 'read' },
     { resource: 'empresas', action: 'read' },
     { resource: 'localidades', action: 'read' },
     { resource: 'projetos', action: 'read' },
