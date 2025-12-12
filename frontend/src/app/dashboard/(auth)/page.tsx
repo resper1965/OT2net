@@ -1,53 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { api } from "@/lib/api";
-import { Building2, Users, FolderKanban, FileText, TrendingUp, CheckCircle2, Clock, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Skeleton, SkeletonCard } from "@/components/ui/skeleton";
 import { usePageTitle } from "@/contexts/PageTitleContext";
-
-interface DashboardStats {
-  clientes: number;
-  empresas: number;
-  projetos: number;
-  processos: number;
-  processosAprovados: number;
-  processosPendentes: number;
-  processosEmProcessamento: number;
-}
-
-interface Projeto {
-  id: string;
-  nome: string;
-  progresso_geral?: number;
-  fase_atual?: string;
-  cliente_id?: string;
-}
-
-interface Processo {
-  id: string;
-  titulo?: string;
-  nome?: string;
-  status?: string;
-  status_processamento?: string;
-  created_at: string;
-}
+import { DashboardKPIs } from "@/components/dashboard/DashboardKPIs";
 
 export default function DashboardPage() {
   const { setTitle } = usePageTitle();
-  const [stats, setStats] = useState<DashboardStats>({
-    clientes: 0,
-    empresas: 0,
-    projetos: 0,
-    processos: 0,
-    processosAprovados: 0,
-    processosPendentes: 0,
-    processosEmProcessamento: 0,
-  });
-  const [projetosRecentes, setProjetosRecentes] = useState<Projeto[]>([]);
-  const [processosRecentes, setProcessosRecentes] = useState<Processo[]>([]);
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold text-black dark:text-zinc-50">
+          Dashboard
+        </h1>
+        <p className="text-zinc-600 dark:text-zinc-400 mt-2">
+          Visão geral do sistema OT2net
+        </p>
+      </div>
+
+      {/* Phase Indicator */}
+      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg p-4">
+        <div className="flex items-center gap-3">
+          <span className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+          </span>
+          <div>
+            <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+              Fase 0: Discovery & AS-IS
+            </p>
+            <p className="text-xs text-amber-700 dark:text-amber-300">
+              Coleta e normalização de processos operacionais
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* KPIs */}
+      <DashboardKPIs />
+    </div>
+  );
+}
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

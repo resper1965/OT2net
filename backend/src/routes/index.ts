@@ -9,6 +9,7 @@ import relatoriosRouter from './relatorios'
 import descricoesRawRouter from './descricoes-raw'
 import processosNormalizadosRouter from './processos-normalizados'
 import ragRouter from './rag'
+import dashboardRouter from './dashboard'
 
 const router = Router()
 
@@ -17,8 +18,11 @@ router.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
+// Dashboard
+router.use('/dashboard', dashboardRouter)
+
 // Rotas de cadastramento (User Story 1)
-router.use('/clientes', clientesRouter)
+router.use('/organizacoes', organizacoesRouter)
 router.use('/empresas', empresasRouter)
 router.use('/sites', sitesRouter)
 router.use('/stakeholders', stakeholdersRouter)

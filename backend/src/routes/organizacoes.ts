@@ -5,12 +5,17 @@ import { validate } from '../middleware/validation';
 import { authenticateToken } from '../middleware/auth';
 import { requirePermission } from '../middleware/permissions';
 
+import { cnpj as cnpjValidator } from 'cpf-cnpj-validator';
+
 const router = Router();
 
 // Schema de validação
 const createOrganizacaoSchema = z.object({
   razao_social: z.string().min(1),
-  cnpj: z.string().min(14).max(18),
+  cnpj: z.string().min(14).max(18).refine(
+    (val) => cnpjValidator.isValid(val),
+    { message: 'CNPJ inválido' }
+  ),
   endereco: z.object({
     logradouro: z.string().optional(),
     numero: z.string().optional(),
