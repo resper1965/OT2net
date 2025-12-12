@@ -40,7 +40,6 @@ model Tenant {
   processos_normalizados  ProcessoNormalizado[]
   iniciativas             Iniciativa[]
   questionarios           Questionario[]
-  stakeholders            Stakeholder[]
   ativos                  Ativo[]
 
   @@map("tenants")
@@ -143,7 +142,6 @@ model Projeto {
   iniciativas     Iniciativa[]
   descricoes_operacionais_raw DescricaoOperacionalRaw[]
   questionarios   Questionario[]
-  stakeholders    Stakeholder[]
   riscos          Risco[]
 
   @@index([tenant_id])
@@ -152,47 +150,52 @@ model Projeto {
 }
 
 model MembroEquipe {
-  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id       String    @db.Uuid
-  projeto_id      String?   @db.Uuid
-  usuario_id      String?   @db.Uuid
-  papel           String?   @db.Text
-  responsabilidade String?  @db.Text
-  autoridade      String?   @db.Text
-  consultado      String?   @db.Text
-  informado       String?   @db.Text
-  created_at      DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime? @default(now()) @db.Timestamptz(6)
-
-  tenant          Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  projeto         Projeto?  @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
-
-  @@index([tenant_id])
-  @@index([projeto_id])
-  @@index([usuario_id])
-  @@map("membros_equipe")
-}
-
-model Stakeholder {
   id                    String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   tenant_id             String    @db.Uuid
   projeto_id            String?   @db.Uuid
-  identificacao_pessoal Json?     @db.JsonB
-  vinculo_profissional  Json?     @db.JsonB
-  contatos              Json?     @db.JsonB
-  localizacao           String?   @db.Text
-  papel_no_projeto      String?   @db.Text
-  poder_influencia      String?   @db.Text
+  organizacao_id        String?   @db.Uuid
+  usuario_id            String?   @db.Uuid
+  
+  // Identificação (para todos)
+  nome                  String    @db.Text
+  email                 String?   @db.Text
+  cargo                 String?   @db.Text
+  departamento          String?   @db.Text
+  telefone              String?   @db.Text
+  
+  // Classificação
+  tipo                  String    @default("EQUIPE_INTERNA") @db.Text // EQUIPE_INTERNA | STAKEHOLDER_EXTERNO | PATROCINADOR | CLIENTE | ENTREVISTADO
+  papel                 String?   @db.Text // Gerente, Consultor, Operador, etc
+  
+  // Gestão de Projeto (RACI)
+  responsabilidade      String?   @db.Text // Responsible
+  autoridade            String?   @db.Text // Accountable
+  consultado            Boolean?  @default(false) @db.Boolean // Consulted
+  informado             Boolean?  @default(false) @db.Boolean // Informed
+  
+  // Stakeholder Management (principalmente para externos)
+  poder_influencia      String?   @db.Text // ALTO | MEDIO | BAIXO
+  nivel_interesse       String?   @db.Text // ALTO | MEDIO | BAIXO
+  estrategia_engajamento String?  @db.Text
   expertise             String?   @db.Text
+  localizacao           String?   @db.Text
+  
+  // Metadata
+  ativo                 Boolean?  @default(true) @db.Boolean
+  observacoes           String?   @db.Text
   created_at            DateTime? @default(now()) @db.Timestamptz(6)
   updated_at            DateTime? @default(now()) @db.Timestamptz(6)
-
+  
   tenant                Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   projeto               Projeto?  @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
-
+  organizacao           Organizacao? @relation(fields: [organizacao_id], references: [id], onDelete: Cascade)
+  
   @@index([tenant_id])
   @@index([projeto_id])
-  @@map("stakeholders")
+  @@index([organizacao_id])
+  @@index([usuario_id])
+  @@index([tipo])
+  @@map("membros_equipe")
 }
 
 // ============================================
