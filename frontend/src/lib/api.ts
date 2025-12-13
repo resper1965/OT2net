@@ -61,10 +61,27 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}): Promi
   return response;
 }
 
+// Helper para extrair array de respostas paginadas ou legadas
+const extractArray = (data: any, key: string) => {
+  if (data.data && Array.isArray(data.data)) return data.data;
+  if (data[key] && Array.isArray(data[key])) return data[key];
+  if (Array.isArray(data)) return data;
+  return [];
+};
+
 export const api = {
   // Organizações
   organizacoes: {
-    list: () => fetchWithAuth("/api/organizacoes").then((r) => r.json()).then((data) => data.organizacoes || []),
+    list: (params?: { page?: number; limit?: number }) => {
+      const query = new URLSearchParams(params as any).toString();
+      const url = query ? `/api/organizacoes?${query}` : "/api/organizacoes";
+      return fetchWithAuth(url).then((r) => r.json()).then((data) => extractArray(data, 'organizacoes'));
+    },
+    listPaginated: (params?: { page?: number; limit?: number }) => {
+       const query = new URLSearchParams(params as any).toString();
+       const url = query ? `/api/organizacoes?${query}` : "/api/organizacoes";
+       return fetchWithAuth(url).then((r) => r.json());
+    },
     get: (id: string) => fetchWithAuth(`/api/organizacoes/${id}`).then((r) => r.json()),
     create: (data: Record<string, unknown>) =>
       fetchWithAuth("/api/organizacoes", {
@@ -153,9 +170,13 @@ export const api = {
 
   // Projetos
   projetos: {
-    list: (organizacaoId?: string) => {
-      const url = organizacaoId ? `/api/projetos?organizacao_id=${organizacaoId}` : "/api/projetos";
-      return fetchWithAuth(url).then((r) => r.json()).then((data) => data.projetos || []);
+    list: (organizacaoId?: string, params?: { page?: number; limit?: number }) => {
+      const allParams = new URLSearchParams(params as any);
+      if (organizacaoId) allParams.append("organizacao_id", organizacaoId);
+      
+      const query = allParams.toString();
+      const url = query ? `/api/projetos?${query}` : "/api/projetos";
+      return fetchWithAuth(url).then((r) => r.json()).then((data) => extractArray(data, 'projetos'));
     },
     get: (id: string) => fetchWithAuth(`/api/projetos/${id}`).then((r) => r.json()),
     create: (data: Record<string, unknown>) =>

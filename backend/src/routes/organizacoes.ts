@@ -38,15 +38,31 @@ const createOrganizacaoSchema = z.object({
 
 const updateOrganizacaoSchema = createOrganizacaoSchema.partial();
 
-// GET /api/organizacoes - Listar todas as organizações
+// GET /api/organizacoes - Listar todas as organizações com paginação
 router.get('/', authenticateToken, requirePermission('organizacoes', 'read'), async (req: any, res, next) => {
   try {
-    // ✅ Usa req.prisma que já tem RLS aplicado
-    const organizacoes = await req.prisma.organizacao.findMany({
-      orderBy: { created_at: 'desc' },
-    });
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [organizacoes, total] = await Promise.all([
+      req.prisma.organizacao.findMany({
+        skip,
+        take: limit,
+        orderBy: { created_at: 'desc' },
+      }),
+      req.prisma.organizacao.count(),
+    ]);
     
-    res.json({ organizacoes });
+    res.json({
+      data: organizacoes,
+      meta: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      }
+    });
   } catch (error) {
     next(error);
   }

@@ -17,22 +17,40 @@ const createProjetoSchema = z.object({
 
 const updateProjetoSchema = createProjetoSchema.partial();
 
-// GET /api/projetos - Listar todos os projetos
+// GET /api/projetos - Listar todos os projetos com paginação
 router.get('/', authenticateToken, requirePermission('projetos', 'read'), async (req: any, res, next) => {
   try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     const { organizacao_id } = req.query;
     const where = organizacao_id ? { organizacao_id: organizacao_id as string } : {};
     
-    const projetos = await req.prisma.projeto.findMany({
-      where,
-      orderBy: { created_at: 'desc' },
-      include: {
-        organizacao: true,
-        membros_equipe: true,
-        stakeholders: true,
-      },
+    const [projetos, total] = await Promise.all([
+      req.prisma.projeto.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { created_at: 'desc' },
+        include: {
+          organizacao: true,
+          membros_equipe: true,
+          stakeholders: true,
+        },
+      }),
+      req.prisma.projeto.count({ where }),
+    ]);
+    
+    res.json({
+      data: projetos,
+      meta: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      }
     });
-    res.json(projetos);
   } catch (error) {
     next(error);
   }
