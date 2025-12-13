@@ -1,3 +1,5 @@
+"use client";
+
 import { usePageTitle } from "@/contexts/PageTitleContext";
 import { DashboardKPIs } from "@/components/dashboard/DashboardKPIs";
 import { ProjectPhasesTimeline } from "@/components/dashboard/ProjectPhasesTimeline";
