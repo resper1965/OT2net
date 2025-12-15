@@ -10,7 +10,8 @@ import ragRouter from './rag'
 import dashboardRouter from './dashboard'
 import exportRouter from './export'
 import fasesRouter from './fases'
-import adminRouter from './admin'
+import adminRouter from './admin';
+import { aiRouter } from './ai';
 
 const router = Router()
 
@@ -45,5 +46,7 @@ router.use('/fases', fasesRouter)
 // Rotas de Admin (Migração, Seed)
 router.use('/admin', adminRouter)
 
-export default router
+// Rotas de IA
+router.use('/ai', aiRouter)
 
+export default router

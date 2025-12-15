@@ -12,6 +12,7 @@ import { PhaseChecklist } from "@/components/projetos/PhaseChecklist";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePageTitle } from "@/contexts/PageTitleContext";
+import { Bot } from "lucide-react";
 
 interface Projeto {
   id: string;
@@ -272,6 +273,20 @@ export default function ProjetoDetalhesPage() {
 
           {fases.map((fase, index) => (
             <TabsContent key={fase.id} value={index.toString()}>
+              {fase.codigo === "fase0" && (
+                <div className="mb-6 bg-blue-50 dark:bg-blue-900/10 p-4 rounded-lg flex items-center justify-between border border-blue-100 dark:border-blue-900/20">
+                  <div>
+                    <h3 className="font-medium text-blue-900 dark:text-blue-100">Ferramentas de IA</h3>
+                    <p className="text-sm text-blue-700 dark:text-blue-300">Utilize nossa IA para normalizar processos brutos.</p>
+                  </div>
+                  <Link href={`/dashboard/projetos/${id}/fase/fase0`}>
+                    <Button variant="outline" className="gap-2 bg-white dark:bg-zinc-900 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20">
+                      <Bot className="w-4 h-4" />
+                      Acessar Normalização
+                    </Button>
+                  </Link>
+                </div>
+              )}
               <PhaseChecklist
                 faseNome={fase.nome}
                 faseCor={fase.cor}

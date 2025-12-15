@@ -259,6 +259,15 @@ export const api = {
         r.json()
       ),
   },
+  
+  // IA
+  ai: {
+    normalizar: (descricao: string) => 
+      fetchWithAuth("/api/ai/normalizar", {
+        method: "POST",
+        body: JSON.stringify({ descricao }),
+      }).then((r) => r.json()),
+  },
 
   // Usuários (apenas admin)
   usuarios: {
