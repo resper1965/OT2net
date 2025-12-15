@@ -9,6 +9,7 @@ import processosNormalizadosRouter from './processos-normalizados'
 import ragRouter from './rag'
 import dashboardRouter from './dashboard'
 import exportRouter from './export'
+import fasesRouter from './fases'
 
 const router = Router()
 
@@ -36,6 +37,9 @@ router.use('/processos-normalizados', processosNormalizadosRouter)
 
 // Rotas de RAG (Regras Regulatórias)
 router.use('/rag', ragRouter)
+
+// Rotas de Fases (Sistema Visual)
+router.use('/fases', fasesRouter)
 
 export default router
 
