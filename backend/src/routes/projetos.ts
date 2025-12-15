@@ -181,11 +181,11 @@ router.get('/:id/fases', authenticateToken, async (req: any, res, next) => {
     });
 
     // Montar resposta com progresso calculado
-    const fasesComProgresso = fases.map((fase) => {
-      const projetoFase = projetoFases.find((pf) => pf.fase_id === fase.id);
+    const fasesComProgresso = fases.map((fase: any) => {
+      const projetoFase = projetoFases.find((pf: any) => pf.fase_id === fase.id);
       const etapasDaFase = fase.etapas;
-      const etapasCompletadasDaFase = etapasCompletadas.filter((ec) =>
-        etapasDaFase.some((e) => e.id === ec.fase_etapa_id)
+      const etapasCompletadasDaFase = etapasCompletadas.filter((ec: any) =>
+        etapasDaFase.some((e: any) => e.id === ec.fase_etapa_id)
       );
 
       const totalEtapas = etapasDaFase.length;
@@ -205,9 +205,9 @@ router.get('/:id/fases', authenticateToken, async (req: any, res, next) => {
         projeto_fase: projetoFase || null,
         status,
         progresso: Math.round(progresso),
-        etapas_completadas: etapasCompletadasDaFase.map((ec) => ({
+        etapas_completadas: etapasCompletadasDaFase.map((ec: any) => ({
           ...ec,
-          etapa: etapasDaFase.find((e) => e.id === ec.fase_etapa_id),
+          etapa: etapasDaFase.find((e: any) => e.id === ec.fase_etapa_id),
         })),
       };
     });
@@ -280,7 +280,7 @@ router.post(
         where: {
           projeto_id: projetoId,
           fase_etapa_id: {
-            in: todasEtapasDaFase.map((e) => e.id),
+            in: todasEtapasDaFase.map((e: any) => e.id),
           },
         },
       });
