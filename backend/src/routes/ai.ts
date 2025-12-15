@@ -37,7 +37,13 @@ router.post('/normalizar', authenticateToken, async (req: Request, res: Response
 
     const result = await generativeModel.generateContent(prompt);
     const response = await result.response;
-    let text = response.candidates[0].content.parts[0].text;
+    const candidates = response.candidates;
+    
+    if (!candidates || !candidates[0] || !candidates[0].content || !candidates[0].content.parts || !candidates[0].content.parts[0]) {
+       throw new Error("Resposta inválida do modelo IA");
+    }
+
+    let text = candidates[0].content.parts[0].text;
 
     // Limpar markdown se houver (```json ... ```)
     if (text?.startsWith('```json')) {
