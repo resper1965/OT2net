@@ -18,7 +18,10 @@ import {
   AlertCircle,
   Plus,
   Download,
+  LayoutGrid,
+  List,
 } from "lucide-react";
+import { KanbanBoard } from "@/components/projetos/KanbanBoard";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
 
 interface Projeto {
@@ -37,6 +40,7 @@ export default function ProjetosPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
   const toast = useToast();
 
   useEffect(() => {
@@ -236,6 +240,29 @@ export default function ProjetosPage() {
             </div>
           </div>
 
+          <div className="flex justify-end mb-4">
+             <div className="bg-zinc-100 dark:bg-zinc-800 p-1 rounded-lg inline-flex">
+                <Button 
+                  variant={viewMode === "list" ? "default" : "ghost"} 
+                  size="sm" 
+                  onClick={() => setViewMode("list")}
+                  className={viewMode === "list" ? "shadow-sm bg-white text-black hover:bg-zinc-50 dark:bg-zinc-700 dark:text-white" : ""}
+                >
+                  <List className="h-4 w-4 mr-2" />
+                  Lista
+                </Button>
+                <Button 
+                  variant={viewMode === "kanban" ? "default" : "ghost"} 
+                  size="sm" 
+                  onClick={() => setViewMode("kanban")}
+                  className={viewMode === "kanban" ? "shadow-sm bg-white text-black hover:bg-zinc-50 dark:bg-zinc-700 dark:text-white" : ""}
+                >
+                  <LayoutGrid className="h-4 w-4 mr-2" />
+                  Kanban
+                </Button>
+             </div>
+          </div>
+
         {/* Content */}
         {loading ? (
           <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-12 text-center">
@@ -255,6 +282,8 @@ export default function ProjetosPage() {
               </Link>
             )}
           </div>
+        ) : viewMode === "kanban" ? (
+          <KanbanBoard projetos={filteredProjetos} />
         ) : (
           <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 shadow-sm">
             <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
