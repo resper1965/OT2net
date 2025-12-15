@@ -1,11 +1,16 @@
 "use client";
 
-// import { usePageTitle } from "@/contexts/PageTitleContext";
+import { usePageTitle } from "@/contexts/PageTitleContext";
 import { DashboardKPIs } from "@/components/dashboard/DashboardKPIs";
 import { ProjectPhasesTimeline } from "@/components/dashboard/ProjectPhasesTimeline";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
-  // const { setTitle } = usePageTitle();
+  const { setTitle } = usePageTitle();
+
+  useEffect(() => {
+    setTitle("Visão Geral");
+  }, [setTitle]);
 
   return (
     <div className="space-y-8">

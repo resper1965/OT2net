@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
     // e simplificar chamadas para /api/*
     
     // Fallback para URL do Backend no Cloud Run
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://ot2net-backend-21597837536.us-central1.run.app";
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://ot2net-backend-4zcmuadx7q-uc.a.run.app";
 
     return [
       {
