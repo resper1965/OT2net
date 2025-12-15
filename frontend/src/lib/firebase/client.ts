@@ -12,7 +12,12 @@ const firebaseConfig = {
 
 // Initialize Firebase (Singleton)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
+let auth: any;
+try {
+  auth = getAuth(app);
+} catch (e) {
+  console.error("Firebase Auth Init Error:", e);
+}
 const googleProvider = new GoogleAuthProvider();
 
 export { app, auth, googleProvider };

@@ -138,17 +138,90 @@ model Projeto {
   created_at      DateTime? @default(now()) @db.Timestamptz(6)
   updated_at      DateTime? @default(now()) @db.Timestamptz(6)
 
-  tenant                      Tenant                    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  organizacao                 Organizacao?              @relation(fields: [organizacao_id], references: [id], onDelete: Cascade)
+  tenant                      Tenant                       @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  organizacao                 Organizacao?                 @relation(fields: [organizacao_id], references: [id], onDelete: Cascade)
   membros_equipe              MembroEquipe[]
   iniciativas                 Iniciativa[]
   descricoes_operacionais_raw DescricaoOperacionalRaw[]
   questionarios               Questionario[]
   riscos                      Risco[]
+  fases                       ProjetoFase[]
+  etapas_completadas          ProjetoEtapaCompletada[]
 
   @@index([tenant_id])
   @@index([organizacao_id])
   @@map("projetos")
+}
+
+// ============================================
+// Sistema de Fases Visuais
+// ============================================
+
+model Fase {
+  id        String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  codigo    String    @unique @db.Text // "fase-1", "fase0", "fase1", "fase2", "fase3"
+  nome      String    @db.Text // "Onboarding & Setup"
+  descricao String    @db.Text
+  ordem     Int
+  cor       String    @db.Text // Código hex da cor (#0ea5e9)
+  icone     String?   @db.Text // Nome do ícone Lucide
+
+  etapas        FaseEtapa[]
+  projeto_fases ProjetoFase[]
+
+  @@map("fases")
+}
+
+model FaseEtapa {
+  id          String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  fase_id     String  @db.Uuid
+  nome        String  @db.Text
+  descricao   String  @db.Text
+  ordem       Int
+  obrigatoria Boolean @default(true) @db.Boolean
+
+  fase        Fase                     @relation(fields: [fase_id], references: [id], onDelete: Cascade)
+  completadas ProjetoEtapaCompletada[]
+
+  @@index([fase_id])
+  @@map("fase_etapas")
+}
+
+model ProjetoFase {
+  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  projeto_id      String    @db.Uuid
+  fase_id         String    @db.Uuid
+  status          String    @default("nao_iniciada") @db.Text // nao_iniciada | em_andamento | concluida
+  data_inicio     DateTime? @db.Timestamptz(6)
+  data_conclusao  DateTime? @db.Timestamptz(6)
+  progresso       Float     @default(0)
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime? @default(now()) @db.Timestamptz(6)
+
+  projeto Projeto @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
+  fase    Fase    @relation(fields: [fase_id], references: [id], onDelete: Cascade)
+
+  @@unique([projeto_id, fase_id])
+  @@index([projeto_id])
+  @@index([fase_id])
+  @@map("projeto_fases")
+}
+
+model ProjetoEtapaCompletada {
+  id             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  projeto_id     String    @db.Uuid
+  fase_etapa_id  String    @db.Uuid
+  completada_em  DateTime  @default(now()) @db.Timestamptz(6)
+  completada_por String?   @db.Uuid
+  observacoes    String?   @db.Text
+
+  projeto    Projeto   @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
+  fase_etapa FaseEtapa @relation(fields: [fase_etapa_id], references: [id], onDelete: Cascade)
+
+  @@unique([projeto_id, fase_etapa_id])
+  @@index([projeto_id])
+  @@index([fase_etapa_id])
+  @@map("projeto_etapas_completadas")
 }
 
 model MembroEquipe {
