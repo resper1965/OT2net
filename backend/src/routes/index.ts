@@ -10,6 +10,7 @@ import ragRouter from './rag'
 import dashboardRouter from './dashboard'
 import exportRouter from './export'
 import fasesRouter from './fases'
+import adminRouter from './admin'
 
 const router = Router()
 
@@ -40,6 +41,9 @@ router.use('/rag', ragRouter)
 
 // Rotas de Fases (Sistema Visual)
 router.use('/fases', fasesRouter)
+
+// Rotas de Admin (Migração, Seed)
+router.use('/admin', adminRouter)
 
 export default router
 
