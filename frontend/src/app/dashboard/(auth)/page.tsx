@@ -1,11 +1,11 @@
 "use client";
 
-import { usePageTitle } from "@/contexts/PageTitleContext";
+// import { usePageTitle } from "@/contexts/PageTitleContext";
 import { DashboardKPIs } from "@/components/dashboard/DashboardKPIs";
 import { ProjectPhasesTimeline } from "@/components/dashboard/ProjectPhasesTimeline";
 
 export default function DashboardPage() {
-  const { setTitle } = usePageTitle();
+  // const { setTitle } = usePageTitle();
 
   return (
     <div className="space-y-8">
