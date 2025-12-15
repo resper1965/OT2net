@@ -349,7 +349,7 @@ router.delete(
         where: {
           projeto_id: projetoId,
           fase_etapa_id: {
-            in: todasEtapasDaFase.map((e) => e.id),
+            in: todasEtapasDaFase.map((e: any) => e.id),
           },
         },
       });
