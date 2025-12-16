@@ -284,6 +284,30 @@ export const api = {
       }),
   },
 
+  // Iniciativas
+  iniciativas: {
+    list: (params?: { projeto_id?: string; status?: string; page?: number; limit?: number }) => {
+      const query = new URLSearchParams(params as any).toString();
+      const url = query ? `/api/iniciativas?${query}` : "/api/iniciativas";
+      return fetchWithAuth(url).then((r) => r.json());
+    },
+    get: (id: string) => fetchWithAuth(`/api/iniciativas/${id}`).then((r) => r.json()),
+    create: (data: Record<string, unknown>) =>
+      fetchWithAuth("/api/iniciativas", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }).then((r) => r.json()),
+    update: (id: string, data: Record<string, unknown>) =>
+      fetchWithAuth(`/api/iniciativas/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }).then((r) => r.json()),
+    delete: (id: string) =>
+      fetchWithAuth(`/api/iniciativas/${id}`, {
+        method: "DELETE",
+      }),
+  },
+
   // IA
   ai: {
     normalizeProcess: (data: { titulo: string; descricao_completa: string }) =>

@@ -53,4 +53,7 @@ router.use('/ai', aiRouter)
 // Rotas de Riscos (Sprint 6)
 router.use('/riscos', riscosRouter)
 
+// Rotas de Iniciativas (Sprint 7)
+router.use('/iniciativas', iniciativasRouter)
+
 export default router
