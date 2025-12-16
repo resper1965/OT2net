@@ -31,7 +31,7 @@ steps:
         "--build-arg",
         "NEXT_PUBLIC_FIREBASE_APP_ID=1:21597837536:web:9ecc63e8258854eb905885",
         "--build-arg",
-        "NEXT_PUBLIC_API_URL=https://ot2net-backend-661727503610.us-central1.run.app",
+        "NEXT_PUBLIC_API_URL=https://ot2net-backend-21597837536.us-central1.run.app",
         "./frontend",
       ]
 

@@ -4,7 +4,7 @@ set -e
 # Configuration
 SERVICE_NAME="ot2net-backend"
 REGION="us-central1"
-INSTANCE_CONNECTION_NAME="ngabi-480613:southamerica-east1:ngabi-db"
+INSTANCE_CONNECTION_NAME="ot2net:us-central1:ot2net-postgres"
 DB_USER="ot2net_user"
 DB_PASS="changeme123"
 FRONTEND_URL="https://ot2net.ness.com.br"
