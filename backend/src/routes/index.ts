@@ -13,6 +13,7 @@ import fasesRouter from './fases'
 import adminRouter from './admin';
 import { aiRouter } from './ai';
 import riscosRouter from './riscos';
+import iniciativasRouter from './iniciativas';
 
 const router = Router()
 
