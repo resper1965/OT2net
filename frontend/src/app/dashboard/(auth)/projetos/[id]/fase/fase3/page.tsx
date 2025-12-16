@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, LineChart, Plus } from "lucide-react";
 import Link from "next/link";
+import { KPIDashboard } from "@/components/kpis/KPIDashboard";
 
 export default function Fase3Page() {
   const params = useParams();
@@ -30,7 +31,7 @@ export default function Fase3Page() {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <LineChart className="h-8 w-8 text-green-600" />
-              Fase 3: PMO & Tracking
+              Fase 3: PMO &amp; Tracking
             </h1>
             <p className="text-zinc-600 dark:text-zinc-400 mt-1">{projeto?.nome}</p>
           </div>
@@ -49,15 +50,23 @@ export default function Fase3Page() {
         </TabsList>
 
         <TabsContent value="kpis">
-          <Card className="p-6">Dashboard de KPIs em desenvolvimento</Card>
+          <KPIDashboard projeto_id={id} />
         </TabsContent>
 
         <TabsContent value="progress">
-          <Card className="p-6">Timeline de progresso</Card>
+          <Card className="p-6">
+            <div className="text-center text-zinc-500 py-8">
+              Timeline de progresso em desenvolvimento
+            </div>
+          </Card>
         </TabsContent>
 
         <TabsContent value="reports">
-          <Card className="p-6">Relatórios exportáveis</Card>
+          <Card className="p-6">
+            <div className="text-center text-zinc-500 py-8">
+              Sistema de relatórios exportáveis em desenvolvimento
+            </div>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

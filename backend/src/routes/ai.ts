@@ -59,4 +59,90 @@ router.post('/normalizar', authenticateToken, async (req: Request, res: Response
   }
 });
 
+// POST /api/ai/analyze-risk - Analyze risks from processed description
+router.post('/analyze-risk', authenticateToken, async (req: any, res: Response): Promise<void> => {
+  try {
+    const { processo_normalizado_id, framework_id } = req.body;
+
+    if (!processo_normalizado_id) {
+      res.status(400).json({ error: 'processo_normalizado_id é obrigatório' });
+      return;
+    }
+
+    // Get normalized process
+    const processo = await req.prisma.processoNormalizado.findUnique({
+      where: { id: processo_normalizado_id },
+      include: {
+        etapas: true,
+        ativos: true,
+        dificuldades: true,
+      },
+    });
+
+    if (!processo) {
+      res.status(404).json({ error: 'Processo não encontrado' });
+      return;
+    }
+
+    const prompt = `
+      Você é um Especialista em Cybersecurity e Riscos Operacionais para Tecnologia Operacional (OT).
+      Analise o seguinte processo normalizado e identifique riscos de segurança e operacionais.
+
+      PROCESSO:
+      Nome: ${processo.nome}
+      Objetivo: ${processo.objetivo || 'N/A'}
+      Criticidade: ${processo.criticidade || 'N/A'}
+      
+      ETAPAS:
+      ${processo.etapas?.map((e: any) => `${e.ordem}. ${e.nome} - ${e.descricao}`).join('\n')}
+      
+      ATIVOS ENVOLVIDOS:
+      ${processo.ativos?.map((a: any) => `- ${a.nome} (${a.tipo})`).join('\n') || 'Nenhum'}
+      
+      DIFICULDADES RELATADAS:
+      ${processo.dificuldades?.map((d: any) => `- ${d.descricao}`).join('\n') || 'Nenhuma'}
+
+      SAÍDA ESPERADA (JSON):
+      {
+        "riscos_identificados": [
+          {
+            "nome": "Nome curto do risco",
+            "categoria": "TECNICO" | "OPERACIONAL" | "SEGURANCA" | "COMPLIANCE",
+            "descricao": "Descrição detalhada do risco",
+            "probabilidade": 1-5,
+            "impacto_seguranca": 1-5,
+            "impacto_operacional": 1-5,
+            "fonte": "Etapa ou ativo que origina o risco",
+            "controles_recomendados": ["Controle 1", "Controle 2"]
+          }
+        ],
+        "recomendacoes_gerais": ["Recomendação 1", "Recomendação 2"]
+      }
+
+      Responda APENAS o JSON. Sem markdown.
+    `;
+
+    const result = await generativeModel.generateContent(prompt);
+    const response = await result.response;
+    const candidates = response.candidates;
+    
+    if (!candidates || !candidates[0] || !candidates[0].content || !candidates[0].content.parts || !candidates[0].content.parts[0]) {
+       throw new Error("Resposta inválida do modelo IA");
+    }
+
+    let text = candidates[0].content.parts[0].text;
+
+    if (text?.startsWith('```json')) {
+      text = text.replace(/```json/g, '').replace(/```/g, '');
+    }
+
+    const jsonResult = JSON.parse(text || '{}');
+
+    res.json(jsonResult);
+  } catch (error: any) {
+    console.error('Erro na análise de riscos IA:', error);
+    res.status(500).json({ error: 'Falha ao processar com IA', details: error.message });
+  }
+});
+
 export const aiRouter = router;

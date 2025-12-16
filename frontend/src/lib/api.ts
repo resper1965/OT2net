@@ -308,10 +308,59 @@ export const api = {
       }),
   },
 
+  // Frameworks
+  frameworks: {
+    list: () => fetchWithAuth("/api/frameworks").then((r) => r.json()),
+    getRequisitos: (framework: string, versao?: string) => {
+      const query = versao ? `?versao=${versao}` : "";
+      return fetchWithAuth(`/api/frameworks/${framework}/requisitos${query}`).then((r) => r.json());
+    },
+  },
+
+  // Análises de Conformidade
+  analisesConformidade: {
+    list: (projeto_id: string) =>
+      fetchWithAuth(`/api/analises-conformidade?projeto_id=${projeto_id}`).then((r) => r.json()),
+    create: (data: Record<string, unknown>) =>
+      fetchWithAuth("/api/analises-conformidade", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }).then((r) => r.json()),
+    getGapReport: (projeto_id: string) =>
+      fetchWithAuth(`/api/analises-conformidade/gap-report/${projeto_id}`).then((r) => r.json()),
+  },
+
+  // Indicadores/KPIs
+  indicadores: {
+    list: (params?: { projeto_id?: string; tipo?: string }) => {
+      const query = new URLSearchParams(params as any).toString();
+      const url = query ? `/api/indicadores?${query}` : "/api/indicadores";
+      return fetchWithAuth(url).then((r) => r.json());
+    },
+    get: (id: string) => fetchWithAuth(`/api/indicadores/${id}`).then((r) => r.json()),
+    create: (data: Record<string, unknown>) =>
+      fetchWithAuth("/api/indicadores", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }).then((r) => r.json()),
+    addValor: (id: string, data: Record<string, unknown>) =>
+      fetchWithAuth(`/api/indicadores/${id}/valores", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }).then((r) => r.json()),
+    getDashboard: (projeto_id: string) =>
+      fetchWithAuth(`/api/indicadores/projeto/${projeto_id}/dashboard`).then((r) => r.json()),
+  },
+
   // IA
   ai: {
     normalizeProcess: (data: { titulo: string; descricao_completa: string }) =>
       fetchWithAuth("/api/ai/normalize-process", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }).then((r) => r.json()),
+    analyzeRisk: (data: { processo_normalizado_id: string; framework_id?: string }) =>
+      fetchWithAuth("/api/ai/analyze-risk", {
         method: "POST",
         body: JSON.stringify(data),
       }).then((r) => r.json()),

@@ -14,6 +14,9 @@ import adminRouter from './admin';
 import { aiRouter } from './ai';
 import riscosRouter from './riscos';
 import iniciativasRouter from './iniciativas';
+import frameworksRouter from './frameworks';
+import analisesConformidadeRouter from './analises-conformidade';
+import indicadoresRouter from './indicadores';
 
 const router = Router()
 
@@ -56,5 +59,14 @@ router.use('/riscos', riscosRouter)
 
 // Rotas de Iniciativas (Sprint 7)
 router.use('/iniciativas', iniciativasRouter)
+
+// Rotas de Frameworks (Sprint 6)
+router.use('/frameworks', frameworksRouter)
+
+// Rotas de Análises de Conformidade (Sprint 6)
+router.use('/analises-conformidade', analisesConformidadeRouter)
+
+// Rotas de Indicadores/KPIs (Sprint 8)
+router.use('/indicadores', indicadoresRouter)
 
 export default router
