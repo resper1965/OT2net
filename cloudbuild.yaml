@@ -80,3 +80,6 @@ steps:
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/ot2net-repo/ot2net-backend"
   - "us-central1-docker.pkg.dev/$PROJECT_ID/ot2net-repo/ot2net-frontend"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
