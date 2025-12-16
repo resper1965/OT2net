@@ -274,12 +274,7 @@ export default function ProjetoDetalhesPage() {
           {fases.map((fase, index) => (
             <TabsContent key={fase.id} value={index.toString()}>
               {fase.codigo === "fase0" && (
-                <div className="mb-6 bg-blue-50 dark:bg-blue-900/10 p-4 rounded-lg flex items-center justify-between border border-blue-100 dark:border-blue-900/20">
-                  <div>
-                    <h3 className="font-medium text-blue-900 dark:text-blue-100">Ferramentas de IA</h3>
-                    <p className="text-sm text-blue-700 dark:text-blue-300">Utilize nossa IA para normalizar processos brutos.</p>
-                  </div>
-                  <div className="flex flex-col gap-2">
+                <div className="mb-6 space-y-2">
                   <Button
                     variant="default"
                     className="w-full justify-start bg-yellow-600 hover:bg-yellow-700"
@@ -297,7 +292,7 @@ export default function ProjetoDetalhesPage() {
                   >
                     <Link href={`/dashboard/projetos/${id}/fase/fase1`}>
                       <Shield className="h-4 w-4 mr-2" />
-                      Fase 1: Assessment & Risks
+                      Fase 1: Assessment &amp; Risks
                     </Link>
                   </Button>
                   <Button
@@ -317,7 +312,7 @@ export default function ProjetoDetalhesPage() {
                   >
                     <Link href={`/dashboard/projetos/${id}/fase/fase3`}>
                       <LineChart className="h-4 w-4 mr-2" />
-                      Fase 3: PMO & Tracking
+                      Fase 3: PMO &amp; Tracking
                     </Link>
                   </Button>
                 </div>
