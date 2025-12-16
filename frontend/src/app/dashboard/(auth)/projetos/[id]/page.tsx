@@ -12,7 +12,7 @@ import { PhaseChecklist } from "@/components/projetos/PhaseChecklist";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePageTitle } from "@/contexts/PageTitleContext";
-import { Bot } from "lucide-react";
+import { Bot, ArrowLeft, Calendar, Users, Building2, TrendingUp, CheckCircle2, AlertCircle, Clock, Sparkles, Shield, Target, LineChart } from "lucide-react";
 
 interface Projeto {
   id: string;
@@ -279,12 +279,47 @@ export default function ProjetoDetalhesPage() {
                     <h3 className="font-medium text-blue-900 dark:text-blue-100">Ferramentas de IA</h3>
                     <p className="text-sm text-blue-700 dark:text-blue-300">Utilize nossa IA para normalizar processos brutos.</p>
                   </div>
-                  <Link href={`/dashboard/projetos/${id}/fase/fase0`}>
-                    <Button variant="outline" className="gap-2 bg-white dark:bg-zinc-900 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20">
-                      <Bot className="w-4 h-4" />
-                      Acessar Normalização
-                    </Button>
-                  </Link>
+                  <div className="flex flex-col gap-2">
+                  <Button
+                    variant="default"
+                    className="w-full justify-start bg-yellow-600 hover:bg-yellow-700"
+                    asChild
+                  >
+                    <Link href={`/dashboard/projetos/${id}/fase/fase0`}>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      AI: Normalização de Processos
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="default"
+                    className="w-full justify-start bg-purple-600 hover:bg-purple-700"
+                    asChild
+                  >
+                    <Link href={`/dashboard/projetos/${id}/fase/fase1`}>
+                      <Shield className="h-4 w-4 mr-2" />
+                      Fase 1: Assessment & Risks
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="default"
+                    className="w-full justify-start bg-blue-600 hover:bg-blue-700"
+                    asChild
+                  >
+                    <Link href={`/dashboard/projetos/${id}/fase/fase2`}>
+                      <Target className="h-4 w-4 mr-2" />
+                      Fase 2: Plano Diretor
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="default"
+                    className="w-full justify-start bg-green-600 hover:bg-green-700"
+                    asChild
+                  >
+                    <Link href={`/dashboard/projetos/${id}/fase/fase3`}>
+                      <LineChart className="h-4 w-4 mr-2" />
+                      Fase 3: PMO & Tracking
+                    </Link>
+                  </Button>
                 </div>
               )}
               <PhaseChecklist
