@@ -260,12 +260,36 @@ export const api = {
       ),
   },
   
+  // Riscos
+  riscos: {
+    list: (params?: { projeto_id?: string; site_id?: string; status?: string; nivel_risco?: string; page?: number; limit?: number }) => {
+      const query = new URLSearchParams(params as any).toString();
+      const url = query ? `/api/riscos?${query}` : "/api/riscos";
+      return fetchWithAuth(url).then((r) => r.json());
+    },
+    get: (id: string) => fetchWithAuth(`/api/riscos/${id}`).then((r) => r.json()),
+    create: (data: Record<string, unknown>) =>
+      fetchWithAuth("/api/riscos", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }).then((r) => r.json()),
+    update: (id: string, data: Record<string, unknown>) =>
+      fetchWithAuth(`/api/riscos/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }).then((r) => r.json()),
+    delete: (id: string) =>
+      fetchWithAuth(`/api/riscos/${id}`, {
+        method: "DELETE",
+      }),
+  },
+
   // IA
   ai: {
-    normalizar: (descricao: string) => 
-      fetchWithAuth("/api/ai/normalizar", {
+    normalizeProcess: (data: { titulo: string; descricao_completa: string }) =>
+      fetchWithAuth("/api/ai/normalize-process", {
         method: "POST",
-        body: JSON.stringify({ descricao }),
+        body: JSON.stringify(data),
       }).then((r) => r.json()),
   },
 

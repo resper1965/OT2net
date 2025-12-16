@@ -12,6 +12,7 @@ import exportRouter from './export'
 import fasesRouter from './fases'
 import adminRouter from './admin';
 import { aiRouter } from './ai';
+import riscosRouter from './riscos';
 
 const router = Router()
 
@@ -48,5 +49,8 @@ router.use('/admin', adminRouter)
 
 // Rotas de IA
 router.use('/ai', aiRouter)
+
+// Rotas de Riscos (Sprint 6)
+router.use('/riscos', riscosRouter)
 
 export default router
