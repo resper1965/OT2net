@@ -97,7 +97,7 @@ router.post('/', authenticateToken, requirePermission('riscos', 'create'), async
         data.probabilidade,
         data.impacto_seguranca,
         data.impacto_operacional
-      );
+      ) as 'CRITICO' | 'ALTO' | 'MEDIO' | 'BAIXO';
     }
 
     const risco = await req.prisma.risco.create({
@@ -152,13 +152,7 @@ router.patch('/:id', authenticateToken, requirePermission('riscos', 'update'), a
     // Recalculate risk level if scoring changed
     if (data.probabilidade || data.impacto_seguranca || data.impacto_operacional) {
       const existing = await req.prisma.risco.findUnique({ where: { id } });
-      if (existing) {
-        data.nivel_risco = calculateNivelRisco(
-          data.probabilidade ?? existing.probabilidade,
-          data.impacto_seguranca ?? existing.impacto_seguranca,
-          data.impacto_operacional ?? existing.impacto_operacional
-        );
-      }
+
     }
 
     const risco = await req.prisma.risco.update({
