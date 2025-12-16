@@ -87,9 +87,9 @@ router.get('/', authenticateToken, requirePermission('riscos', 'read'), async (r
 });
 
 // POST /api/riscos - Create a new risk
-router.post('/', authenticateToken, requirePermission('riscos', 'create'), validate(createRiscoSchema), async (req: any, res, next) => {
+router.post('/', authenticateToken, requirePermission('riscos', 'create'), async (req: any, res, next) => {
   try {
-    const data = req.validatedData;
+    const data = createRiscoSchema.parse(req.body);
     
     // Auto-calculate risk level if not provided
     if (!data.nivel_risco) {
@@ -144,10 +144,10 @@ router.get('/:id', authenticateToken, requirePermission('riscos', 'read'), async
 });
 
 // PATCH /api/riscos/:id - Update risk
-router.patch('/:id', authenticateToken, requirePermission('riscos', 'update'), validate({ body: updateRiscoSchema }), async (req: any, res, next) => {
+router.patch('/:id', authenticateToken, requirePermission('riscos', 'update'), async (req: any, res, next) => {
   try {
     const { id } = req.params;
-    const data = req.validatedData;
+    const data = updateRiscoSchema.parse(req.body);
 
     // Recalculate risk level if scoring changed
     if (data.probabilidade || data.impacto_seguranca || data.impacto_operacional) {
