@@ -344,7 +344,7 @@ export const api = {
         body: JSON.stringify(data),
       }).then((r) => r.json()),
     addValor: (id: string, data: Record<string, unknown>) =>
-      fetchWithAuth(`/api/indicadores/${id}/valores", {
+      fetchWithAuth(`/api/indicadores/${id}/valores`, {
         method: "POST",
         body: JSON.stringify(data),
       }).then((r) => r.json()),
