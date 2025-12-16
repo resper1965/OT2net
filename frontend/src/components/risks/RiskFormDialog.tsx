@@ -9,7 +9,7 @@ import { api } from "@/lib/api";
 
 interface RiskFormDialogProps {
   open: boolean;
-  on Close: () => void;
+  onClose: () => void;
   projeto_id: string;
   onSuccess: () => void;
 }
