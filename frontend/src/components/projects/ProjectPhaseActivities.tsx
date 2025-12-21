@@ -13,7 +13,8 @@ import {
   BarChart3,
   Target,
   Workflow,
-  ChevronRight
+  ChevronRight,
+  LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -23,7 +24,7 @@ interface FaseAtividade {
   nome: string;
   descricao: string;
   menuUrl: string;
-  icon: any;
+  icon: LucideIcon;
   concluida?: boolean;
 }
 
@@ -180,7 +181,7 @@ interface ProjectPhaseActivitiesProps {
   projetoId?: string;
 }
 
-export function ProjectPhaseActivities({ faseAtual = "discovery", projetoId }: ProjectPhaseActivitiesProps) {
+export function ProjectPhaseActivities({ faseAtual = "discovery" }: ProjectPhaseActivitiesProps) {
   // Mapear fase_atual do banco para ID da fase
   const faseMap: Record<string, string> = {
     "onboarding": "onboarding",

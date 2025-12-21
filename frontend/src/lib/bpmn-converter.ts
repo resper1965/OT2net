@@ -1,6 +1,6 @@
 export function convertJsonToBpmnXml(json: any): string {
     const definitions = json.definitions?.process;
-    if (!definitions) return "";
+    if (!definitions) {return "";}
 
     const processId = definitions.id || "Process_1";
     let shapes = "";

@@ -7,7 +7,7 @@ import { AppError } from '../middleware/errorHandler'
  * Serviço de RAG (Retrieval-Augmented Generation) para regras regulatórias
  * Especializado em regras da ANEEL, ONS sobre redes operativas e normas BPMN 2.0
  */
-export type FrameworkType = 'ANEEL' | 'ONS' | 'BPMN'
+export type FrameworkType = 'ANEEL' | 'ONS' | 'BPMN' | 'IEC62443' | 'NIST_CSF'
 
 export class RAGService {
   /**
@@ -125,6 +125,17 @@ Sua função é responder perguntas sobre normas e especificações BPMN 2.0 rel
 Use APENAS as normas fornecidas no contexto para responder. Se a pergunta não estiver relacionada às normas fornecidas, informe isso claramente.
 
 Seja preciso, cite os códigos/seções das normas quando relevante, e forneça respostas práticas e acionáveis com exemplos quando apropriado.`
+      } else if (frameworkContext === 'IEC62443' || frameworkContext === 'NIST_CSF') {
+        systemInstruction = `Você é um especialista em segurança cibernética industrial (OT Security) e conformidade regulatória.
+Sua especialidade inclui as normas IEC 62443 e o frameworks NIST CSF 2.0.
+
+Sua função é realizar o cross-check entre o mapeamento de processos de campo e os requisitos destas normas.
+Use APENAS o contexto fornecido para responder.
+
+Ao responder:
+1. Cite especificamente o controle ou requisito (ex: IEC 62443-3-3 SR 1.1).
+2. Explique a aplicação prática no ambiente industrial do cliente.
+3. Destaque lacunas de conformidade se identificadas.`
       } else {
         systemInstruction = `Você é um especialista em regulações da ANEEL (Agência Nacional de Energia Elétrica) e ONS (Operador Nacional do Sistema Elétrico) sobre redes operativas.
 
@@ -134,7 +145,7 @@ Sua função é responder perguntas sobre regras regulatórias relacionadas a:
 - Normas técnicas e procedimentos
 - Conformidade regulatória
 
-Use APENAS as regras fornecidas no contexto para responder. Se a pergunta não estiver relacionada às regras fornecidas, informe isso claramente.
+Use APENAS as regras fornecidas no contexto para responder. Se a pergunta não estiver relacionada às normas fornecidas, informe isso claramente.
 
 Seja preciso, cite os códigos das regras quando relevante, e forneça respostas práticas e acionáveis.`
       }

@@ -12,7 +12,7 @@ import { Loader2 } from "lucide-react";
 
 export default function ContaPage() {
   const { user } = useAuth();
-  const { toast } = useToast();
+  const toast = useToast();
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -24,24 +24,17 @@ export default function ContaPage() {
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {return;}
 
     setLoading(true);
     try {
       await updateProfile(user, {
         displayName: displayName,
       });
-      toast({
-        title: "Perfil atualizado",
-        description: "Seu nome foi atualizado com sucesso.",
-      });
+      toast.success("Seu nome foi atualizado com sucesso.", "Perfil atualizado");
     } catch (error) {
       console.error("Erro ao atualizar perfil:", error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar o perfil.",
-        variant: "destructive",
-      });
+      toast.error("Não foi possível atualizar o perfil.", "Erro");
     } finally {
       setLoading(false);
     }

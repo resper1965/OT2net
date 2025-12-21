@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { RAGService } from '../src/services/rag-service';
 
 const prisma = new PrismaClient();
 
@@ -98,80 +99,80 @@ async function main() {
       data: {
         tenant_id: tenant.id,
         empresa_id: empresas[0].id,
-        nome: 'UHE Tucuruí',
-        tipo_instalacao: 'Usina Hidrelétrica'
+        identificacao: 'UHE-TUCURUI',
+        classificacao: 'Usina Hidrelétrica'
       }
     }),
     prisma.site.create({
       data: {
         tenant_id: tenant.id,
         empresa_id: empresas[0].id,
-        nome: 'SE Tucuruí 500kV',
-        tipo_instalacao: 'Subestação'
+        identificacao: 'SE-TUCURUI-500KV',
+        classificacao: 'Subestação'
       }
     }),
     prisma.site.create({
       data: {
         tenant_id: tenant.id,
         empresa_id: empresas[1].id,
-        nome: 'UHE Furnas',
-        tipo_instalacao: 'Usina Hidrelétrica'
+        identificacao: 'UHE-FURNAS',
+        classificacao: 'Usina Hidrelétrica'
       }
     }),
     prisma.site.create({
       data: {
         tenant_id: tenant.id,
         empresa_id: empresas[1].id,
-        nome: 'UTE Santa Cruz',
-        tipo_instalacao: 'Usina Termelétrica'
+        identificacao: 'UTE-SANTA-CRUZ',
+        classificacao: 'Usina Termelétrica'
       }
     }),
     prisma.site.create({
       data: {
         tenant_id: tenant.id,
         empresa_id: empresas[2].id,
-        nome: 'UHE Paulo Afonso IV',
-        tipo_instalacao: 'Usina Hidrelétrica'
+        identificacao: 'UHE-PAULO-AFONSO-IV',
+        classificacao: 'Usina Hidrelétrica'
       }
     }),
     prisma.site.create({
       data: {
         tenant_id: tenant.id,
         empresa_id: empresas[2].id,
-        nome: 'SE Angelim II 500kV',
-        tipo_instalacao: 'Subestação'
+        identificacao: 'SE-ANGELIM-II',
+        classificacao: 'Subestação'
       }
     }),
     prisma.site.create({
       data: {
         tenant_id: tenant.id,
         empresa_id: empresas[3].id,
-        nome: 'UHE Emborcação',
-        tipo_instalacao: 'Usina Hidrelétrica'
+        identificacao: 'UHE-EMBORCACAO',
+        classificacao: 'Usina Hidrelétrica'
       }
     }),
     prisma.site.create({
       data: {
         tenant_id: tenant.id,
         empresa_id: empresas[3].id,
-        nome: 'UHE Jaguara',
-        tipo_instalacao: 'Usina Hidrelétrica'
+        identificacao: 'UHE-JAGUARA',
+        classificacao: 'Usina Hidrelétrica'
       }
     }),
     prisma.site.create({
       data: {
         tenant_id: tenant.id,
         empresa_id: empresas[4].id,
-        nome: 'SE Barreiro 138kV',
-        tipo_instalacao: 'Subestação'
+        identificacao: 'SE-BARREIRO',
+        classificacao: 'Subestação'
       }
     }),
     prisma.site.create({
       data: {
         tenant_id: tenant.id,
         empresa_id: empresas[4].id,
-        nome: 'Centro de Operação do Sistema (COS)',
-        tipo_instalacao: 'Centro de Controle'
+        identificacao: 'COS-CEMIG',
+        classificacao: 'Centro de Controle'
       }
     }),
   ]);
@@ -185,9 +186,8 @@ async function main() {
         tenant_id: tenant.id,
         organizacao_id: org1.id,
         nome: 'Adequação ANEEL 964/21 - Eletrobras',
-        objetivo: 'Compliance com Resolução ANEEL 964/21',
-        fase_atual: 'discovery',
-        status: 'em_andamento'
+        descricao: 'Compliance com Resolução ANEEL 964/21',
+        fase_atual: 'discovery'
       }
     }),
     await prisma.projeto.create({
@@ -195,9 +195,8 @@ async function main() {
         tenant_id: tenant.id,
         organizacao_id: org2.id,
         nome: 'Mapeamento AS-IS - CEMIG',
-        objetivo: 'Levantamento de processos operacionais',
-        fase_atual: 'discovery',
-        status: 'em_andamento'
+        descricao: 'Levantamento de processos operacionais',
+        fase_atual: 'discovery'
       }
     }),
     await prisma.projeto.create({
@@ -205,9 +204,8 @@ async function main() {
         tenant_id: tenant.id,
         organizacao_id: org1.id,
         nome: 'Assessment IEC 62443 - Furnas',
-        objetivo: 'Avaliação de conformidade IEC 62443',
-        fase_atual: 'planejamento',
-        status: 'planejado'
+        descricao: 'Avaliação de conformidade IEC 62443',
+        fase_atual: 'planejamento'
       }
     }),
   ];
@@ -230,7 +228,7 @@ async function main() {
             approval_text: `Processo ${i + 1}: monitoramento de sistemas SCADA com impacto moderado.`,
             mermaid_graph: `flowchart TD\n    A[Início] --> B[Verificar]\n    B --> C[Fim]`,
             bpmn: { id: `proc-${i}` }
-          } : null
+          } as any : undefined
         }
       });
     })
@@ -246,9 +244,6 @@ async function main() {
           tenant_id: tenant.id,
           descricao_raw_id: desc.id,
           nome: `${desc.titulo} (Normalizado)`,
-          bpmn_json: { id: `norm-${i}` },
-          approval_text: (desc.resultado_processamento as any)?.approval_text,
-          mermaid_graph: (desc.resultado_processamento as any)?.mermaid_graph,
           nivel_confianca_normalizacao: 0.85,
           status: i < 5 ? 'aprovado' : 'revisao'
         }
@@ -257,7 +252,46 @@ async function main() {
   );
   console.log(`✅ Processos Normalizados: ${processosNorm.length} created`);
 
-  console.log('\n🎉 Seed completed!');
+  // Regulatory Requirements (RAG)
+  const requirements = [
+    {
+      framework: 'ANEEL',
+      codigo: 'REN 964/2021',
+      titulo: 'Segurança Cibernética no Setor Elétrico',
+      descricao: 'Estabelece os requisitos mínimos de segurança cibernética para as instalações e sistemas de rede operativos do setor elétrico.',
+      categoria: 'Governança'
+    },
+    {
+      framework: 'IEC62443',
+      codigo: 'IEC 62443-3-3',
+      titulo: 'System security requirements and security levels',
+      descricao: 'Define requisitos detalhados para o SR 1.1 (Identificação e Autenticação), segmentação de zonas e condutos (SR 5.1).',
+      categoria: 'Técnico'
+    },
+    {
+      framework: 'NIST_CSF',
+      codigo: 'PR.AC-3',
+      titulo: 'Access Control Management',
+      descricao: 'Controle de acesso lógico ao ativos de rede e sistemas baseados em privilégios mínimos.',
+      categoria: 'Proteção'
+    }
+  ]
+
+  for (const req of requirements) {
+    try {
+      await RAGService.adicionarRegra(
+        req.framework as any,
+        req.codigo,
+        req.titulo,
+        req.descricao,
+        req.categoria
+      )
+    } catch (e) {
+      console.log(`Regra ${req.codigo} já existe ou erro na vetorização.`)
+    }
+  }
+
+  console.log('Seed completed successfully')
   console.log('📊 Summary:');
   console.log(`   - Tenants: 1`);
   console.log(`   - Organizações: 2`);

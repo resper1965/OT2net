@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
@@ -9,21 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Users, Search, Filter, Shield, UserCheck } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
-
-interface Usuario {
-  id: string;
-  nome: string;
-  email: string;
-  perfil?: string;
-  organizacao?: string;
-  status?: string;
-  created_at?: string;
-}
+import { useUsuarios } from "@/hooks/use-usuarios";
 
 export default function UsuariosPage() {
   usePageTitleEffect("Usuários");
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { usuarios, loading, refetch } = useUsuarios();
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [filterPerfil, setFilterPerfil] = useState<string>("all");
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; id: string | null }>({
@@ -31,28 +22,6 @@ export default function UsuariosPage() {
     id: null,
   });
   const toast = useToast();
-
-  const loadUsuarios = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await api.usuarios.list();
-      setUsuarios(Array.isArray(data) ? data : []);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
-      if (errorMessage.includes("403") || errorMessage.includes("Acesso negado")) {
-        toast.error("Acesso negado. Apenas administradores podem gerenciar usuários.");
-        window.location.href = "/dashboard";
-      } else {
-        toast.error("Erro ao carregar usuários");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
-
-  useEffect(() => {
-    loadUsuarios();
-  }, [loadUsuarios]);
 
   function handleDeleteClick(id: string) {
     setDeleteDialog({ open: true, id });
@@ -63,7 +32,7 @@ export default function UsuariosPage() {
 
     try {
       await api.usuarios.delete(deleteDialog.id);
-      await loadUsuarios();
+      await refetch();
       toast.success("Usuário excluído com sucesso");
       setDeleteDialog({ open: false, id: null });
     } catch (err: unknown) {

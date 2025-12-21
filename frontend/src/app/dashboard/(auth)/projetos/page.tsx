@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
+import { useProjetos } from "@/hooks/use-projetos";
 import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
@@ -32,31 +33,18 @@ interface Projeto {
   progresso_geral?: number;
   organizacao_id?: string;
   created_at?: string;
+  [key: string]: unknown;
 }
 
 export default function ProjetosPage() {
   usePageTitleEffect("Projetos");
-  const [projetos, setProjetos] = useState<Projeto[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { projetos: rawProjetos, loading } = useProjetos();
+  const projetos = (rawProjetos as Projeto[]) || [];
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
   const toast = useToast();
-
-  useEffect(() => {
-    loadProjetos();
-  }, []);
-
-  async function loadProjetos() {
-    try {
-      const data = await api.projetos.list();
-      setProjetos(Array.isArray(data) ? data : []);
-    } catch {
-      // Erro já tratado pelo hook ou componente
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function generateReport(projetoId: string) {
     try {

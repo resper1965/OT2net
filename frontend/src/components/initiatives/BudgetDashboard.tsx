@@ -17,13 +17,13 @@ export function BudgetDashboard({ iniciativas }: BudgetDashboardProps) {
   const budgetData = useMemo(() => {
     const byPriority = iniciativas.reduce((acc: any, ini) => {
       const p = ini.prioridade || "NAO_DEFINIDA";
-      if (!acc[p]) acc[p] = 0;
+      if (!acc[p]) {acc[p] = 0;}
       acc[p] += ini.custo_estimado || 0;
       return acc;
     }, {});
 
     const byStatus = iniciativas.reduce((acc: any, ini) => {
-      if (!acc[ini.status]) acc[ini.status] = 0;
+      if (!acc[ini.status]) {acc[ini.status] = 0;}
       acc[ini.status] += ini.custo_estimado || 0;
       return acc;
     }, {});

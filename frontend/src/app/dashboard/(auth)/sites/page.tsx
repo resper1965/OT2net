@@ -1,43 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
+import { useSites } from "@/hooks/use-sites";
 import { MapPin, Search, Filter, Plus, Download } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
 
-interface Site {
-  id: string;
-  nome: string;
-  endereco?: string;
-  empresa_id?: string;
-  created_at?: string;
-}
+
 
 export default function SitesPage() {
   usePageTitleEffect("Sites");
-  const [sites, setSites] = useState<Site[]>([]);
-  const [loading, setLoading] = useState(true);
+  
+  const { sites, loading } = useSites();
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    loadSites();
-  }, []);
-
-  async function loadSites() {
-    try {
-      setLoading(true);
-      const data = await api.sites.list();
-      setSites(Array.isArray(data) ? data : []);
-    } catch {
-      // Erro já tratado
-    } finally {
-      setLoading(false);
-    }
-  }
 
   // Filtros
   const filteredSites = sites.filter((site) => {

@@ -39,6 +39,7 @@ model Tenant {
   descricoes_raw         DescricaoOperacionalRaw[]
   processos_normalizados ProcessoNormalizado[]
   iniciativas            Iniciativa[]
+  tickets                Ticket[]
   questionarios          Questionario[]
   ativos                 Ativo[]
   job_queues             JobQueue[]
@@ -73,6 +74,53 @@ model Organizacao {
   @@index([tenant_id])
   @@index([cnpj])
   @@map("organizacoes")
+}
+
+model Iniciativa {
+  id                    String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id             String    @db.Uuid
+  projeto_id            String    @db.Uuid
+  nome                  String    @db.Text
+  objetivo              String    @db.Text
+  onda                  Int?
+  prioridade            String?   @db.Text
+  tecnologias_sugeridas String[]  @db.Text
+  rasci_sugerido        Json?
+  status                String    @default("planejado") @db.Text
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+
+  // Relations
+  tenant                Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  projeto               Projeto   @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
+  tickets               Ticket[]
+
+  @@map("iniciativas")
+}
+
+model Ticket {
+  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  tenant_id       String    @db.Uuid
+  projeto_id      String    @db.Uuid
+  iniciativa_id   String?   @db.Uuid
+  titulo          String    @db.Text
+  descricao       String    @db.Text
+  status          String    @default("aberto") @db.Text // aberto, em_progresso, validacao, concluido, cancelado
+  prioridade      String    @default("media") @db.Text // baixa, media, alta, critica
+  responsavel_id  String?   @db.Uuid
+  data_vencimento DateTime?
+  external_id     String?   @db.Text // Ref para Jira/ServiceNow
+  metadata        Json?     // Para armazenar especificidades de TO ou do sistema externo
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  // Relations
+  tenant          Tenant      @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  projeto         Projeto     @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
+  iniciativa      Iniciativa? @relation(fields: [iniciativa_id], references: [id], onDelete: SetNull)
+  responsavel     Usuario?    @relation(fields: [responsavel_id], references: [id], onDelete: SetNull)
+
+  @@map("tickets")
 }
 
 model Empresa {
@@ -142,6 +190,7 @@ model Projeto {
   organizacao                 Organizacao?                 @relation(fields: [organizacao_id], references: [id], onDelete: Cascade)
   membros_equipe              MembroEquipe[]
   iniciativas                 Iniciativa[]
+  tickets                     Ticket[]
   descricoes_operacionais_raw DescricaoOperacionalRaw[]
   questionarios               Questionario[]
   riscos                      Risco[]
@@ -512,39 +561,6 @@ model RespostaQuestao {
 }
 
 // ============================================
-// Fase 2 - Plano Diretor
-// ============================================
-
-model Iniciativa {
-  id                   String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  tenant_id            String    @db.Uuid
-  projeto_id           String?   @db.Uuid
-  plano_diretor_id     String?   @db.Uuid
-  nome                 String    @db.Text
-  descricao            String?   @db.Text
-  dominio_governanca   String?   @db.Text
-  status               String?   @default("planejada") @db.Text
-  progresso_percentual Float?    @default(0)
-  saude                String?   @default("verde") @db.Text
-  responsavel_id       String?   @db.Uuid
-  data_inicio          DateTime? @db.Date
-  data_fim_prevista    DateTime? @db.Date
-  data_fim_real        DateTime? @db.Date
-  prioridade           String?   @db.Text
-  custo_estimado       Float?
-  beneficio_estimado   String?   @db.Text
-  created_at           DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at           DateTime? @default(now()) @db.Timestamptz(6)
-
-  tenant  Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  projeto Projeto? @relation(fields: [projeto_id], references: [id], onDelete: Cascade)
-
-  @@index([tenant_id])
-  @@index([projeto_id])
-  @@map("iniciativas")
-}
-
-// ============================================
 // Usuários e Autenticação
 // ============================================
 
@@ -570,6 +586,7 @@ model Usuario {
   ultimo_acesso  DateTime? @db.Timestamptz(6)
   created_at     DateTime? @default(now()) @db.Timestamptz(6)
   updated_at     DateTime? @default(now()) @db.Timestamptz(6)
+  tickets         Ticket[]
 
   tenant          Tenant       @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   organizacao_rel Organizacao? @relation(fields: [organizacao_id], references: [id], onDelete: SetNull)

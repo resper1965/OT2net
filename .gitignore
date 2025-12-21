@@ -58,6 +58,7 @@ Thumbs.db
 
 # Terraform keys
 sa-key.json
+gcp-key.json
 *.tfstate
 *.tfstate.backup
 .terraform/

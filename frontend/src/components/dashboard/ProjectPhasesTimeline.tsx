@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Circle, Clock } from "lucide-react";
+import { CheckCircle2, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Fase {
@@ -73,7 +73,7 @@ export function ProjectPhasesTimeline() {
 
           {/* Phases */}
           <div className="space-y-8">
-            {FASES.map((fase, index) => (
+            {FASES.map((fase) => (
               <div key={fase.id} className="relative flex gap-4">
                 {/* Icon */}
                 <div className="relative z-10 flex items-center justify-center">

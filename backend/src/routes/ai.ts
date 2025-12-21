@@ -1,8 +1,22 @@
 import { Router, Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth';
-import { generativeModel } from '../lib/vertex';
+import { vertexService } from '../services/vertex-ai';
 
 const router = Router();
+
+// GET /api/ai/health - Verify Vertex AI connectivity
+router.get('/health', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const isHealthy = await vertexService.healthCheck();
+    if (isHealthy) {
+      res.json({ status: 'ok', model: 'gemini-1.5-flash', message: 'Vertex AI connectivity confirmed' });
+    } else {
+      res.status(503).json({ status: 'error', message: 'Vertex AI health check failed' });
+    }
+  } catch (error: any) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
 
 router.post('/normalizar', authenticateToken, async (req: Request, res: Response): Promise<void> => {
   try {
@@ -14,45 +28,61 @@ router.post('/normalizar', authenticateToken, async (req: Request, res: Response
     }
 
     const prompt = `
-      Você é um Especialista em Processos de Negócio (BPM) e Governança de TI.
-      Sua tarefa é analisar a seguinte descrição operacional bruta e normalizá-la em um processo estruturado.
+      Você é um Arquiteto de Sistemas Senior especializado em BPMN 2.0 e Governança Corporativa (Foco em OT/Cibersegurança: ANEEL, ONS, CyberArk).
+      Seu objetivo é atuar como o motor lógico de uma aplicação que transforma descrições informais de processos em fluxos técnicos validados.
 
-      DESCRIÇÃO ORIGINAL:
+      TAREFA:
+      Analisar a descrição operacional bruta e normalizá-la em um PROCESSO ESTRUTURADO BPMN 2.0.
+
+      DESCRIÇÃO RAW:
       "${descricao}"
+
+      DIRETRIZES TÉCNICAS (BPMN 2.0 STRICT):
+      1. Normalização: Identifique Pools (Organizações) e Lanes (Departamentos/Papéis).
+      2. Descrição Estruturada: Texto técnico e sequencial.
+      3. Mermaid: Gere código compatível com Mermaid.js (graph TD).
+      4. RACI: Para CADA passo, identifique quem é R, A, C, I.
 
       SAÍDA ESPERADA (JSON):
       {
-        "titulo": "Nome curto e profissional para o processo",
-        "resumo": "Resumo executivo do que o processo faz (max 2 frases)",
-        "atores": ["Lista", "de", "cargos/personas", "envolvidos"],
-        "mermaid_code": "Código Mermaid graph TD representando o fluxo passo a passo. Use formas retangulares para processos e losangos para decisões. Não use subgraphs complexos, mantenha simples.",
-        "passos": [
-          { "ordem": 1, "acao": "Descrição da ação", "responsavel": "Cargo" }
-        ],
-        "riscos_identificados": ["Possível risco 1", "Possível risco 2"]
+        "processo_identificado": {
+          "nome": "string",
+          "objetivo": "string",
+          "passos": [
+            {
+              "id": "step_1",
+              "acao": "string",
+              "ator": "string",
+              "tipo_bpmn": "Task | Gateway | Event",
+              "raci": { "R": "string", "A": "string", "C": "string", "I": "string" }
+            }
+          ],
+          "mermaid_code": "string",
+          "validacao_tecnica": "string",
+          "riscos_identificados": ["string"]
+        }
       }
-      
-      Responda APENAS o JSON. Sem markdown.
     `;
 
-    const result = await generativeModel.generateContent(prompt);
+    // Use Flash for speed
+    const model = vertexService.getFlashModel();
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        responseMimeType: "application/json"
+      }
+    });
+
     const response = await result.response;
-    const candidates = response.candidates;
-    
-    if (!candidates || !candidates[0] || !candidates[0].content || !candidates[0].content.parts || !candidates[0].content.parts[0]) {
-       throw new Error("Resposta inválida do modelo IA");
+    const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!text) {
+      throw new Error('No content generated');
     }
 
-    let text = candidates[0].content.parts[0].text;
-
-    // Limpar markdown se houver (```json ... ```)
-    if (text?.startsWith('```json')) {
-      text = text.replace(/```json/g, '').replace(/```/g, '');
-    }
-
-    const jsonResult = JSON.parse(text || '{}');
-
-    res.json(jsonResult);
+    // Since we requested JSON mime type, we can parse directly
+    const jsonResult = JSON.parse(text);
+    res.json(jsonResult.processo_identificado); // Return the inner object to match expected frontend data
   } catch (error: any) {
     console.error('Erro na normalização IA:', error);
     res.status(500).json({ error: 'Falha ao processar com IA', details: error.message });
@@ -100,7 +130,7 @@ router.post('/analyze-risk', authenticateToken, async (req: any, res: Response):
       ${processo.ativos?.map((a: any) => `- ${a.nome} (${a.tipo})`).join('\n') || 'Nenhum'}
       
       DIFICULDADES RELATADAS:
-      ${processo.dificuldades?.map((d: any) => `- ${d.descricao}`).join('\n') || 'Nenhuma'}
+      ${processo.dificuldades?.map((d: any) => `- ${d.descricao}`).join('\n') || 'Nenhum'}
 
       SAÍDA ESPERADA (JSON):
       {
@@ -122,21 +152,8 @@ router.post('/analyze-risk', authenticateToken, async (req: any, res: Response):
       Responda APENAS o JSON. Sem markdown.
     `;
 
-    const result = await generativeModel.generateContent(prompt);
-    const response = await result.response;
-    const candidates = response.candidates;
-    
-    if (!candidates || !candidates[0] || !candidates[0].content || !candidates[0].content.parts || !candidates[0].content.parts[0]) {
-       throw new Error("Resposta inválida do modelo IA");
-    }
-
-    let text = candidates[0].content.parts[0].text;
-
-    if (text?.startsWith('```json')) {
-      text = text.replace(/```json/g, '').replace(/```/g, '');
-    }
-
-    const jsonResult = JSON.parse(text || '{}');
+    // Use Pro for risk analysis (deeper reasoning)
+    const jsonResult = await vertexService.generateJson(prompt, 'pro');
 
     res.json(jsonResult);
   } catch (error: any) {

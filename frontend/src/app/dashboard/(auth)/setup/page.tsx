@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, CheckCircle2, XCircle, Terminal } from "lucide-react";
+import { Loader2, CheckCircle2, Terminal } from "lucide-react";
 
 export default function SetupPage() {
   const { user } = useAuth();
@@ -45,9 +45,9 @@ export default function SetupPage() {
       }
 
       addLog('success', `${action === 'migrate' ? 'Migração' : 'Seed'} concluído com sucesso!`, data.output);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      addLog('error', `Falha ao executar ${action}`, error.message);
+      addLog('error', `Falha ao executar ${action}`, (error as Error).message);
     } finally {
       setLoading(null);
     }

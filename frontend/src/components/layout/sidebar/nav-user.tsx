@@ -1,5 +1,7 @@
 "use client";
 
+import { User } from "firebase/auth";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -31,7 +33,7 @@ export function NavUser() {
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user: User | null) => {
       if (user) {
         setUserEmail(user.email);
         setUserName(user.displayName || user.email?.split("@")[0] || "Usuário");

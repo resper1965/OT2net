@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useEmpresas } from "@/hooks/use-empresas";
 import { useToast } from "@/lib/hooks/useToast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
@@ -13,39 +14,18 @@ import { usePageTitleEffect } from "@/hooks/use-page-title";
 import { EmptyState } from "@/components/ui/empty-state";
 
 
-interface Empresa {
-  id: string;
-  identificacao: string;
-  tipo?: string;
-  status?: string;
-  organizacao_id?: string;
-}
+
 
 export default function EmpresasPage() {
   usePageTitleEffect("Empresas");
-  const [empresas, setEmpresas] = useState<Empresa[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { empresas, loading, refetch } = useEmpresas();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; id: string | null }>({
     open: false,
     id: null,
   });
   const toast = useToast();
-
-  useEffect(() => {
-    loadEmpresas();
-  }, []);
-
-  async function loadEmpresas() {
-    try {
-      const data = await api.empresas.list();
-      setEmpresas(Array.isArray(data) ? data : []);
-    } catch {
-      // Erro já tratado
-    } finally {
-      setLoading(false);
-    }
-  }
 
   function handleDeleteClick(id: string) {
     setDeleteDialog({ open: true, id });
@@ -56,7 +36,7 @@ export default function EmpresasPage() {
 
     try {
       await api.empresas.delete(deleteDialog.id);
-      await loadEmpresas();
+      await refetch();
       toast.success("Empresa excluída com sucesso");
       setDeleteDialog({ open: false, id: null });
     } catch (err: unknown) {
@@ -68,7 +48,7 @@ export default function EmpresasPage() {
   // Filtros
   const filteredEmpresas = empresas.filter((empresa) => {
     const matchesSearch =
-      empresa.identificacao.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      empresa.razao_social.toLowerCase().includes(searchQuery.toLowerCase()) ||
       empresa.tipo?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       empresa.status?.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -184,7 +164,7 @@ export default function EmpresasPage() {
                     {filteredEmpresas.map((empresa) => (
                       <tr key={empresa.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                         <td className="px-6 py-4 text-sm font-medium text-black dark:text-zinc-50">
-                          {empresa.identificacao}
+                          {empresa.razao_social}
                         </td>
                         <td className="px-6 py-4">
                           {empresa.tipo ? (

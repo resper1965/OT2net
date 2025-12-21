@@ -3,11 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_API_URL || "https://ot2net-backend-21597837536.us-central1.run.app";
 
-async function proxy(request: NextRequest, { params }: { params: { path: string[] } }) {
+async function proxy(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   const path = (await params).path.join("/");
   const url = `${BACKEND_URL}/api/${path}${request.nextUrl.search}`;
   
-  console.log(`[Proxy] Forwarding ${request.method} request to: ${url}`);
+  // console.log(`[Proxy] Forwarding ${request.method} request to: ${url}`);
 
   try {
     const headers = new Headers(request.headers);
@@ -41,10 +41,10 @@ async function proxy(request: NextRequest, { params }: { params: { path: string[
       headers: response.headers,
     });
 
-  } catch (error: any) {
+    } catch (error: unknown) {
     console.error("[Proxy] Critical Error connecting to backend:", error);
     return NextResponse.json(
-      { error: "Backend Connection Error", details: error.message },
+      { error: "Backend Connection Error", details: (error as Error).message },
       { status: 500 }
     );
   }

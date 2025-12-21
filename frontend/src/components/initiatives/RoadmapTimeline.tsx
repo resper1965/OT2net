@@ -16,14 +16,14 @@ interface RoadmapTimelineProps {
 
 export function RoadmapTimeline({ iniciativas }: RoadmapTimelineProps) {
   const timelineData = useMemo(() => {
-    if (!iniciativas || iniciativas.length === 0) return null;
+    if (!iniciativas || iniciativas.length === 0) {return null;}
 
     // Find min and max dates
     const dates = iniciativas
       .filter((i) => i.data_inicio && i.data_fim_prevista)
       .flatMap((i) => [new Date(i.data_inicio!), new Date(i.data_fim_prevista!)]);
 
-    if (dates.length === 0) return null;
+    if (dates.length === 0) {return null;}
 
     const minDate = new Date(Math.min(...dates.map((d) => d.getTime())));
     const maxDate = new Date(Math.max(...dates.map((d) => d.getTime())));

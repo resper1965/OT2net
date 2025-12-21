@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useToast } from "@/lib/hooks/useToast";
@@ -12,44 +12,27 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
 import { Building2, Search, Filter, Plus, Download } from "lucide-react";
 import { usePageTitleEffect } from "@/hooks/use-page-title";
+import { useOrganizacoes } from "@/hooks/use-organizacoes";
 
 interface Organizacao {
   id: string;
   razao_social: string;
   cnpj: string;
   classificacao?: string;
-  created_at: string;
+  created_at?: string;
 }
 
 export default function OrganizacoesPage() {
   usePageTitleEffect("Organizações");
-  const [organizacoes, setOrganizacoes] = useState<Organizacao[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { organizacoes: rawOrganizacoes, loading, error, refetch } = useOrganizacoes();
+  const organizacoes = (rawOrganizacoes as unknown as Organizacao[]) || [];
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; id: string | null }>({
     open: false,
     id: null,
   });
   const toast = useToast();
-
-  useEffect(() => {
-    loadOrganizacoes();
-  }, []);
-
-  async function loadOrganizacoes() {
-    try {
-      setLoading(true);
-      const data = await api.organizacoes.list();
-      setOrganizacoes(Array.isArray(data) ? data : []);
-      setError(null);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Erro ao carregar organizações";
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   function handleDeleteClick(id: string) {
     setDeleteDialog({ open: true, id });
@@ -60,9 +43,10 @@ export default function OrganizacoesPage() {
 
     try {
       await api.organizacoes.delete(deleteDialog.id);
-      await loadOrganizacoes();
+      await refetch();
       toast.success("Organização excluída com sucesso");
       setDeleteDialog({ open: false, id: null });
+
     } catch (err: unknown) {
       const error = err as Error;
       toast.error(error.message || "Erro ao excluir organização");

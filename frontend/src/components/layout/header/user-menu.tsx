@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { User } from "firebase/auth";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase/client";
@@ -23,7 +24,7 @@ export default function UserMenu() {
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user: User | null) => {
       if (user) {
         setUserEmail(user.email);
         setUserName(user.displayName || user.email?.split("@")[0] || "Usuário");

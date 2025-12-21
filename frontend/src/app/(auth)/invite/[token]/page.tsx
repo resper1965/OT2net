@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 
 export default function InvitePage() {
-  const params = useParams();
+  // const params = useParams();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +21,7 @@ export default function InvitePage() {
   const [loading, setLoading] = useState(false);
   
   // Provisório: Em produção, validaríamos o token com o backend para obter o email
-  const token = params.token as string;
+  // const token = params.token as string;
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();

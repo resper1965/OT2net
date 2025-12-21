@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Circle, User, Calendar, MessageSquare } from "lucide-react";
+import { Check, User, Calendar, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -62,7 +62,7 @@ export function PhaseChecklist({
   };
 
   const handleCheckboxClick = (etapa: FaseEtapa) => {
-    if (readonly) return;
+    if (readonly) { return; }
 
     const isCompleted = isEtapaCompletada(etapa.id);
 
@@ -168,7 +168,7 @@ export function PhaseChecklist({
               onClick={() => !readonly && handleCheckboxClick(etapa)}
             >
               {/* Checkbox */}
-              <div className="flex-shrink-0 mt-0.5">
+              <div className="shrink-0 mt-0.5">
                 <div
                   className={cn(
                     "w-5 h-5 rounded border-2 flex items-center justify-center transition-all",
@@ -233,7 +233,7 @@ export function PhaseChecklist({
                     </div>
                     {completada.observacoes && (
                       <div className="flex items-start gap-1 text-xs text-green-700 dark:text-green-300">
-                        <MessageSquare className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                        <MessageSquare className="w-3 h-3 mt-0.5 shrink-0" />
                         <span className="italic">{completada.observacoes}</span>
                       </div>
                     )}

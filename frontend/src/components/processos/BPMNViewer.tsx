@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 // bpmn-js requires window, so we dynamic import or ensure client-side only
 import BpmnViewer from "bpmn-js/lib/NavigatedViewer";
 import "bpmn-js/dist/assets/diagram-js.css";
@@ -8,7 +8,7 @@ import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 
 interface BPMNViewerProps {
   xml?: string; // We'll support XML injection
-  json?: any;   // Or we might need a converter if the AI gives pure JSON, but standardized tools use XML.
+  json?: unknown;   // Or we might need a converter if the AI gives pure JSON, but standardized tools use XML.
                 // VertexAI instruction was to return JSON structure *representing* BPMN elements.
                 // We'll need a converter JSON -> XML if bpmn-js only takes XML. 
                 // For now, let's assume we might receive XML or we convert raw JSON to XML on the client.
@@ -16,10 +16,10 @@ interface BPMNViewerProps {
 
 export default function BPMNViewer({ xml }: BPMNViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const viewerRef = useRef<any>(null);
+  const viewerRef = useRef<BpmnViewer | null>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) { return; }
 
     // Initialize viewer if not already
     if (!viewerRef.current) {
@@ -36,14 +36,14 @@ export default function BPMNViewer({ xml }: BPMNViewerProps) {
     if (xml) {
       viewer
         .importXML(xml)
-        .then(({ warnings }: any) => {
+        .then(({ warnings }: { warnings: Array<unknown> }) => {
           if (warnings.length) {
             console.warn("BPMN Import Warnings", warnings);
           }
-          const canvas = viewer.get("canvas");
+          const canvas = viewer.get("canvas") as any;
           canvas.zoom("fit-viewport");
         })
-        .catch((err: any) => {
+        .catch((err: unknown) => {
           console.error("BPMN Import Error", err);
         });
     }

@@ -12,7 +12,7 @@ import { PhaseChecklist } from "@/components/projetos/PhaseChecklist";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePageTitle } from "@/contexts/PageTitleContext";
-import { Bot, ArrowLeft, Calendar, Users, Building2, TrendingUp, CheckCircle2, AlertCircle, Clock, Sparkles, Shield, Target, LineChart } from "lucide-react";
+import { Sparkles, Shield, Target, LineChart } from "lucide-react";
 
 interface Projeto {
   id: string;
@@ -145,7 +145,9 @@ export default function ProjetoDetalhesPage() {
   ) {
     try {
       const fase = fases.find((f) => f.id === faseId);
-      if (!fase) return;
+      if (!fase) {
+        return;
+      }
 
       const isCompleted = fase.etapas_completadas.some(
         (ec) => ec.fase_etapa_id === etapaId
@@ -214,7 +216,7 @@ export default function ProjetoDetalhesPage() {
     );
   }
 
-  const selectedFase = fases[selectedFaseIndex];
+
 
   return (
     <div className="space-y-8">

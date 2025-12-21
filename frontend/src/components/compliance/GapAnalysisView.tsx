@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { Badge } from "@/components/ui/badge";
+
 
 interface GapAnalysisViewProps {
   projeto_id: string;

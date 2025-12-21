@@ -36,7 +36,7 @@ export function ProjectPhaseTimeline({ fases, className }: ProjectPhaseTimelineP
     return Circle;
   };
 
-  const getStatusColor = (status: string, progresso: number, cor: string) => {
+  const getStatusColor = (status: string, progresso: number) => {
     if (status === "concluida" || progresso === 100) {
       return "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20";
     }
@@ -47,8 +47,8 @@ export function ProjectPhaseTimeline({ fases, className }: ProjectPhaseTimelineP
   };
 
   const getStatusLabel = (status: string, progresso: number) => {
-    if (status === "concluida" || progresso === 100) return "Concluída";
-    if (status === "em_andamento" || progresso > 0) return "Em Andamento";
+    if (status === "concluida" || progresso === 100) { return "Concluída"; }
+    if (status === "em_andamento" || progresso > 0) { return "Em Andamento"; }
     return "Não Iniciada";
   };
 
@@ -100,7 +100,7 @@ export function ProjectPhaseTimeline({ fases, className }: ProjectPhaseTimelineP
                   <span
                     className={cn(
                       "px-2 py-0.5 text-xs font-medium rounded-full",
-                      getStatusColor(fase.status, fase.progresso, fase.cor)
+                      getStatusColor(fase.status, fase.progresso)
                     )}
                     style={
                       isActive
@@ -143,7 +143,7 @@ export function ProjectPhaseTimeline({ fases, className }: ProjectPhaseTimelineP
 
           {/* Phases */}
           <div className="relative grid grid-cols-5 gap-4">
-            {sortedFases.map((fase, index) => {
+            {sortedFases.map((fase) => {
               const StatusIcon = getStatusIcon(fase.status, fase.progresso);
               const isActive = fase.status === "em_andamento" || (fase.progresso > 0 && fase.progresso < 100);
               const isCompleted = fase.status === "concluida" || fase.progresso === 100;
@@ -193,7 +193,7 @@ export function ProjectPhaseTimeline({ fases, className }: ProjectPhaseTimelineP
                     <span
                       className={cn(
                         "inline-block px-2 py-0.5 text-xs font-medium rounded-full mb-2",
-                        getStatusColor(fase.status, fase.progresso, fase.cor)
+                        getStatusColor(fase.status, fase.progresso)
                       )}
                       style={
                         isActive

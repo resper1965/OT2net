@@ -24,11 +24,14 @@ import {
   BookOpen,
   ChevronRight,
   Settings,
+  Shield,
+  Target,
+  LineChart,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { usePathname } from "next/navigation";
+import { usePathname, useParams } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -149,49 +152,77 @@ export const navItems: NavGroup[] = [
 
 export function NavMain() {
   const pathname = usePathname();
+  const params = useParams(); // Hook to get URL parameters
   const { isMobile } = useSidebar();
-  // const { can, role } = usePermissions();
   
-  /**
-   * Filtra itens do menu baseado nas permissões do usuário
-   */
-  /*
-  const _filterItemsByPermission = (items: NavItem): NavItem => {
-    return items.filter(item => {
-      // Se tem requiredRoles, verifica se o role do usuário está na lista
-      if (item.requiredRoles && role) {
-        if (!item.requiredRoles.includes(role)) {
-          return false;
+  // Check if we are inside a project context
+  const projectId = params?.id;
+  const isProjectContext = !!projectId && pathname.startsWith(`/dashboard/projetos/${projectId}`);
+
+  // Define Project-Speciifc Navigation
+  const projectNavItems: NavGroup[] = isProjectContext ? [
+    {
+      title: "Navegação",
+      items: [
+        {
+          title: "Voltar ao Dashboard",
+          href: "/dashboard",
+          icon: LayoutDashboard,
+        },
+        {
+          title: "Visão Geral",
+          href: `/dashboard/projetos/${projectId}`,
+          icon: FolderKanban,
         }
-      }
-      
-      // Se tem requiredPermission, verifica permissão
-      if (item.requiredPermission) {
-        const { resource, action } = item.requiredPermission;
-        if (!can(resource, action)) {
-          return false;
+      ]
+    },
+    {
+      title: "Fase 0: Discovery",
+      items: [
+        {
+          title: "Levantamento & AS-IS",
+          href: `/dashboard/projetos/${projectId}/fase/fase0`,
+          icon: Workflow,
         }
-      }
-      
-      // Filtra sub-itens recursivamente
-      if (item.items) {
-        item.items = filterItemsByPermission(item.items);
-        // Se não sobrou nenhum sub-item, remove o item pai
-        if (item.items.length === 0) {
-          return false;
+      ]
+    },
+    {
+      title: "Fase 1: Assessment",
+      items: [
+         {
+          title: "Análise & Cross-check",
+          href: `/dashboard/projetos/${projectId}/fase/fase1`,
+          icon: Shield,
         }
-      }
-      
-      return true;
-    });
-  };
-  */
+      ]
+    },
+    {
+       title: "Fase 2: Planejador",
+       items: [
+         {
+           title: "Plano Diretor (Roadmap)",
+           href: `/dashboard/projetos/${projectId}/fase/fase2`,
+           icon: Target,
+         }
+       ]
+    },
+    {
+       title: "Fase 3: Monitoramento",
+       items: [
+         {
+           title: "PMO & Indicadores",
+           href: `/dashboard/projetos/${projectId}/fase/fase3`,
+           icon: LineChart,
+         }
+       ]
+    }
+  ] : [];
+
+  // Toggle between Global and Project menus
+  const currentNavItems = isProjectContext ? projectNavItems : navItems;
   
-  /**
-   * Filtra grupos do menu, removendo grupos vazios
-   * TODO: Reativar filtro de permissões quando o sistema de roles estiver 100%
-   */
-  const filteredNavItems = navItems; // .map(group => ({ ...group, items: filterItemsByPermission(group.items) })).filter(group => group.items.length > 0);
+  // Apply permission filtering if needed (currently bypassed as per original code)
+  const filteredNavItems = currentNavItems; 
 
   return (
     <>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { auth } from "@/lib/firebase/client";
+import { User as FirebaseUser } from "firebase/auth";
 import {
   Search,
   Bell,
@@ -21,7 +22,7 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user: FirebaseUser | null) => {
       if (user) {
         setUserEmail(user.email);
         setUserName(user.displayName || user.email?.split("@")[0] || null);

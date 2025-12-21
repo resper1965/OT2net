@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Building2, 
-  Factory, 
   MapPin, 
   FileText, 
   CheckCircle2,
@@ -14,49 +13,26 @@ import {
 } from "lucide-react";
 import { LoadingState } from "@/components/ui/loading-state";
 
-interface DashboardStats {
-  overview: {
-    organizacoes: number;
-    empresas: number;
-    sites: number;
-    projetos: number;
-    projetosAtivos: number;
-  };
-  processos: {
-    descricoesTotal: number;
-    descricoesProcessadas: number;
-    taxaProcessamento: number;
-    processosNormalizados: number;
-    processosAprovados: number;
-    taxaAprovacao: number;
-  };
-  atividade: {
-    descricoesUltimos7Dias: number;
-  };
-}
+
 
 export function DashboardKPIs() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadStats();
-  }, []);
 
-  async function loadStats() {
-    try {
-      const response = await fetch('/api/dashboard/stats', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-        }
-      });
-      const data = await response.json();
-      setStats(data);
-    } catch (error) {
-      console.error('Error loading dashboard stats:', error);
-    } finally {
-      setLoading(false);
+  const { data: stats, isLoading: loading, error } = useQuery({
+    queryKey: ['dashboard-stats'],
+    queryFn: async () => {
+      const data = await api.dashboard.getStats();
+      if (!data?.overview) {
+         // Optionally throw/return null if data is invalid,
+         // or just let the defensive code in JSX handle it.
+         console.warn("Invalid stats data format:", data);
+      }
+      return data;
     }
+  });
+
+  if (error) {
+    console.error('Error loading dashboard stats:', error);
   }
 
   if (loading) {
@@ -78,9 +54,9 @@ export function DashboardKPIs() {
           <Building2 className="h-4 w-4 text-zinc-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.overview.organizacoes}</div>
+          <div className="text-2xl font-bold">{stats?.overview?.organizacoes ?? 0}</div>
           <p className="text-xs text-zinc-500 mt-1">
-            {stats.overview.empresas} empresas cadastradas
+            {stats?.overview?.empresas ?? 0} empresas cadastradas
           </p>
         </CardContent>
       </Card>
@@ -94,7 +70,7 @@ export function DashboardKPIs() {
           <MapPin className="h-4 w-4 text-zinc-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.overview.sites}</div>
+          <div className="text-2xl font-bold">{stats?.overview?.sites ?? 0}</div>
           <p className="text-xs text-zinc-500 mt-1">
             Instalações mapeadas
           </p>
@@ -110,9 +86,9 @@ export function DashboardKPIs() {
           <Activity className="h-4 w-4 text-zinc-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.overview.projetosAtivos}</div>
+          <div className="text-2xl font-bold">{stats?.overview?.projetosAtivos ?? 0}</div>
           <p className="text-xs text-zinc-500 mt-1">
-            de {stats.overview.projetos} totais
+            de {stats?.overview?.projetos ?? 0} totais
           </p>
         </CardContent>
       </Card>
@@ -126,9 +102,9 @@ export function DashboardKPIs() {
           <FileText className="h-4 w-4 text-zinc-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.processos.taxaProcessamento}%</div>
+          <div className="text-2xl font-bold">{stats?.processos?.taxaProcessamento ?? 0}%</div>
           <p className="text-xs text-zinc-500 mt-1">
-            {stats.processos.descricoesProcessadas} de {stats.processos.descricoesTotal} descrições
+            {stats?.processos?.descricoesProcessadas ?? 0} de {stats?.processos?.descricoesTotal ?? 0} descrições
           </p>
         </CardContent>
       </Card>
@@ -142,9 +118,9 @@ export function DashboardKPIs() {
           <CheckCircle2 className="h-4 w-4 text-zinc-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.processos.taxaAprovacao}%</div>
+          <div className="text-2xl font-bold">{stats?.processos?.taxaAprovacao ?? 0}%</div>
           <p className="text-xs text-zinc-500 mt-1">
-            {stats.processos.processosAprovados} de {stats.processos.processosNormalizados} processos
+            {stats?.processos?.processosAprovados ?? 0} de {stats?.processos?.processosNormalizados ?? 0} processos
           </p>
         </CardContent>
       </Card>
@@ -158,7 +134,7 @@ export function DashboardKPIs() {
           <TrendingUp className="h-4 w-4 text-zinc-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.atividade.descricoesUltimos7Dias}</div>
+          <div className="text-2xl font-bold">{stats?.atividade?.descricoesUltimos7Dias ?? 0}</div>
           <p className="text-xs text-zinc-500 mt-1">
             Novas descrições
           </p>

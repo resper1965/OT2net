@@ -16,6 +16,7 @@ async function getAuthToken(): Promise<string | null> {
   const user = auth.currentUser;
   
   if (!user) {
+    console.warn("getAuthToken: No user found in firebase auth");
     return null;
   }
   
@@ -63,9 +64,9 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}): Promi
 
 // Helper para extrair array de respostas paginadas ou legadas
 const extractArray = (data: any, key: string) => {
-  if (data.data && Array.isArray(data.data)) return data.data;
-  if (data[key] && Array.isArray(data[key])) return data[key];
-  if (Array.isArray(data)) return data;
+  if (data.data && Array.isArray(data.data)) {return data.data;}
+  if (data[key] && Array.isArray(data[key])) {return data[key];}
+  if (Array.isArray(data)) {return data;}
   return [];
 };
 
@@ -172,7 +173,7 @@ export const api = {
   projetos: {
     list: (organizacaoId?: string, params?: { page?: number; limit?: number }) => {
       const allParams = new URLSearchParams(params as any);
-      if (organizacaoId) allParams.append("organizacao_id", organizacaoId);
+      if (organizacaoId) {allParams.append("organizacao_id", organizacaoId);}
       
       const query = allParams.toString();
       const url = query ? `/api/projetos?${query}` : "/api/projetos";
@@ -355,15 +356,19 @@ export const api = {
   // IA
   ai: {
     normalizeProcess: (data: { titulo: string; descricao_completa: string }) =>
-      fetchWithAuth("/api/ai/normalize-process", {
+      fetchWithAuth("/api/ai/normalizar", {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify({ descricao: data.descricao_completa }),
       }).then((r) => r.json()),
-    analyzeRisk: (data: { processo_normalizado_id: string; framework_id?: string }) =>
+    analyzeRisk: (data: any) =>
       fetchWithAuth("/api/ai/analyze-risk", {
         method: "POST",
         body: JSON.stringify(data),
       }).then((r) => r.json()),
+  },
+
+  dashboard: {
+    getStats: () => fetchWithAuth("/api/dashboard/stats").then((r) => r.json()),
   },
 
   // Usuários (apenas admin)

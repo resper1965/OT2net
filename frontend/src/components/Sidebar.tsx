@@ -11,7 +11,6 @@ import {
   MapPin,
   FolderKanban,
   Users,
-  UserCog,
   Workflow,
   BookOpen,
   LogOut,
@@ -92,6 +91,7 @@ export function Sidebar({ className }: SidebarProps = {}) {
     },
     {
       title: "Projetos",
+      href: "/dashboard/projetos",
       icon: FolderKanban,
     },
     {
